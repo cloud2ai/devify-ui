@@ -1,0 +1,129 @@
+import { format, formatDistanceToNow } from 'date-fns'
+import { formatInTimeZone, toZonedTime } from 'date-fns-tz'
+import { zhCN } from 'date-fns/locale/zh-CN'
+import { enUS } from 'date-fns/locale/en-US'
+
+const localeMap = {
+  'zh-CN': zhCN,
+  'en': enUS
+}
+
+export function detectTimezone() {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone
+  } catch (error) {
+    console.error('Failed to detect timezone:', error)
+    return 'UTC'
+  }
+}
+
+export function detectLanguage() {
+  const browserLang = navigator.language || navigator.userLanguage
+
+  if (browserLang.startsWith('zh')) {
+    return 'zh-CN'
+  }
+
+  return 'en'
+}
+
+export function formatDate(date, timezone, pattern = 'yyyy-MM-dd HH:mm:ss', language = 'en') {
+  if (!date) return ''
+
+  try {
+    const dateObj = typeof date === 'string' ? new Date(date) : date
+    const locale = localeMap[language] || enUS
+
+    return formatInTimeZone(dateObj, timezone || 'UTC', pattern, { locale })
+  } catch (error) {
+    console.error('Failed to format date:', error)
+    return ''
+  }
+}
+
+export function formatRelativeTime(date, language = 'en') {
+  if (!date) return ''
+
+  try {
+    const dateObj = typeof date === 'string' ? new Date(date) : date
+    const locale = localeMap[language] || enUS
+
+    return formatDistanceToNow(dateObj, { addSuffix: true, locale })
+  } catch (error) {
+    console.error('Failed to format relative time:', error)
+    return ''
+  }
+}
+
+export function convertToUserTimezone(date, timezone) {
+  if (!date) return null
+
+  try {
+    const dateObj = typeof date === 'string' ? new Date(date) : date
+    return toZonedTime(dateObj, timezone || 'UTC')
+  } catch (error) {
+    console.error('Failed to convert timezone:', error)
+    return date
+  }
+}
+
+export function getTimezoneList() {
+  return [
+    { value: 'UTC', label: 'UTC' },
+    { value: 'America/New_York', label: 'Eastern Time (US & Canada)' },
+    { value: 'America/Chicago', label: 'Central Time (US & Canada)' },
+    { value: 'America/Denver', label: 'Mountain Time (US & Canada)' },
+    { value: 'America/Los_Angeles', label: 'Pacific Time (US & Canada)' },
+    { value: 'Europe/London', label: 'London' },
+    { value: 'Europe/Paris', label: 'Paris' },
+    { value: 'Europe/Berlin', label: 'Berlin' },
+    { value: 'Europe/Moscow', label: 'Moscow' },
+    { value: 'Asia/Dubai', label: 'Dubai' },
+    { value: 'Asia/Kolkata', label: 'Mumbai, Kolkata' },
+    { value: 'Asia/Shanghai', label: 'Beijing, Shanghai' },
+    { value: 'Asia/Hong_Kong', label: 'Hong Kong' },
+    { value: 'Asia/Tokyo', label: 'Tokyo' },
+    { value: 'Asia/Seoul', label: 'Seoul' },
+    { value: 'Asia/Singapore', label: 'Singapore' },
+    { value: 'Australia/Sydney', label: 'Sydney' },
+    { value: 'Pacific/Auckland', label: 'Auckland' }
+  ]
+}
+
+// Get friendly language display name
+export function getFriendlyLanguageName(languageCode) {
+  const languageNames = {
+    'en': 'English',
+    'zh-CN': '简体中文',
+    'zh': '简体中文'
+  }
+  return languageNames[languageCode] || languageCode
+}
+
+// Get friendly timezone display with UTC offset
+export function getFriendlyTimezoneName(timezone) {
+  try {
+    const now = new Date()
+    const utcOffset = formatInTimeZone(now, timezone, 'XXX') // Gets offset like +08:00
+    const offsetHours = parseInt(utcOffset.substring(1, 3))
+    const offsetMinutes = parseInt(utcOffset.substring(4, 6))
+    const offsetSign = utcOffset.substring(0, 1)
+
+    // Convert to GMT format
+    let gmtOffset = ''
+    if (offsetHours === 0 && offsetMinutes === 0) {
+      gmtOffset = 'GMT'
+    } else {
+      gmtOffset = `GMT${offsetSign}${offsetHours}`
+      if (offsetMinutes > 0) {
+        gmtOffset += `:${offsetMinutes.toString().padStart(2, '0')}`
+      }
+    }
+
+    // Return full timezone name with GMT offset
+    return `${timezone} (${gmtOffset})`
+  } catch (error) {
+    console.error('Failed to get friendly timezone name:', error)
+    return timezone
+  }
+}
