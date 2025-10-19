@@ -68,11 +68,13 @@
             >
               <div
                 v-if="showUserMenu"
-                class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200"
+                class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200"
               >
                 <div class="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
-                  <div class="font-medium">{{ userStore.userInfo?.username || 'User' }}</div>
-                  <div class="text-gray-500">{{ userStore.userInfo?.email || '' }}</div>
+                  <div class="font-medium truncate">{{ userStore.userInfo?.username || 'User' }}</div>
+                  <div class="text-gray-500 text-xs truncate" :title="userStore.userInfo?.email || ''">
+                    {{ userStore.userInfo?.email || '' }}
+                  </div>
                 </div>
                 <button
                   @click="handleLogout"

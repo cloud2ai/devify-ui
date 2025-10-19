@@ -1,6 +1,11 @@
 <template>
   <AppLayout>
     <div class="space-y-6">
+      <VirtualEmailBanner
+        :virtual-email="userStore.userInfo?.virtual_email"
+        :label="t('settings.emailAddressDesc')"
+      />
+
       <!-- Header -->
       <div class="md:flex md:items-center md:justify-between">
         <div class="flex-1 min-w-0">
@@ -125,7 +130,7 @@
 
         <div v-else-if="results.length === 0" class="text-center py-8">
           <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 2 0 01-2 2z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           <h3 class="mt-2 text-sm font-medium text-gray-900">{{ t('conversations.noConversations') }}</h3>
           <p class="mt-1 text-sm text-gray-500">{{ t('conversations.noConversationsDesc') }}</p>
@@ -183,16 +188,19 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { usePreferencesStore } from '@/store/preferences'
+import { useUserStore } from '@/store/user'
 import { chatApi } from '@/api/chat'
 import { formatDate, formatRelativeTime } from '@/utils/timezone'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import BaseCard from '@/components/ui/BaseCard.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import MarkdownPreview from '@/components/ui/MarkdownPreview.vue'
+import VirtualEmailBanner from '@/components/ui/VirtualEmailBanner.vue'
 
 const { t } = useI18n()
 const router = useRouter()
 const preferencesStore = usePreferencesStore()
+const userStore = useUserStore()
 
 const loading = ref(false)
 const results = ref([])
@@ -212,22 +220,6 @@ const loadData = async () => {
     const responseData = response.data.data || response.data
     results.value = responseData.list || responseData.results || []
 
-    console.log('API Response:', response.data)
-    console.log('Results:', results.value)
-    if (results.value.length > 0) {
-      console.log('First result:', results.value[0])
-      console.log('Sender type:', typeof results.value[0].sender, results.value[0].sender)
-      console.log('Attachments type:', typeof results.value[0].attachments, results.value[0].attachments)
-
-      const testDate = formatDateTime(results.value[0].received_at || results.value[0].created_at)
-      console.log('Formatted date:', typeof testDate, testDate)
-
-      const testFrom = t('conversations.from')
-      console.log('Translation "from":', typeof testFrom, testFrom)
-
-      const testAttachment = t('conversations.attachments', { count: results.value[0].attachments?.length || 0 })
-      console.log('Translation "attachments":', typeof testAttachment, testAttachment)
-    }
 
     // Calculate stats
     stats.value = {

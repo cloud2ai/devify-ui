@@ -105,6 +105,26 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  const checkAuthStatus = async () => {
+    try {
+      const response = await authApi.getProfile()
+      const data = response.data.data || response.data
+
+      user.value = data
+
+      if (!token.value && localStorage.getItem('access_token')) {
+        token.value = localStorage.getItem('access_token')
+      }
+
+      await loadUserPreferences()
+
+      return data
+    } catch (err) {
+      console.error('Check auth status failed:', err)
+      return null
+    }
+  }
+
   const updateProfile = async (profileData) => {
     loading.value = true
     error.value = null
@@ -171,6 +191,7 @@ export const useUserStore = defineStore('user', () => {
     login,
     logout,
     checkAuth,
+    checkAuthStatus,
     updateProfile,
     register
   }

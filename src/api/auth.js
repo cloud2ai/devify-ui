@@ -39,5 +39,61 @@ export const authApi = {
   // Change password
   changePassword(passwordData) {
     return api.post('/v1/auth/password/change', passwordData)
+  },
+
+  // Send registration email
+  sendRegistrationEmail(data) {
+    return api.post('/v1/auth/register/send-email', data)
+  },
+
+  // Verify registration token
+  verifyRegistrationToken(token) {
+    return api.get(`/v1/auth/register/verify-token/${token}`)
+  },
+
+  // Complete registration
+  completeRegistration(data) {
+    return api.post('/v1/auth/register/complete', data)
+  },
+
+  // Complete OAuth setup (Google, WeChat, etc.)
+  completeOAuthSetup(data) {
+    return api.post('/v1/auth/oauth/complete-setup', data)
+  },
+
+  // Backward compatibility alias
+  completeGoogleSetup(data) {
+    return this.completeOAuthSetup(data)
+  },
+
+  // Check username availability
+  checkUsernameAvailability(username) {
+    return api.get(`/v1/auth/check-username/${username}`)
+  },
+
+  // Get available scenes
+  getAvailableScenes(language) {
+    return api.get('/v1/auth/scenes', {
+      params: { language }
+    })
   }
 }
+
+// Export individual functions for easier imports
+export const {
+  login,
+  getProfile,
+  updateProfile,
+  logout,
+  refreshToken,
+  register,
+  resetPassword,
+  changePassword,
+  sendRegistrationEmail,
+  verifyRegistrationToken,
+  completeRegistration,
+  completeOAuthSetup,
+  completeGoogleSetup,
+  checkUsernameAvailability,
+  getAvailableScenes
+} = authApi

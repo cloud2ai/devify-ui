@@ -9,14 +9,39 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import('@/pages/Login.vue'),
+    component: () => import('@/pages/Auth.vue'),
     meta: { requiresGuest: true }
   },
   {
     path: '/register',
     name: 'Register',
-    component: () => import('@/pages/Register.vue'),
+    component: () => import('@/pages/Auth.vue'),
     meta: { requiresGuest: true }
+  },
+  {
+    path: '/register/complete/:token',
+    name: 'RegisterComplete',
+    component: () => import('@/pages/RegisterComplete.vue'),
+    meta: { requiresGuest: true }
+  },
+  {
+    path: '/auth/oauth/callback',
+    name: 'OAuthCallback',
+    component: () => import('@/pages/OAuthCallback.vue')
+  },
+  {
+    path: '/auth/google/callback',
+    redirect: '/auth/oauth/callback'
+  },
+  {
+    path: '/auth/wechat/callback',
+    redirect: '/auth/oauth/callback'
+  },
+  {
+    path: '/google/complete-setup',
+    name: 'GoogleCompleteSetup',
+    component: () => import('@/pages/GoogleCompleteSetup.vue'),
+    meta: { requiresAuth: true }
   },
   {
     path: '/conversations',

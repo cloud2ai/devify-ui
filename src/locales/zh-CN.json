@@ -26,15 +26,31 @@
     "success": "成功",
     "language": "语言"
   },
+  "virtualEmail": {
+    "yourAddress": "您的虚拟邮箱"
+  },
   "auth": {
     "login": "登录",
     "register": "注册",
     "loginTitle": "登录 AimyChats",
     "registerTitle": "创建您的账户",
+    "tabs": {
+      "login": "登录",
+      "register": "注册"
+    },
+    "divider": {
+      "or": "或"
+    },
+    "oauth": {
+      "continueWithGoogle": "使用 Google 账号继续"
+    },
     "username": "用户名",
+    "virtualEmailUsername": "虚拟邮箱用户名",
     "email": "邮箱",
     "password": "密码",
     "confirmPassword": "确认密码",
+    "passwordHelp": "密码长度至少为8个字符",
+    "passwordHelpComplex": "8-32个字符，必须包含字母和数字",
     "rememberMe": "记住我",
     "forgotPassword": "忘记密码？",
     "noAccount": "还没有账户？",
@@ -49,6 +65,15 @@
     "loginErrorDetail": "登录失败。请检查您的用户名和密码是否正确，或者<a href='/register' class='font-medium underline'>注册新账户</a>。",
     "registerError": "注册失败，请重试",
     "registerErrorDetail": "注册失败。该用户名或邮箱可能已被使用，请尝试其他用户名或邮箱。",
+    "selectScene": "请选择使用场景",
+    "fullVirtualEmail": "完整邮箱地址",
+    "usernameTooShort": "用户名至少需要3个字符",
+    "usernameNotAvailable": "此用户名已被使用",
+    "usernameNotAvailableWithSuggestions": "此用户名已被使用，您可以尝试：{suggestions}",
+    "usernameCheckFailed": "无法验证用户名，请稍后重试",
+    "usernameReserved": "此用户名为系统保留，无法使用",
+    "usernameInvalidChars": "用户名只能包含字母、数字、点、连字符和下划线",
+    "usernameInvalidDot": "用户名不能以点开头或结尾",
     "required": {
       "username": "请输入用户名",
       "email": "请输入邮箱",
@@ -58,11 +83,72 @@
     "invalid": {
       "email": "请输入有效的邮箱地址",
       "passwordMatch": "两次输入的密码不一致",
-      "passwordLength": "密码长度至少为8个字符"
+      "passwordLength": "密码长度至少为8个字符",
+      "passwordTooShort": "密码长度至少为8个字符",
+      "passwordTooLong": "密码长度不能超过32个字符",
+      "passwordComplexity": "密码必须同时包含字母和数字"
     },
     "loginFailedMessage": "登录失败。请检查您的用户名和密码是否正确，或者",
     "registerNewAccount": "注册新账户",
-    "period": "。"
+    "period": "。",
+    "processing": "处理中..."
+  },
+  "register": {
+    "emailPlaceholder": "请输入您的邮箱地址",
+    "emailHint": "我们将向您的邮箱发送注册链接",
+    "sendEmail": "发送注册邮件",
+    "sending": "发送中...",
+    "sendEmailError": "发送邮件失败，请稍后重试",
+    "orContinueWith": "或使用以下方式继续",
+    "continueWithGoogle": "使用 Google 账号继续",
+    "emailSent": {
+      "title": "注册邮件已发送",
+      "message": "我们已向 {email} 发送了注册链接，请查收邮件并点击链接完成注册。"
+    },
+    "complete": {
+      "title": "完成注册",
+      "subtitle": "请填写以下信息完成您的账户设置",
+      "verifying": "正在验证链接...",
+      "invalidToken": "注册链接无效或已过期",
+      "invalidTokenMessage": "该注册链接可能已过期或已被使用。请返回注册页面重新申请。",
+      "backToRegister": "返回注册页面",
+      "registeringFor": "注册邮箱",
+      "passwordPlaceholder": "请设置您的密码（至少8个字符）",
+      "pleaseComplete": "请完成所有必填项",
+      "submitError": "注册失败，请稍后重试",
+      "submit": "完成注册",
+      "submitting": "提交中..."
+    },
+    "virtualEmail": {
+      "label": "虚拟邮箱用户名",
+      "placeholder": "请输入用户名",
+      "preview": "完整邮箱地址",
+      "info": "此邮箱地址用于接收处理后的邮件内容。它是您在 Threadline 邮件处理系统中的唯一标识。",
+      "tooShort": "用户名至少需要3个字符",
+      "notAvailable": "此用户名已被使用",
+      "checkFailed": "无法验证用户名，请稍后重试",
+      "checking": "检查可用性..."
+    },
+    "scene": {
+      "label": "使用场景",
+      "help": "选择您的主要使用场景，系统会根据场景优化AI提示词配置",
+      "loadError": "无法加载场景列表，请刷新页面重试"
+    },
+    "google": {
+      "processing": "正在处理 Google 登录",
+      "pleaseWait": "请稍候...",
+      "error": "Google 登录失败",
+      "callbackError": "处理 Google 回调时出错，请重试",
+      "completeTitle": "完成账户设置",
+      "completeSubtitle": "请填写以下信息完成您的账户设置",
+      "loggedInAs": "已登录为"
+    },
+    "googleSetup": {
+      "subtitle": "请完成您的个人资料设置"
+    },
+    "oauthSetup": {
+      "subtitle": "请完成您的个人资料设置"
+    }
   },
   "conversations": {
     "title": "对话列表",
@@ -101,7 +187,7 @@
     "title": "设置",
     "emailAddress": "邮箱地址",
     "yourEmailAddress": "您的邮箱地址",
-    "emailAddressDesc": "将您的聊天记录转发到此邮箱地址，即可由 AI 自动生成摘要。",
+    "emailAddressDesc": "将您的聊天记录转发到此邮箱地址，即可由 AI 自动生成摘要",
     "copyEmail": "复制邮箱地址",
     "preferences": "偏好设置",
     "language": "语言",
@@ -113,6 +199,7 @@
     "detectedLanguage": "检测到语言：{{value}}",
     "detectedTimezone": "检测到时区：{{value}}",
     "detectedText": "检测到",
+    "advancedOptions": "高级选项",
     "saveSettings": "保存设置",
     "settingsSaved": "设置保存成功",
     "settingsError": "保存设置失败",

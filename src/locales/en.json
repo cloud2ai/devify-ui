@@ -26,15 +26,21 @@
     "success": "Success",
     "language": "Language"
   },
+  "virtualEmail": {
+    "yourAddress": "Your Virtual Email"
+  },
   "auth": {
     "login": "Login",
     "register": "Register",
     "loginTitle": "Sign in to AimyChats",
     "registerTitle": "Create your account",
     "username": "Username",
+    "virtualEmailUsername": "Virtual Email Username",
     "email": "Email",
     "password": "Password",
     "confirmPassword": "Confirm Password",
+    "passwordHelp": "Password must be at least 8 characters",
+    "passwordHelpComplex": "8-32 characters, must contain letters and numbers",
     "rememberMe": "Remember me",
     "forgotPassword": "Forgot password?",
     "noAccount": "Don't have an account?",
@@ -49,6 +55,26 @@
     "loginErrorDetail": "Login failed. Please check your username and password, or <a href='/register' class='font-medium underline'>register a new account</a>.",
     "registerError": "Registration failed, please try again",
     "registerErrorDetail": "Registration failed. This username or email may already be in use. Please try a different one.",
+    "tabs": {
+      "login": "Log in",
+      "register": "Sign up"
+    },
+    "divider": {
+      "or": "Or"
+    },
+    "oauth": {
+      "continueWithGoogle": "Continue with Google"
+    },
+    "processing": "Processing...",
+    "selectScene": "Please select a usage scenario",
+    "fullVirtualEmail": "Full email address",
+    "usernameTooShort": "Username must be at least 3 characters",
+    "usernameNotAvailable": "This username is already taken",
+    "usernameNotAvailableWithSuggestions": "This username is already taken. You can try: {suggestions}",
+    "usernameCheckFailed": "Unable to verify username, please try again later",
+    "usernameReserved": "This username is reserved and cannot be used",
+    "usernameInvalidChars": "Username can only contain letters, numbers, dots, hyphens, and underscores",
+    "usernameInvalidDot": "Username cannot start or end with a dot",
     "required": {
       "username": "Username is required",
       "email": "Email is required",
@@ -58,11 +84,61 @@
     "invalid": {
       "email": "Please enter a valid email address",
       "passwordMatch": "Passwords do not match",
-      "passwordLength": "Password must be at least 8 characters"
+      "passwordLength": "Password must be at least 8 characters",
+      "passwordTooShort": "Password must be at least 8 characters",
+      "passwordTooLong": "Password cannot exceed 32 characters",
+      "passwordComplexity": "Password must contain both letters and numbers"
     },
     "loginFailedMessage": "Login failed. Please check your username and password, or",
     "registerNewAccount": "register a new account",
     "period": "."
+  },
+  "register": {
+    "emailPlaceholder": "Enter your email address",
+    "emailHint": "We'll send you a registration link",
+    "sendEmail": "Send Registration Email",
+    "sending": "Sending...",
+    "sendEmailError": "Failed to send email, please try again later",
+    "orContinueWith": "Or continue with",
+    "continueWithGoogle": "Continue with Google",
+    "emailSent": {
+      "title": "Registration Email Sent",
+      "message": "We've sent a registration link to {email}. Please check your email and click the link to complete registration."
+    },
+    "complete": {
+      "title": "Complete Registration",
+      "subtitle": "Please fill in the information below to complete your account setup",
+      "verifying": "Verifying link...",
+      "invalidToken": "Registration link is invalid or expired",
+      "invalidTokenMessage": "This registration link may have expired or already been used. Please return to the registration page to request a new one.",
+      "backToRegister": "Back to registration",
+      "registeringFor": "Registering for",
+      "passwordPlaceholder": "Set your password (at least 8 characters)",
+      "pleaseComplete": "Please complete all required fields",
+      "submitError": "Registration failed, please try again later",
+      "submit": "Complete Registration",
+      "submitting": "Submitting..."
+    },
+    "virtualEmail": {
+      "label": "Virtual Email Username",
+      "placeholder": "Enter username",
+      "info": "This email address is used to receive processed email content. It's your unique identifier in the Threadline email processing system."
+    },
+    "scene": {
+      "label": "Usage Scenario",
+      "help": "Select your primary use case. The system will optimize AI prompt configurations based on your selection"
+    },
+    "googleSetup": {
+      "subtitle": "Please complete your profile setup"
+    },
+    "oauthSetup": {
+      "subtitle": "Please complete your profile setup"
+    },
+    "google": {
+      "completeTitle": "Complete Account Setup",
+      "completeSubtitle": "Please fill in the information below to complete your account setup",
+      "loggedInAs": "Logged in as"
+    }
   },
   "conversations": {
     "title": "Conversations",
@@ -101,7 +177,7 @@
     "title": "Settings",
     "emailAddress": "Email Address",
     "yourEmailAddress": "Your Email Address",
-    "emailAddressDesc": "Forward your chat records to this email address to have them automatically summarized by AI.",
+    "emailAddressDesc": "Forward your chat records to this email address to have them automatically summarized by AI",
     "copyEmail": "Copy email address",
     "preferences": "Preferences",
     "language": "Language",
@@ -113,6 +189,7 @@
     "detectedLanguage": "Detected language: {{value}}",
     "detectedTimezone": "Detected timezone: {{value}}",
     "detectedText": "Detected",
+    "advancedOptions": "Advanced Options",
     "saveSettings": "Save settings",
     "settingsSaved": "Settings saved successfully",
     "settingsError": "Failed to save settings",

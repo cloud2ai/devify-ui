@@ -1,6 +1,8 @@
 # Devify UI
 
-一个支持中英文双语、时区感知的、AI驱动的邮件对话摘要应用。
+> **AimyChats** - 一个支持中英文双语、时区感知的、AI驱动的邮件对话摘要应用。
+
+Devify 项目的前端应用，以 AimyChats 品牌对外展示。
 
 ## 功能特性
 
@@ -65,7 +67,7 @@ src/
 
 ### 环境要求
 
-- Node.js 18+
+- Node.js 22.x (LTS) 或更高版本
 - npm 或 yarn
 - 后端 API 运行在 `http://localhost:8000`
 
@@ -207,8 +209,7 @@ const relative = formatRelativeTime(
 
 ```env
 VITE_API_BASE_URL=http://localhost:8000/api
-VITE_APP_TITLE=Devify
-VITE_VIRTUAL_EMAIL_DOMAIN=devify.local
+VITE_APP_TITLE=AimyChats
 ```
 
 ## 开发指南

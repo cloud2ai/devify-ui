@@ -11,41 +11,77 @@
       </div>
 
       <BaseCard :title="t('settings.emailAddress')">
-        <div class="space-y-4">
-          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div class="flex items-start">
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-2.5 sm:p-3">
+          <div class="flex items-center justify-between gap-2 sm:gap-3">
+            <div class="flex items-center gap-2 min-w-0 flex-1">
               <div class="flex-shrink-0">
-                <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  class="h-4 w-4 sm:h-5 sm:w-5 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
                 </svg>
               </div>
-              <div class="ml-3 flex-1">
-                <h3 class="text-sm font-medium text-blue-800">
-                  {{ t('settings.yourEmailAddress') }}
-                </h3>
-                <div class="mt-2 text-sm text-blue-700">
-                  <p>{{ t('settings.emailAddressDesc') }}</p>
+
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-1.5 flex-wrap sm:flex-nowrap">
+                  <span class="text-xs font-medium text-blue-800 whitespace-nowrap">
+                    {{ t('settings.emailAddressDesc') }}:
+                  </span>
+                  <code
+                    class="text-xs sm:text-sm font-mono font-medium text-blue-900 truncate"
+                    :title="userEmail"
+                  >
+                    {{ userEmail }}
+                  </code>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="flex items-center space-x-3">
-            <div class="flex-1 bg-gray-100 rounded-lg px-4 py-3 font-mono text-sm">
-              {{ userEmail }}
-            </div>
-            <BaseButton
-              variant="secondary"
+            <button
               @click="copyEmail"
+              class="flex-shrink-0 inline-flex items-center gap-1 text-xs font-medium text-blue-700 hover:text-blue-900 bg-blue-100 hover:bg-blue-200 px-2 py-1 rounded transition-colors"
+              :title="t('settings.copyEmail')"
             >
-              <svg v-if="!emailCopied" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              <svg
+                v-if="!emailCopied"
+                class="h-3.5 w-3.5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                />
               </svg>
-              <svg v-else class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              <svg
+                v-else
+                class="h-3.5 w-3.5 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
-              {{ emailCopied ? t('common.copied') : t('settings.copyEmail') }}
-            </BaseButton>
+              <span class="hidden sm:inline">
+                {{ emailCopied ? t('common.copied') : t('common.copy') }}
+              </span>
+            </button>
           </div>
         </div>
       </BaseCard>
@@ -167,7 +203,9 @@ const detectedLanguage = ref(detectLanguage())
 const detectedTimezone = ref(detectTimezone())
 const timezones = ref(getTimezoneList())
 
-const userEmail = ref(userStore.userInfo?.email || 'user@example.com')
+const userEmail = ref(
+  userStore.userInfo?.virtual_email || 'user@example.com'
+)
 
 const copyEmail = async () => {
   try {
