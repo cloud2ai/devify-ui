@@ -63,7 +63,7 @@ const handleComplete = async (formValues) => {
 
     if (responseData.success || response.data.code === 0) {
       await userStore.checkAuth()
-      router.push('/conversations')
+      router.push('/chats')
     }
   } catch (error) {
     console.error('Google setup completion error:', error)
@@ -99,7 +99,7 @@ onMounted(async () => {
       }
 
       if (userStore.user.profile?.registration_completed) {
-        router.push('/conversations')
+        router.push('/chats')
       }
     } else {
       router.push('/login')

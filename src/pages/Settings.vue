@@ -176,12 +176,13 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store/user'
 import { usePreferencesStore } from '@/store/preferences'
 import { settingsApi } from '@/api/settings'
-import { detectTimezone, detectLanguage, getTimezoneList } from '@/utils/timezone'
+import { detectTimezone, detectLanguage } from '@/utils/timezone'
+import { getLocalizedTimezones } from '@/utils/timezones'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import BaseCard from '@/components/ui/BaseCard.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -201,7 +202,16 @@ const successMessage = ref('')
 const emailCopied = ref(false)
 const detectedLanguage = ref(detectLanguage())
 const detectedTimezone = ref(detectTimezone())
-const timezones = ref(getTimezoneList())
+
+// Computed timezone list that updates when language changes
+const timezones = computed(() => {
+  return getLocalizedTimezones(preferencesStore.currentLanguage)
+})
+
+// Watch language changes and update timezone list
+watch(() => preferencesStore.currentLanguage, (newLang) => {
+  formData.language = newLang
+})
 
 const userEmail = ref(
   userStore.userInfo?.virtual_email || 'user@example.com'

@@ -4,7 +4,7 @@ import { useUserStore } from '@/store/user'
 const routes = [
   {
     path: '/',
-    redirect: '/conversations'
+    redirect: '/chats'
   },
   {
     path: '/login',
@@ -44,24 +44,32 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/conversations',
-    name: 'Conversations',
+    path: '/chats',
+    name: 'Chats',
     component: () => import('@/pages/Dashboard.vue'),
     meta: { requiresAuth: true }
   },
   {
     path: '/dashboard',
-    redirect: '/conversations'
+    redirect: '/chats'
   },
   {
-    path: '/conversations/:id',
-    name: 'ConversationDetail',
+    path: '/conversations',
+    redirect: '/chats'
+  },
+  {
+    path: '/chats/:id',
+    name: 'ChatDetail',
     component: () => import('@/pages/ThreadlineDetail.vue'),
     meta: { requiresAuth: true }
   },
   {
+    path: '/conversations/:id',
+    redirect: to => `/chats/${to.params.id}`
+  },
+  {
     path: '/threadlines/:id',
-    redirect: to => `/conversations/${to.params.id}`
+    redirect: to => `/chats/${to.params.id}`
   },
   {
     path: '/settings',

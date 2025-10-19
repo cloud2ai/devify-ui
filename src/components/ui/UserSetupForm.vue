@@ -103,7 +103,7 @@
               class="input w-full"
             >
               <option
-                v-for="tz in COMMON_TIMEZONES"
+                v-for="tz in getLocalizedTimezones(detectLanguage())"
                 :key="tz.value"
                 :value="tz.value"
               >
@@ -149,7 +149,7 @@ import {
   getFriendlyLanguageName,
   getFriendlyTimezoneName
 } from '@/utils/timezone'
-import { COMMON_TIMEZONES } from '@/utils/timezones'
+import { getLocalizedTimezones } from '@/utils/timezones'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import VirtualEmailInput from '@/components/ui/VirtualEmailInput.vue'

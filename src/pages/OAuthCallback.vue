@@ -121,7 +121,7 @@ const handleComplete = async (formValues) => {
         localStorage.setItem('refresh_token', responseData.refresh)
       }
 
-      router.push('/conversations')
+      router.push('/chats')
     }
   } catch (err) {
     console.error('Setup completion error:', err)
@@ -161,7 +161,7 @@ const handleOAuthCallback = async () => {
 
     if (user) {
       if (user.profile?.registration_completed) {
-        router.push('/conversations')
+        router.push('/chats')
       } else {
         needsSetup.value = true
         userEmail.value = user.email

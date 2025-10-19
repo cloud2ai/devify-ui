@@ -336,7 +336,7 @@ const handleLogin = async () => {
       password: formData.password
     })
 
-    router.push('/conversations')
+    router.push('/chats')
   } catch (error) {
     console.error('Login error:', error)
     errorMessage.value = t('auth.loginError')

@@ -10,10 +10,10 @@
       <div class="md:flex md:items-center md:justify-between">
         <div class="flex-1 min-w-0">
           <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-            {{ t('conversations.title') }}
+            {{ t('chats.title') }}
           </h2>
           <p class="mt-1 text-sm text-gray-500">
-            {{ t('conversations.recentConversations') }}
+            {{ t('chats.recentConversations') }}
           </p>
         </div>
         <div class="mt-4 flex md:mt-0 md:ml-4">
@@ -132,8 +132,8 @@
           <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          <h3 class="mt-2 text-sm font-medium text-gray-900">{{ t('conversations.noConversations') }}</h3>
-          <p class="mt-1 text-sm text-gray-500">{{ t('conversations.noConversationsDesc') }}</p>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">{{ t('chats.noConversations') }}</h3>
+          <p class="mt-1 text-sm text-gray-500">{{ t('chats.noConversationsDesc') }}</p>
         </div>
 
         <div v-else class="space-y-4">
@@ -154,14 +154,14 @@
                     :content="result.summary_content"
                     :max-length="150"
                   />
-                  <span v-else class="break-words">{{ result.text_content || t('conversations.noSummary') }}</span>
+                  <span v-else class="break-words">{{ result.text_content || t('chats.noSummary') }}</span>
                 </div>
                 <div class="flex flex-wrap items-center text-xs text-gray-400 gap-x-2 gap-y-1">
                   <span class="whitespace-nowrap">{{ formatDateTime(result.received_at || result.created_at) }}</span>
                   <span class="hidden sm:inline">•</span>
-                  <span class="truncate max-w-40">{{ t('conversations.from') }}: {{ result.sender }}</span>
+                  <span class="truncate max-w-40">{{ t('chats.from') }}: {{ result.sender }}</span>
                   <span class="hidden sm:inline">•</span>
-                  <span class="whitespace-nowrap">{{ t('conversations.attachments', { count: result.attachments?.length || 0 }) }}</span>
+                  <span class="whitespace-nowrap">{{ t('chats.attachments', { count: result.attachments?.length || 0 }) }}</span>
                 </div>
               </div>
               <div class="flex items-center justify-between sm:justify-end sm:flex-col sm:items-end space-x-2 sm:space-x-0 sm:space-y-2 flex-shrink-0">
@@ -240,7 +240,7 @@ const refreshData = () => {
 }
 
 const viewResult = (id) => {
-  router.push(`/conversations/${id}`)
+  router.push(`/chats/${id}`)
 }
 
 const formatDateTime = (dateString) => {

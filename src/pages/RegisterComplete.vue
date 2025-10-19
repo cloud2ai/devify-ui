@@ -153,7 +153,7 @@ const handleComplete = async (formValues) => {
         await userStore.checkAuth()
       }
 
-      router.push('/conversations')
+      router.push('/chats')
     }
   } catch (error) {
     console.error('Registration completion error:', error)

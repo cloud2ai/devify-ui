@@ -141,12 +141,12 @@
       "loggedInAs": "Logged in as"
     }
   },
-  "conversations": {
-    "title": "Conversations",
-    "recentConversations": "Recent Conversations",
-    "noConversations": "No conversations found",
-    "noConversationsDesc": "No email conversations have been processed yet.",
-    "searchPlaceholder": "Search conversations...",
+  "chats": {
+    "title": "Chats",
+    "recentChats": "Recent Chats",
+    "noChats": "No chats found",
+    "noChatsDesc": "No email chats have been processed yet.",
+    "searchPlaceholder": "Search chats...",
     "filterByStatus": "Filter by status",
     "sortBy": "Sort by",
     "sortByDate": "Date",
@@ -186,9 +186,9 @@
     "timezone": "Timezone",
     "timezoneDesc": "Choose your timezone",
     "autoDetected": "Auto-detected",
-    "detected": "Detected: {{value}}",
-    "detectedLanguage": "Detected language: {{value}}",
-    "detectedTimezone": "Detected timezone: {{value}}",
+    "detected": "Detected: {value}",
+    "detectedLanguage": "Detected language: {value}",
+    "detectedTimezone": "Detected timezone: {value}",
     "detectedText": "Detected",
     "advancedOptions": "Advanced Options",
     "saveSettings": "Save settings",

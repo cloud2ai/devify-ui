@@ -5,7 +5,7 @@
         <!-- Logo and title -->
         <div class="flex items-center">
           <router-link
-            to="/conversations"
+            to="/chats"
             class="flex items-center space-x-2"
           >
             <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
@@ -18,11 +18,11 @@
         <!-- Navigation -->
         <nav class="hidden md:flex space-x-8">
           <router-link
-            to="/conversations"
+            to="/chats"
             class="nav-link"
-            :class="{ 'nav-link-active': $route.name === 'Conversations' }"
+            :class="{ 'nav-link-active': $route.name === 'Chats' }"
           >
-            {{ t('conversations.title') }}
+            {{ t('chats.title') }}
           </router-link>
           <router-link
             to="/settings"
@@ -35,6 +35,7 @@
 
         <!-- User menu -->
         <div class="flex items-center space-x-4">
+          <LanguageSwitcher />
           <div class="relative" ref="userMenuRef">
             <button
               @click="toggleUserMenu"
@@ -165,6 +166,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store/user'
+import LanguageSwitcher from '@/components/ui/LanguageSwitcher.vue'
 
 const { t } = useI18n()
 const router = useRouter()

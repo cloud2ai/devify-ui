@@ -67,29 +67,6 @@ export function convertToUserTimezone(date, timezone) {
   }
 }
 
-export function getTimezoneList() {
-  return [
-    { value: 'UTC', label: 'UTC' },
-    { value: 'America/New_York', label: 'Eastern Time (US & Canada)' },
-    { value: 'America/Chicago', label: 'Central Time (US & Canada)' },
-    { value: 'America/Denver', label: 'Mountain Time (US & Canada)' },
-    { value: 'America/Los_Angeles', label: 'Pacific Time (US & Canada)' },
-    { value: 'Europe/London', label: 'London' },
-    { value: 'Europe/Paris', label: 'Paris' },
-    { value: 'Europe/Berlin', label: 'Berlin' },
-    { value: 'Europe/Moscow', label: 'Moscow' },
-    { value: 'Asia/Dubai', label: 'Dubai' },
-    { value: 'Asia/Kolkata', label: 'Mumbai, Kolkata' },
-    { value: 'Asia/Shanghai', label: 'Beijing, Shanghai' },
-    { value: 'Asia/Hong_Kong', label: 'Hong Kong' },
-    { value: 'Asia/Tokyo', label: 'Tokyo' },
-    { value: 'Asia/Seoul', label: 'Seoul' },
-    { value: 'Asia/Singapore', label: 'Singapore' },
-    { value: 'Australia/Sydney', label: 'Sydney' },
-    { value: 'Pacific/Auckland', label: 'Auckland' }
-  ]
-}
-
 // Get friendly language display name
 export function getFriendlyLanguageName(languageCode) {
   const languageNames = {

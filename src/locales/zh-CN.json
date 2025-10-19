@@ -151,11 +151,11 @@
       "subtitle": "请完成您的个人资料设置"
     }
   },
-  "conversations": {
+  "chats": {
     "title": "对话列表",
-    "recentConversations": "最近的对话",
-    "noConversations": "未找到对话",
-    "noConversationsDesc": "还没有处理过的邮件对话。",
+    "recentChats": "最近的对话",
+    "noChats": "未找到对话",
+    "noChatsDesc": "还没有处理过的邮件对话。",
     "searchPlaceholder": "搜索对话...",
     "filterByStatus": "按状态筛选",
     "sortBy": "排序方式",
@@ -196,9 +196,9 @@
     "timezone": "时区",
     "timezoneDesc": "选择您的时区",
     "autoDetected": "自动检测",
-    "detected": "检测到：{{value}}",
-    "detectedLanguage": "检测到语言：{{value}}",
-    "detectedTimezone": "检测到时区：{{value}}",
+    "detected": "检测到：{value}",
+    "detectedLanguage": "检测到语言：{value}",
+    "detectedTimezone": "检测到时区：{value}",
     "detectedText": "检测到",
     "advancedOptions": "高级选项",
     "saveSettings": "保存设置",
