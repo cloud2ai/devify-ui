@@ -68,14 +68,83 @@
             >
               <div
                 v-if="showUserMenu"
-                class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200"
+                class="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg py-2 z-50 border border-gray-200"
               >
-                <div class="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
-                  <div class="font-medium truncate">{{ userStore.userInfo?.username || 'User' }}</div>
-                  <div class="text-gray-500 text-xs truncate" :title="userStore.userInfo?.email || ''">
+                <!-- User Info -->
+                <div class="px-4 py-2">
+                  <div class="font-semibold text-gray-900 truncate">{{ userStore.userInfo?.username || 'User' }}</div>
+                </div>
+
+                <!-- Login Email -->
+                <div class="px-4 py-2">
+                  <div class="flex items-center gap-2 mb-1">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span class="text-xs text-gray-500 font-medium">{{ t('auth.loginEmail') }}</span>
+                  </div>
+                  <div class="text-gray-700 text-xs truncate pl-6" :title="userStore.userInfo?.email || ''">
                     {{ userStore.userInfo?.email || '' }}
                   </div>
                 </div>
+
+                <!-- AI Email Card -->
+                <div v-if="userStore.userInfo?.virtual_email" class="px-4 py-2">
+                  <div class="bg-gradient-to-r from-primary-50 to-blue-50 rounded-lg p-3 border border-primary-100">
+                    <div class="flex items-center gap-2 mb-2">
+                      <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                      <span class="text-xs text-primary-700 font-semibold">{{ t('virtualEmail.yourAddress') }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="flex-1 min-w-0">
+                        <div class="text-primary-900 text-sm font-medium truncate" :title="userStore.userInfo?.virtual_email">
+                          {{ userStore.userInfo?.virtual_email }}
+                        </div>
+                      </div>
+                      <button
+                        @click.stop="copyVirtualEmail"
+                        class="flex-shrink-0 p-1.5 text-primary-600 hover:text-primary-700 hover:bg-primary-100 rounded-md transition-all"
+                        :title="t('settings.copyEmail')"
+                      >
+                        <svg
+                          v-if="!copied"
+                          class="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                          />
+                        </svg>
+                        <svg
+                          v-else
+                          class="w-4 h-4 text-green-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Divider -->
+                <div class="border-t border-gray-100 my-1"></div>
+
+                <!-- Logout Button -->
                 <button
                   @click="handleLogout"
                   class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -103,6 +172,7 @@ const userStore = useUserStore()
 
 const showUserMenu = ref(false)
 const userMenuRef = ref(null)
+const copied = ref(false)
 
 const userInitials = computed(() => {
   const username = userStore.userInfo?.username || 'U'
@@ -111,6 +181,24 @@ const userInitials = computed(() => {
 
 const toggleUserMenu = () => {
   showUserMenu.value = !showUserMenu.value
+  if (!showUserMenu.value) {
+    copied.value = false
+  }
+}
+
+const copyVirtualEmail = async () => {
+  try {
+    const virtualEmail = userStore.userInfo?.virtual_email
+    if (virtualEmail) {
+      await navigator.clipboard.writeText(virtualEmail)
+      copied.value = true
+      setTimeout(() => {
+        copied.value = false
+      }, 2000)
+    }
+  } catch (error) {
+    console.error('Failed to copy email:', error)
+  }
 }
 
 const handleLogout = async () => {
@@ -126,6 +214,7 @@ const handleLogout = async () => {
 const handleClickOutside = (event) => {
   if (userMenuRef.value && !userMenuRef.value.contains(event.target)) {
     showUserMenu.value = false
+    copied.value = false
   }
 }
 

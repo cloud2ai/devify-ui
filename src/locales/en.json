@@ -27,7 +27,7 @@
     "language": "Language"
   },
   "virtualEmail": {
-    "yourAddress": "Your Virtual Email"
+    "yourAddress": "Your AI Email"
   },
   "auth": {
     "login": "Login",
@@ -35,8 +35,9 @@
     "loginTitle": "Sign in to AimyChats",
     "registerTitle": "Create your account",
     "username": "Username",
-    "virtualEmailUsername": "Virtual Email Username",
+    "virtualEmailUsername": "AI Email Username",
     "email": "Email",
+    "loginEmail": "Login Email",
     "password": "Password",
     "confirmPassword": "Confirm Password",
     "passwordHelp": "Password must be at least 8 characters",
@@ -120,9 +121,9 @@
       "submitting": "Submitting..."
     },
     "virtualEmail": {
-      "label": "Virtual Email Username",
+      "label": "AI Email Username",
       "placeholder": "Enter username",
-      "info": "This email address is used to receive processed email content. It's your unique identifier in the Threadline email processing system."
+      "info": "This AI email address is used to intelligently process your information. It's your unique identifier in the Threadline intelligent processing system."
     },
     "scene": {
       "label": "Usage Scenario",
@@ -175,9 +176,9 @@
   },
   "settings": {
     "title": "Settings",
-    "emailAddress": "Email Address",
-    "yourEmailAddress": "Your Email Address",
-    "emailAddressDesc": "Forward your chat records to this email address to have them automatically summarized by AI",
+    "emailAddress": "AI Email Address",
+    "yourEmailAddress": "Your AI Email",
+    "emailAddressDesc": "Forward once, AI handles it all · Text & image recognition",
     "copyEmail": "Copy email address",
     "preferences": "Preferences",
     "language": "Language",

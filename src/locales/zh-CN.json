@@ -27,7 +27,7 @@
     "language": "语言"
   },
   "virtualEmail": {
-    "yourAddress": "您的虚拟邮箱"
+    "yourAddress": "您的AI智能邮箱"
   },
   "auth": {
     "login": "登录",
@@ -45,8 +45,9 @@
       "continueWithGoogle": "使用 Google 账号继续"
     },
     "username": "用户名",
-    "virtualEmailUsername": "虚拟邮箱用户名",
+    "virtualEmailUsername": "AI邮箱用户名",
     "email": "邮箱",
+    "loginEmail": "登录邮箱",
     "password": "密码",
     "confirmPassword": "确认密码",
     "passwordHelp": "密码长度至少为8个字符",
@@ -120,10 +121,10 @@
       "submitting": "提交中..."
     },
     "virtualEmail": {
-      "label": "虚拟邮箱用户名",
+      "label": "AI邮箱用户名",
       "placeholder": "请输入用户名",
       "preview": "完整邮箱地址",
-      "info": "此邮箱地址用于接收处理后的邮件内容。它是您在 Threadline 邮件处理系统中的唯一标识。",
+      "info": "此AI邮箱地址用于智能处理您的信息。它是您在 Threadline 智能处理系统中的唯一标识。",
       "tooShort": "用户名至少需要3个字符",
       "notAvailable": "此用户名已被使用",
       "checkFailed": "无法验证用户名，请稍后重试",
@@ -185,9 +186,9 @@
   },
   "settings": {
     "title": "设置",
-    "emailAddress": "邮箱地址",
-    "yourEmailAddress": "您的邮箱地址",
-    "emailAddressDesc": "将您的聊天记录转发到此邮箱地址，即可由 AI 自动生成摘要",
+    "emailAddress": "AI邮箱地址",
+    "yourEmailAddress": "您的AI智能邮箱",
+    "emailAddressDesc": "一键转发，AI智能处理 · 支持文字和图片识别",
     "copyEmail": "复制邮箱地址",
     "preferences": "偏好设置",
     "language": "语言",
