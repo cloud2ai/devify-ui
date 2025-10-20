@@ -166,7 +166,7 @@
           </div>
 
           <div class="text-sm">
-            <a href="#" class="font-medium text-primary-600 hover:text-primary-500">
+            <a href="#" @click.prevent="showForgotPassword = true" class="font-medium text-primary-600 hover:text-primary-500">
               {{ t('auth.forgotPassword') }}
             </a>
           </div>
@@ -234,6 +234,137 @@
         </BaseButton>
       </form>
     </div>
+
+    <!-- Forgot Password Modal -->
+    <div
+      v-if="showForgotPassword"
+      class="fixed inset-0 z-50 overflow-y-auto"
+      aria-labelledby="modal-title"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <!-- Background overlay -->
+        <div
+          class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+          aria-hidden="true"
+          @click="closeForgotPassword"
+        ></div>
+
+        <!-- Center modal -->
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <!-- Modal content -->
+        <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+          <div>
+            <div class="mt-3 text-center sm:mt-5">
+              <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                {{ t('auth.forgotPassword') }}
+              </h3>
+              <div class="mt-2">
+                <p class="text-sm text-gray-500">
+                  {{ t('auth.forgotPasswordDescription') }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Success message -->
+          <div
+            v-if="resetEmailSent"
+            class="mt-4 rounded-md bg-green-50 border border-green-200 p-4"
+          >
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm font-medium text-green-800">
+                  {{ t('auth.resetEmailSent') }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Error message -->
+          <div
+            v-else-if="resetErrorMessage"
+            class="mt-4 rounded-md bg-red-50 border border-red-200 p-4"
+          >
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm text-red-700">
+                  {{ resetErrorMessage }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Email input form -->
+          <form v-if="!resetEmailSent" @submit.prevent="handleForgotPassword" class="mt-5">
+            <div>
+              <label for="reset-email" class="block text-sm font-medium text-gray-700">
+                {{ t('settings.securityEmail') }}
+              </label>
+              <div class="mt-1">
+                <input
+                  id="reset-email"
+                  v-model="resetEmail"
+                  type="email"
+                  required
+                  class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  :placeholder="t('auth.securityEmailPlaceholder') || t('auth.emailPlaceholder')"
+                  :disabled="resetLoading"
+                />
+              </div>
+            </div>
+
+            <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+              <button
+                type="submit"
+                :disabled="resetLoading || !resetEmail"
+                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:col-start-2 sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {{ resetLoading ? t('common.loading') : t('common.submit') }}
+              </button>
+              <button
+                type="button"
+                @click="closeForgotPassword"
+                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:mt-0 sm:col-start-1 sm:text-sm"
+              >
+                {{ t('common.cancel') }}
+              </button>
+            </div>
+          </form>
+
+          <!-- Close button when email sent -->
+          <div v-else class="mt-5">
+            <button
+              type="button"
+              @click="closeForgotPassword"
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:text-sm"
+            >
+              {{ t('common.close') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -242,7 +373,7 @@ import { ref, reactive, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store/user'
-import { sendRegistrationEmail } from '@/api/auth'
+import { sendRegistrationEmail, resetPassword } from '@/api/auth'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher.vue'
@@ -270,6 +401,12 @@ const loading = ref(false)
 const errorMessage = ref('')
 const emailSent = ref(false)
 const rememberMe = ref(false)
+
+const showForgotPassword = ref(false)
+const resetEmail = ref('')
+const resetLoading = ref(false)
+const resetErrorMessage = ref('')
+const resetEmailSent = ref(false)
 
 const googleOAuthUrl = computed(() => {
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api'
@@ -379,5 +516,41 @@ const handleRegister = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const handleForgotPassword = async () => {
+  resetErrorMessage.value = ''
+  resetLoading.value = true
+
+  try {
+    const response = await resetPassword(resetEmail.value)
+    const responseData = response.data?.data || response.data
+
+    if (responseData.success || response.data.code === 0) {
+      resetEmailSent.value = true
+    }
+  } catch (error) {
+    console.error('Reset password error:', error)
+
+    const errorData = error.response?.data?.data || error.response?.data
+
+    if (errorData?.error) {
+      resetErrorMessage.value = errorData.error
+    } else if (errorData?.errors?.email) {
+      resetErrorMessage.value = errorData.errors.email[0]
+    } else {
+      resetErrorMessage.value = t('auth.resetPasswordError')
+    }
+  } finally {
+    resetLoading.value = false
+  }
+}
+
+const closeForgotPassword = () => {
+  showForgotPassword.value = false
+  resetEmail.value = ''
+  resetLoading.value = false
+  resetErrorMessage.value = ''
+  resetEmailSent.value = false
 }
 </script>

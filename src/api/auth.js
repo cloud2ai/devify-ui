@@ -31,12 +31,17 @@ export const authApi = {
     return api.post('/v1/auth/registration', userData)
   },
 
-  // Reset password (for future use)
+  // Reset password - Send reset email
   resetPassword(email) {
     return api.post('/v1/auth/password/reset', { email })
   },
 
-  // Change password
+  // Confirm password reset with uid and token
+  confirmPasswordReset(data) {
+    return api.post('/v1/auth/password/reset/confirm', data)
+  },
+
+  // Change password (requires authentication)
   changePassword(passwordData) {
     return api.post('/v1/auth/password/change', passwordData)
   },
@@ -88,6 +93,7 @@ export const {
   refreshToken,
   register,
   resetPassword,
+  confirmPasswordReset,
   changePassword,
   sendRegistrationEmail,
   verifyRegistrationToken,

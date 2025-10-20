@@ -62,6 +62,7 @@ const handleComplete = async (formValues) => {
     const responseData = response.data.data || response.data
 
     if (responseData.success || response.data.code === 0) {
+      // Refresh to fetch server-side generated fields (virtual_email)
       await userStore.checkAuth()
       router.push('/chats')
     }

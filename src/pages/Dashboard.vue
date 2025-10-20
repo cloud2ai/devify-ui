@@ -6,30 +6,6 @@
         :label="t('settings.emailAddressDesc')"
       />
 
-      <!-- Header -->
-      <div class="md:flex md:items-center md:justify-between">
-        <div class="flex-1 min-w-0">
-          <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-            {{ t('chats.title') }}
-          </h2>
-          <p class="mt-1 text-sm text-gray-500">
-            {{ t('chats.recentConversations') }}
-          </p>
-        </div>
-        <div class="mt-4 flex md:mt-0 md:ml-4">
-          <BaseButton
-            @click="refreshData"
-            :loading="loading"
-            variant="secondary"
-          >
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            {{ t('common.refresh') }}
-          </BaseButton>
-        </div>
-      </div>
-
       <!-- Stats Cards -->
       <div class="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
         <BaseCard>
@@ -122,7 +98,25 @@
       </div>
 
       <!-- Email Messages List -->
-      <BaseCard :title="t('dashboard.recentMessages')">
+      <BaseCard>
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-medium text-gray-900">
+              {{ t('dashboard.recentMessages') }}
+            </h3>
+            <BaseButton
+              @click="refreshData"
+              :loading="loading"
+              variant="secondary"
+              size="sm"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              {{ t('common.refresh') }}
+            </BaseButton>
+          </div>
+        </template>
         <div v-if="loading" class="text-center py-8">
           <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
           <p class="mt-2 text-sm text-gray-500">{{ t('common.loading') }}</p>
@@ -271,7 +265,11 @@ const getStatusClass = (status) => {
   return classes[status] || 'bg-gray-100 text-gray-800'
 }
 
-onMounted(() => {
+onMounted(async () => {
+  // Ensure user data is loaded before rendering
+  if (!userStore.user) {
+    await userStore.checkAuthStatus()
+  }
   loadData()
 })
 </script>

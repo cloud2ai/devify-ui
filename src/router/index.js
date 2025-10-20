@@ -25,6 +25,12 @@ const routes = [
     meta: { requiresGuest: true }
   },
   {
+    path: '/reset-password/:uid/:token',
+    name: 'PasswordReset',
+    component: () => import('@/pages/PasswordReset.vue'),
+    meta: { requiresGuest: true }
+  },
+  {
     path: '/auth/oauth/callback',
     name: 'OAuthCallback',
     component: () => import('@/pages/OAuthCallback.vue')

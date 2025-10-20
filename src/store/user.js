@@ -70,18 +70,30 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  const logout = () => {
+  const clearAuthState = () => {
     user.value = null
     token.value = null
     localStorage.removeItem('access_token')
     localStorage.removeItem('refresh_token')
   }
 
+  const logout = async () => {
+    try {
+      // Call backend logout API to invalidate token
+      await authApi.logout()
+    } catch (error) {
+      console.error('Logout API call failed:', error)
+      // Continue with local cleanup even if API call fails
+    } finally {
+      clearAuthState()
+    }
+  }
+
   const checkAuth = async () => {
     // Check if we have a token in localStorage
     const storedToken = localStorage.getItem('access_token')
     if (!storedToken) {
-      logout()
+      clearAuthState()
       return false
     }
 
@@ -100,7 +112,7 @@ export const useUserStore = defineStore('user', () => {
 
       return true
     } catch (err) {
-      logout()
+      clearAuthState()
       return false
     }
   }

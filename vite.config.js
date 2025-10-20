@@ -9,6 +9,12 @@ export default defineConfig({
       '@': resolve(__dirname, 'src')
     }
   },
+  define: {
+    // vue-i18n feature flags for better tree-shaking
+    __VUE_I18N_FULL_INSTALL__: true,
+    __VUE_I18N_LEGACY_API__: false,
+    __INTLIFY_PROD_DEVTOOLS__: false,
+  },
   server: {
     host: '0.0.0.0', // 允许外部访问
     port: 3000,

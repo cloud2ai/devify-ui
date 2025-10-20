@@ -17,6 +17,7 @@
         :placeholder="placeholder"
         :disabled="disabled"
         :required="required"
+        :autocomplete="autocomplete"
         :class="inputClasses"
         @input="$emit('update:modelValue', $event.target.value)"
         @blur="$emit('blur', $event)"
@@ -89,6 +90,10 @@ const props = defineProps({
     default: ''
   },
   placeholder: {
+    type: String,
+    default: ''
+  },
+  autocomplete: {
     type: String,
     default: ''
   },

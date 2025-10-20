@@ -86,8 +86,13 @@
               v-model="formData.language"
               class="input w-full"
             >
-              <option value="zh-CN">简体中文</option>
-              <option value="en-US">English</option>
+              <option
+                v-for="opt in languageOptions"
+                :key="opt.value"
+                :value="opt.value"
+              >
+                {{ opt.label }}
+              </option>
             </select>
             <p class="mt-1 text-xs text-gray-500">
               {{ t('settings.detectedText') }}: {{ getFriendlyLanguageName(detectedLanguage) }}
@@ -103,7 +108,7 @@
               class="input w-full"
             >
               <option
-                v-for="tz in getLocalizedTimezones(detectLanguage())"
+                v-for="tz in timezones"
                 :key="tz.value"
                 :value="tz.value"
               >
@@ -180,7 +185,7 @@ const props = defineProps({
 
 const emit = defineEmits(['submit'])
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const detectedTimezone = ref(detectTimezone())
 const detectedLanguage = ref(detectLanguage())
@@ -204,6 +209,24 @@ const errors = ref({
 const errorMessage = ref('')
 const usernameValid = ref(false)
 const showAdvanced = ref(false)
+const timezones = computed(() => {
+  // Use global UI language for timezone labels, independent
+  // from the registration form language selection below.
+  return getLocalizedTimezones(locale.value)
+})
+
+const languageOptions = computed(() => {
+  const codes = ['zh-CN', 'en']
+  return codes.map(code => ({
+    value: code,
+    label: code === 'en' ? t('settings.languages.en') : t('settings.languages.zh-CN')
+  }))
+})
+
+// Note: Keep form language independent from global UI language.
+// Users can choose a different registration language without
+// affecting or being affected by the current UI locale.
+
 const passwordTouched = ref(false)
 const confirmPasswordTouched = ref(false)
 

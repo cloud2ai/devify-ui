@@ -147,11 +147,9 @@ const handleComplete = async (formValues) => {
         localStorage.setItem('refresh_token', responseData.refresh)
       }
 
-      if (responseData.user) {
-        userStore.user = responseData.user
-      } else {
-        await userStore.checkAuth()
-      }
+      // Always refresh full profile to include generated fields
+      // like virtual_email and auth_info
+      await userStore.checkAuth()
 
       router.push('/chats')
     }
