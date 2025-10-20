@@ -173,8 +173,7 @@
     "from": "发件人",
     "to": "收件人",
     "received": "接收时间",
-    "attachments_one": "{{count}} 个附件",
-    "attachments_other": "{{count}} 个附件",
+    "attachments": "{count} 个附件",
     "status": {
       "all": "全部",
       "pending": "待处理",
@@ -297,15 +296,10 @@
   },
   "time": {
     "justNow": "刚刚",
-    "minutesAgo": "{{count}} 分钟前",
-    "minutesAgo_plural": "{{count}} 分钟前",
-    "hoursAgo": "{{count}} 小时前",
-    "hoursAgo_plural": "{{count}} 小时前",
-    "daysAgo": "{{count}} 天前",
-    "daysAgo_plural": "{{count}} 天前",
-    "weeksAgo": "{{count}} 周前",
-    "weeksAgo_plural": "{{count}} 周前",
-    "monthsAgo": "{{count}} 个月前",
-    "monthsAgo_plural": "{{count}} 个月前"
+    "minutesAgo": "{count} 分钟前",
+    "hoursAgo": "{count} 小时前",
+    "daysAgo": "{count} 天前",
+    "weeksAgo": "{count} 周前",
+    "monthsAgo": "{count} 个月前"
   }
 }

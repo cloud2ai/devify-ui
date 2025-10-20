@@ -126,8 +126,8 @@
           <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          <h3 class="mt-2 text-sm font-medium text-gray-900">{{ t('chats.noConversations') }}</h3>
-          <p class="mt-1 text-sm text-gray-500">{{ t('chats.noConversationsDesc') }}</p>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">{{ t('chats.noChats') }}</h3>
+          <p class="mt-1 text-sm text-gray-500">{{ t('chats.noChatsDesc') }}</p>
         </div>
 
         <div v-else class="space-y-4">
@@ -144,16 +144,16 @@
                 </h4>
                 <div class="text-sm text-gray-500 line-clamp-2">
                   <MarkdownPreview
-                    v-if="result.summary_content"
+                    v-if="typeof result.summary_content === 'string' && result.summary_content"
                     :content="result.summary_content"
                     :max-length="150"
                   />
-                  <span v-else class="break-words">{{ result.text_content || t('chats.noSummary') }}</span>
+                  <span v-else class="break-words">{{ getPreviewText(result) }}</span>
                 </div>
                 <div class="flex flex-wrap items-center text-xs text-gray-400 gap-x-2 gap-y-1">
                   <span class="whitespace-nowrap">{{ formatDateTime(result.received_at || result.created_at) }}</span>
                   <span class="hidden sm:inline">•</span>
-                  <span class="truncate max-w-40">{{ t('chats.from') }}: {{ result.sender }}</span>
+                  <span class="truncate max-w-40">{{ t('chats.from') }}: {{ getSender(result.sender) }}</span>
                   <span class="hidden sm:inline">•</span>
                   <span class="whitespace-nowrap">{{ t('chats.attachments', { count: result.attachments?.length || 0 }) }}</span>
                 </div>
@@ -184,7 +184,7 @@ import { useI18n } from 'vue-i18n'
 import { usePreferencesStore } from '@/store/preferences'
 import { useUserStore } from '@/store/user'
 import { chatApi } from '@/api/chat'
-import { formatDate, formatRelativeTime } from '@/utils/timezone'
+import { formatDate } from '@/utils/timezone'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import BaseCard from '@/components/ui/BaseCard.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -263,6 +263,42 @@ const getStatusClass = (status) => {
     processing: 'bg-blue-100 text-blue-800'
   }
   return classes[status] || 'bg-gray-100 text-gray-800'
+}
+
+// Get concise plain-text preview (no JSON fallback)
+const getPreviewText = (result) => {
+  const fromObject = (obj) => {
+    if (!obj || typeof obj !== 'object') return ''
+    return obj.content || obj.text || obj.summary || obj.preview || ''
+  }
+  const prefer = [
+    result.text_content,
+    result.preview,
+    result.summary_text,
+    result.body,
+    result.description
+  ]
+  for (const item of prefer) {
+    if (!item) continue
+    if (typeof item === 'string' && item.trim()) return item
+    if (typeof item === 'object') {
+      const s = fromObject(item)
+      if (typeof s === 'string' && s.trim()) return s
+    }
+    if (Array.isArray(item)) {
+      const first = item.find(v => typeof v === 'string')
+      if (first && first.trim()) return first
+    }
+  }
+  return t('chats.noSummary')
+}
+
+// Normalize sender display
+const getSender = (sender) => {
+  if (!sender) return t('common.noData')
+  if (typeof sender === 'string') return sender
+  if (typeof sender === 'object') return sender.name || sender.email || sender.address || t('common.noData')
+  return ''
 }
 
 onMounted(async () => {

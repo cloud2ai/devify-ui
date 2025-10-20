@@ -25,11 +25,27 @@ previewRenderer.heading = (text, level) => {
   return `<strong>${text}</strong>`
 }
 
-previewRenderer.list = (body, ordered) => {
+previewRenderer.list = (tokensOrHtml, ordered) => {
+  const toText = (val) => {
+    if (!val) return ''
+    if (typeof val === 'string') return val
+    if (Array.isArray(val)) {
+      return val
+        .map((t) => t?.text || t?.raw || '')
+        .filter(Boolean)
+        .join(' ')
+    }
+    if (typeof val === 'object') return val.text || val.raw || ''
+    return String(val)
+  }
+  const body = toText(tokensOrHtml)
   return `<div class="list-preview">${body}</div>`
 }
 
-previewRenderer.listitem = (text) => {
+previewRenderer.listitem = (tokenOrText) => {
+  const text = typeof tokenOrText === 'string'
+    ? tokenOrText
+    : (tokenOrText?.text || tokenOrText?.raw || '')
   return `<span class="list-item">• ${text}</span>`
 }
 
@@ -37,15 +53,24 @@ const renderedContent = computed(() => {
   if (!props.content) return ''
 
   try {
-    // Truncate content for preview
-    const truncatedContent = props.content.length > props.maxLength
-      ? props.content.substring(0, props.maxLength) + '...'
-      : props.content
+    // Normalize to string and truncate for preview
+    const raw = typeof props.content === 'string'
+      ? props.content
+      : (Array.isArray(props.content)
+          ? props.content.map(v => (typeof v === 'string' ? v : JSON.stringify(v))).join(' ')
+          : JSON.stringify(props.content))
+
+    const truncatedContent = raw.length > props.maxLength
+      ? raw.substring(0, props.maxLength) + '...'
+      : raw
 
     return marked.parse(truncatedContent, { renderer: previewRenderer })
   } catch (error) {
     console.error('Markdown preview parsing error:', error)
-    return props.content.substring(0, props.maxLength) + (props.content.length > props.maxLength ? '...' : '')
+    const fallback = typeof props.content === 'string'
+      ? props.content
+      : JSON.stringify(props.content)
+    return fallback.substring(0, props.maxLength) + (fallback.length > props.maxLength ? '...' : '')
   }
 })
 </script>
