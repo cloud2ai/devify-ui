@@ -135,6 +135,10 @@ const renderedContent = computed(() => {
   @apply text-primary-600 hover:text-primary-700 underline;
 }
 
+.markdown-content :deep(img) {
+  @apply max-w-full h-auto rounded-lg shadow-md my-4;
+}
+
 .markdown-content :deep(strong) {
   @apply font-semibold text-gray-900;
 }

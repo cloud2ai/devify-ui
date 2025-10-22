@@ -135,7 +135,7 @@
             v-for="result in results"
             :key="result.id"
             class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors cursor-pointer"
-            @click="viewResult(result.id)"
+            @click="viewResult(result.uuid || result.id)"
           >
             <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
               <div class="flex-1 min-w-0 space-y-2">

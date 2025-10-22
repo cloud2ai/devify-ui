@@ -127,8 +127,13 @@
         </div>
       </BaseCard>
 
-      <!-- Email Content -->
-      <BaseCard title="Email Content">
+      <!-- LLM Content (AI Processed) -->
+      <BaseCard v-if="threadline.llm_content" title="Processed Content">
+        <MarkdownRenderer :content="threadline.llm_content" />
+      </BaseCard>
+
+      <!-- Email Content (Original) -->
+      <BaseCard v-else title="Email Content">
         <div class="space-y-4">
           <!-- HTML Content -->
           <div v-if="threadline.html_content" class="prose max-w-none">

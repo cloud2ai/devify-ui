@@ -107,4 +107,8 @@ const renderedContent = computed(() => {
 .markdown-preview :deep(a) {
   @apply text-primary-600 hover:text-primary-700;
 }
+
+.markdown-preview :deep(img) {
+  @apply max-w-full h-auto rounded;
+}
 </style>
