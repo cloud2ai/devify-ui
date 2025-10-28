@@ -14,6 +14,7 @@
     "search": "搜索",
     "filter": "筛选",
     "refresh": "刷新",
+    "loadMore": "加载更多",
     "copy": "复制",
     "copied": "已复制！",
     "export": "导出",
@@ -189,7 +190,10 @@
     "copyContent": "复制内容",
     "copyLink": "复制链接",
     "htmlView": "HTML 视图",
-    "textView": "文本视图"
+    "textView": "文本视图",
+    "searchPlaceholderDetailed": "搜索标题、内容、标签...支持多关键词",
+    "noResults": "未找到匹配结果",
+    "tags": "标签"
   },
   "settings": {
     "title": "设置",

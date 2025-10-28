@@ -14,6 +14,7 @@
     "search": "Search",
     "filter": "Filter",
     "refresh": "Refresh",
+    "loadMore": "Load More",
     "copy": "Copy",
     "copied": "Copied!",
     "export": "Export",
@@ -179,7 +180,10 @@
     "copyContent": "Copy content",
     "copyLink": "Copy link",
     "htmlView": "HTML View",
-    "textView": "Text View"
+    "textView": "Text View",
+    "searchPlaceholderDetailed": "Search titles, content, tags... Supports multiple keywords",
+    "noResults": "No matching results found",
+    "tags": "Tags"
   },
   "settings": {
     "title": "Settings",

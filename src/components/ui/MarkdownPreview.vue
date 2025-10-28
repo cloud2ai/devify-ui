@@ -8,7 +8,7 @@ import { marked } from 'marked'
 
 const props = defineProps({
   content: {
-    type: String,
+    type: [String, Object, Array],
     default: ''
   },
   maxLength: {
@@ -31,11 +31,17 @@ previewRenderer.list = (tokensOrHtml, ordered) => {
     if (typeof val === 'string') return val
     if (Array.isArray(val)) {
       return val
-        .map((t) => t?.text || t?.raw || '')
+        .map((t) => {
+          if (typeof t === 'string') return t
+          if (typeof t === 'object' && t !== null) return t?.text || t?.raw || JSON.stringify(t)
+          return String(t)
+        })
         .filter(Boolean)
         .join(' ')
     }
-    if (typeof val === 'object') return val.text || val.raw || ''
+    if (typeof val === 'object' && val !== null) {
+      return val.text || val.raw || JSON.stringify(val)
+    }
     return String(val)
   }
   const body = toText(tokensOrHtml)
@@ -43,9 +49,14 @@ previewRenderer.list = (tokensOrHtml, ordered) => {
 }
 
 previewRenderer.listitem = (tokenOrText) => {
-  const text = typeof tokenOrText === 'string'
-    ? tokenOrText
-    : (tokenOrText?.text || tokenOrText?.raw || '')
+  let text
+  if (typeof tokenOrText === 'string') {
+    text = tokenOrText
+  } else if (tokenOrText && typeof tokenOrText === 'object') {
+    text = tokenOrText.text || tokenOrText.raw || JSON.stringify(tokenOrText)
+  } else {
+    text = String(tokenOrText)
+  }
   return `<span class="list-item">• ${text}</span>`
 }
 
@@ -54,22 +65,31 @@ const renderedContent = computed(() => {
 
   try {
     // Normalize to string and truncate for preview
-    const raw = typeof props.content === 'string'
-      ? props.content
-      : (Array.isArray(props.content)
-          ? props.content.map(v => (typeof v === 'string' ? v : JSON.stringify(v))).join(' ')
-          : JSON.stringify(props.content))
+    let raw
+    if (typeof props.content === 'string') {
+      raw = props.content
+    } else if (Array.isArray(props.content)) {
+      raw = props.content.map(v => (typeof v === 'string' ? v : JSON.stringify(v))).join(' ')
+    } else if (typeof props.content === 'object') {
+      // Handle object case - try to extract meaningful content
+      raw = props.content.content || props.content.text || props.content.summary || JSON.stringify(props.content)
+    } else {
+      raw = String(props.content)
+    }
 
     const truncatedContent = raw.length > props.maxLength
       ? raw.substring(0, props.maxLength) + '...'
       : raw
 
-    return marked.parse(truncatedContent, { renderer: previewRenderer })
+    const result = marked.parse(truncatedContent, { renderer: previewRenderer })
+    return result
   } catch (error) {
-    console.error('Markdown preview parsing error:', error)
+    // Fallback to plain text if markdown parsing fails
     const fallback = typeof props.content === 'string'
       ? props.content
-      : JSON.stringify(props.content)
+      : (typeof props.content === 'object'
+          ? (props.content?.content || props.content?.text || JSON.stringify(props.content))
+          : String(props.content))
     return fallback.substring(0, props.maxLength) + (fallback.length > props.maxLength ? '...' : '')
   }
 })

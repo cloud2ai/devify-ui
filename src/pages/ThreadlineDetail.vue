@@ -33,17 +33,7 @@
             From: {{ threadline.sender }} • {{ formatDate(threadline.received_at || threadline.created_at) }}
           </p>
         </div>
-        <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
-          <BaseButton
-            @click="exportThreadline"
-            variant="secondary"
-            :loading="exporting"
-          >
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            Export
-          </BaseButton>
+        <div class="mt-4 flex md:mt-0 md:ml-4">
           <BaseButton
             @click="deleteThreadline"
             variant="danger"
@@ -98,26 +88,11 @@
           </div>
         </BaseCard>
 
-        <BaseCard>
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m0 0V1a1 1 0 011-1h2a1 1 0 011 1v18a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1h2z" />
-                </svg>
-              </div>
-            </div>
-            <div class="ml-3">
-              <p class="text-sm font-medium text-gray-500">Attachments</p>
-              <p class="text-sm text-gray-900">{{ threadline.attachments?.length || 0 }}</p>
-            </div>
-          </div>
-        </BaseCard>
       </div>
 
       <!-- Summary Content -->
-      <BaseCard v-if="threadline.summary_title || threadline.summary_content" title="Summary">
-        <div class="space-y-4">
+      <BaseCard title="Summary">
+        <div v-if="threadline.summary_title || threadline.summary_content" class="space-y-4">
           <div v-if="threadline.summary_title">
             <h3 class="text-lg font-medium text-gray-900 mb-2">{{ threadline.summary_title }}</h3>
           </div>
@@ -125,15 +100,31 @@
             <MarkdownRenderer :content="threadline.summary_content" />
           </div>
         </div>
+        <div v-else class="text-gray-500 italic text-center py-8">
+          <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <p>AI summary is being processed...</p>
+          <p class="text-sm mt-2">Status: {{ threadline.status || 'pending' }}</p>
+        </div>
       </BaseCard>
 
       <!-- LLM Content (AI Processed) -->
-      <BaseCard v-if="threadline.llm_content" title="Processed Content">
-        <MarkdownRenderer :content="threadline.llm_content" />
+      <BaseCard title="Processed Content">
+        <div v-if="threadline.llm_content">
+          <MarkdownRenderer :content="threadline.llm_content" />
+        </div>
+        <div v-else class="text-gray-500 italic text-center py-8">
+          <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          </svg>
+          <p>LLM content is being processed...</p>
+          <p class="text-sm mt-2">This section will show AI-processed content when available</p>
+        </div>
       </BaseCard>
 
       <!-- Email Content (Original) -->
-      <BaseCard v-else title="Email Content">
+      <BaseCard title="Email Content">
         <div class="space-y-4">
           <!-- HTML Content -->
           <div v-if="threadline.html_content" class="prose max-w-none">
@@ -159,39 +150,44 @@
         </div>
       </BaseCard>
 
-      <!-- Attachments -->
-      <BaseCard v-if="threadline.attachments && threadline.attachments.length > 0" title="Attachments">
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <div
-            v-for="attachment in threadline.attachments"
-            :key="attachment.id"
-            class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50"
-          >
-            <div class="flex-shrink-0">
-              <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-              </svg>
-            </div>
-            <div class="ml-3 flex-1 min-w-0">
-              <p class="text-sm font-medium text-gray-900 truncate">
-                {{ attachment.filename }}
-              </p>
-              <p class="text-sm text-gray-500">
-                {{ formatFileSize(attachment.file_size) }}
-              </p>
-            </div>
-            <div class="ml-3">
-              <BaseButton
-                @click="downloadAttachment(attachment)"
-                variant="secondary"
-                size="sm"
+      <!-- Metadata/Tags -->
+      <BaseCard v-if="threadline.metadata && Object.keys(threadline.metadata).length > 0" title="Metadata">
+        <div class="space-y-4">
+          <div v-if="threadline.metadata.keywords && threadline.metadata.keywords.length > 0" class="space-y-2">
+            <h4 class="text-sm font-medium text-gray-700">Keywords</h4>
+            <div class="flex flex-wrap gap-2">
+              <span
+                v-for="(keyword, index) in threadline.metadata.keywords"
+                :key="index"
+                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800"
               >
-                Download
-              </BaseButton>
+                {{ keyword }}
+              </span>
+            </div>
+          </div>
+          <div v-if="threadline.metadata.category" class="space-y-2">
+            <h4 class="text-sm font-medium text-gray-700">Category</h4>
+            <p class="text-sm text-gray-600">{{ threadline.metadata.category }}</p>
+          </div>
+          <div v-if="threadline.metadata.scene" class="space-y-2">
+            <h4 class="text-sm font-medium text-gray-700">Scene</h4>
+            <p class="text-sm text-gray-600">{{ threadline.metadata.scene }}</p>
+          </div>
+          <div v-if="threadline.metadata.participants && threadline.metadata.participants.length > 0" class="space-y-2">
+            <h4 class="text-sm font-medium text-gray-700">Participants</h4>
+            <div class="flex flex-wrap gap-2">
+              <span
+                v-for="(participant, index) in threadline.metadata.participants"
+                :key="index"
+                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800"
+              >
+                {{ participant }}
+              </span>
             </div>
           </div>
         </div>
       </BaseCard>
+
     </div>
   </AppLayout>
 </template>
@@ -199,6 +195,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { usePreferencesStore } from '@/store/preferences'
+import { formatDate as formatDateUtil } from '@/utils/timezone'
 import { chatApi } from '@/api/chat'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import BaseCard from '@/components/ui/BaseCard.vue'
@@ -207,11 +206,12 @@ import MarkdownRenderer from '@/components/ui/MarkdownRenderer.vue'
 
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
+const preferencesStore = usePreferencesStore()
 
 const threadline = ref(null)
 const loading = ref(false)
 const error = ref('')
-const exporting = ref(false)
 const deleting = ref(false)
 
 const loadThreadline = async () => {
@@ -232,28 +232,6 @@ const loadThreadline = async () => {
   }
 }
 
-const exportThreadline = async () => {
-  exporting.value = true
-
-  try {
-    const response = await chatApi.exportThreadline(route.params.id)
-
-    // Create download link
-    const url = window.URL.createObjectURL(new Blob([response.data]))
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', `threadline-${route.params.id}.json`)
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    window.URL.revokeObjectURL(url)
-  } catch (err) {
-    console.error('Export failed:', err)
-  } finally {
-    exporting.value = false
-  }
-}
-
 const deleteThreadline = async () => {
   if (!confirm('Are you sure you want to delete this threadline?')) return
 
@@ -269,29 +247,23 @@ const deleteThreadline = async () => {
   }
 }
 
-const downloadAttachment = (attachment) => {
-  // This would need to be implemented based on your backend
-  // TODO: Implement attachment download functionality
-}
 
 const formatDate = (dateString) => {
-  if (!dateString) return 'Unknown'
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+  if (!dateString) return t('common.noData')
+
+  // Use different date format based on language
+  const dateFormat = preferencesStore.currentLanguage === 'zh-CN'
+    ? 'yyyy年MM月dd日 HH:mm'
+    : 'MMM dd, yyyy HH:mm'
+
+  return formatDateUtil(
+    dateString,
+    preferencesStore.currentTimezone,
+    dateFormat,
+    preferencesStore.currentLanguage
+  )
 }
 
-const formatFileSize = (bytes) => {
-  if (!bytes) return '0 B'
-  const k = 1024
-  const sizes = ['B', 'KB', 'MB', 'GB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
-}
 
 const getStatusClass = (status) => {
   const classes = {
