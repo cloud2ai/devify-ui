@@ -183,65 +183,110 @@
       </div>
 
       <BaseCard :title="t('settings.preferences')">
-        <form @submit.prevent="saveSettings" class="space-y-6">
-          <div>
-            <label for="language" class="block text-sm font-medium text-gray-700">
-              {{ t('settings.language') }}
-            </label>
-            <p class="mt-1 text-xs text-gray-500">
-              {{ t('settings.languageDesc') }}
-            </p>
-            <select
-              id="language"
-              v-model="formData.language"
-              class="mt-2 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 rounded-md"
-            >
-              <option value="en">{{ t('settings.languages.en') }}</option>
-              <option value="zh-CN">{{ t('settings.languages.zh-CN') }}</option>
-              <option value="es">{{ t('settings.languages.es') }}</option>
-            </select>
-            <p class="mt-1 text-xs text-gray-400">
-              {{ t('settings.detected', { value: getFriendlyLanguageName(detectedLanguage) }) }}
-            </p>
-          </div>
-
-          <div>
-            <label for="timezone" class="block text-sm font-medium text-gray-700">
-              {{ t('settings.timezone') }}
-            </label>
-            <p class="mt-1 text-xs text-gray-500">
-              {{ t('settings.timezoneDesc') }}
-            </p>
-            <div class="mt-2 block w-full pl-3 pr-10 py-2 text-base border-gray-300 bg-gray-50 text-gray-600 rounded-md">
-              {{ getFriendlyTimezoneName(detectedTimezone) }}
+        <form @submit.prevent="saveSettings" class="space-y-3">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label for="language" class="block text-sm font-medium text-gray-700 mb-1">
+                {{ t('settings.language') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('settings.languageDesc') }}
+              </p>
             </div>
-            <p class="mt-1 text-xs text-gray-400">
-              {{ t('settings.autoDetected') }}
-            </p>
+            <div class="md:col-span-2">
+              <div class="relative">
+                <select
+                  id="language"
+                  v-model="formData.language"
+                  class="block w-full pl-3 pr-10 py-2 text-sm border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 rounded-md shadow-sm appearance-none cursor-pointer hover:border-gray-400 transition-colors"
+                >
+                  <option value="en">{{ t('settings.languages.en') }}</option>
+                  <option value="zh-CN">{{ t('settings.languages.zh-CN') }}</option>
+                  <option value="es">{{ t('settings.languages.es') }}</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-gray-400">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div v-if="errorMessage" class="rounded-md bg-red-50 p-4">
-            <div class="flex">
-              <div class="flex-shrink-0">
-                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div class="md:col-span-1">
+              <label for="scene" class="block text-sm font-medium text-gray-700 mb-1">
+                {{ t('settings.scene') }}
+              </label>
+              <p class="text-xs text-gray-500 mb-2 md:mb-0">
+                {{ t('settings.sceneDesc') }}
+              </p>
+            </div>
+            <div class="md:col-span-2">
+              <div class="relative">
+                <select
+                  id="scene"
+                  v-model="formData.scene"
+                  class="block w-full pl-3 pr-10 py-2 text-sm border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 rounded-md shadow-sm appearance-none cursor-pointer hover:border-gray-400 transition-colors disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  :disabled="loadingScenes"
+                >
+                  <option value="" disabled>
+                    {{ loadingScenes ? t('common.loading') : t('auth.selectScene') }}
+                  </option>
+                  <option
+                    v-for="scene in scenes"
+                    :key="scene.key"
+                    :value="scene.key"
+                  >
+                    {{ scene.name }}{{ scene.description ? ` - ${scene.description}` : '' }}
+                  </option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-gray-400">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-2.5">
+            <div class="flex gap-2">
+              <div class="flex-shrink-0 pt-0.5">
+                <svg class="h-4 w-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <p class="text-xs leading-relaxed text-blue-700">
+                  {{ t('settings.preferenceChangeWarning') }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="errorMessage" class="rounded-md bg-red-50 p-2.5">
+            <div class="flex gap-2">
+              <div class="flex-shrink-0 pt-0.5">
+                <svg class="h-4 w-4 text-red-400" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
                 </svg>
               </div>
-              <div class="ml-3">
-                <p class="text-sm font-medium text-red-800">{{ errorMessage }}</p>
+              <div class="flex-1">
+                <p class="text-xs font-medium text-red-800">{{ errorMessage }}</p>
               </div>
             </div>
           </div>
 
-          <div v-if="successMessage" class="rounded-md bg-green-50 p-4">
-            <div class="flex">
-              <div class="flex-shrink-0">
-                <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+          <div v-if="successMessage" class="rounded-md bg-green-50 p-2.5">
+            <div class="flex gap-2">
+              <div class="flex-shrink-0 pt-0.5">
+                <svg class="h-4 w-4 text-green-400" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                 </svg>
               </div>
-              <div class="ml-3">
-                <p class="text-sm font-medium text-green-800">{{ successMessage }}</p>
+              <div class="flex-1">
+                <p class="text-xs font-medium text-green-800">{{ successMessage }}</p>
               </div>
             </div>
           </div>
@@ -334,27 +379,26 @@ import { useUserStore } from '@/store/user'
 import { usePreferencesStore } from '@/store/preferences'
 import { settingsApi } from '@/api/settings'
 import { authApi } from '@/api/auth'
-import { detectTimezone, detectLanguage, getFriendlyLanguageName, getFriendlyTimezoneName } from '@/utils/timezone'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import BaseCard from '@/components/ui/BaseCard.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const userStore = useUserStore()
 const preferencesStore = usePreferencesStore()
 
 const formData = reactive({
-  language: preferencesStore.currentLanguage,
-  timezone: preferencesStore.currentTimezone
+  language: '',
+  scene: ''
 })
 
 const saving = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
 const emailCopied = ref(false)
-const detectedLanguage = ref(detectLanguage())
-const detectedTimezone = ref(detectTimezone())
+const loadingScenes = ref(false)
+const scenes = ref([])
 
 // Password reset functionality
 const sendingResetEmail = ref(false)
@@ -362,10 +406,38 @@ const resetEmailSent = ref(false)
 const resetEmailError = ref('')
 const showPasswordResetConfirm = ref(false)
 
+const loadSettings = async () => {
+  try {
+    const preferences = await settingsApi.getPreferences()
+    // Load AI prompt language from backend, not UI display language
+    formData.language = preferences.language || 'en-US'
+    formData.scene = preferences.scene || ''
+  } catch (error) {
+    console.error('Failed to load settings:', error)
+    // Set defaults if load fails
+    formData.language = 'en-US'
+  }
+}
 
-// Watch language changes and update timezone list
-watch(() => preferencesStore.currentLanguage, (newLang) => {
-  formData.language = newLang
+const loadScenes = async () => {
+  loadingScenes.value = true
+  try {
+    const response = await authApi.getAvailableScenes(locale.value)
+    const responseData = response.data.data || response.data || []
+    scenes.value = Array.isArray(responseData) ? responseData : []
+
+    if (scenes.value.length > 0 && !formData.scene) {
+      formData.scene = scenes.value[0].key
+    }
+  } catch (error) {
+    console.error('Failed to load scenes:', error)
+  } finally {
+    loadingScenes.value = false
+  }
+}
+
+watch(() => locale.value, () => {
+  loadScenes()
 })
 
 const userEmail = computed(
@@ -394,11 +466,11 @@ const saveSettings = async () => {
   try {
     await settingsApi.updatePreferences({
       language: formData.language,
-      timezone: formData.timezone
+      scene: formData.scene
     })
 
-    preferencesStore.setLanguage(formData.language)
-    preferencesStore.setTimezone(formData.timezone)
+    // Note: Do NOT sync AI prompt language to UI display language
+    // They should be independent settings
 
     successMessage.value = t('settings.settingsSaved')
     setTimeout(() => {
@@ -459,7 +531,16 @@ onMounted(async () => {
   if (!userStore.user) {
     await userStore.checkAuthStatus()
   }
-  formData.language = preferencesStore.currentLanguage
-  formData.timezone = preferencesStore.currentTimezone
+
+  // Load AI prompt language from backend (independent from UI display language)
+  await loadSettings()
+
+  // Load available scenes
+  await loadScenes()
+
+  // If no scene is set, use default from loaded scenes
+  if (!formData.scene && scenes.value.length > 0) {
+    formData.scene = scenes.value[0].key
+  }
 })
 </script>

@@ -33,41 +33,47 @@ export const settingsApi = {
     const settings = await this.getSettings()
     const preferencesData = settings.data?.list || settings.data || []
 
-    const languageSetting = preferencesData.find((s) => s.key === 'language')
-    const timezoneSetting = preferencesData.find((s) => s.key === 'timezone')
+    const promptConfigSetting = preferencesData.find((s) => s.key === 'prompt_config')
 
     const promises = []
 
-    if (languageSetting) {
-      promises.push(
-        this.updateSetting(languageSetting.id, {
-          value: { language: preferences.language }
-        })
-      )
-    } else if (preferences.language) {
-      promises.push(
-        this.createSetting({
-          key: 'language',
-          value: { language: preferences.language },
-          description: 'User language preference'
-        })
-      )
-    }
+    if (promptConfigSetting) {
+      const currentValue = promptConfigSetting.value || {}
+      const updatedValue = { ...currentValue }
 
-    if (timezoneSetting) {
+      if (preferences.language) {
+        updatedValue.language = preferences.language
+      }
+
+      if (preferences.scene) {
+        updatedValue.scene = preferences.scene
+      }
+
       promises.push(
-        this.updateSetting(timezoneSetting.id, {
-          value: { timezone: preferences.timezone }
+        this.updateSetting(promptConfigSetting.id, {
+          value: updatedValue
         })
       )
-    } else if (preferences.timezone) {
-      promises.push(
-        this.createSetting({
-          key: 'timezone',
-          value: { timezone: preferences.timezone },
-          description: 'User timezone preference'
-        })
-      )
+    } else {
+      const promptConfigValue = {}
+
+      if (preferences.language) {
+        promptConfigValue.language = preferences.language
+      }
+
+      if (preferences.scene) {
+        promptConfigValue.scene = preferences.scene
+      }
+
+      if (Object.keys(promptConfigValue).length > 0) {
+        promises.push(
+          this.createSetting({
+            key: 'prompt_config',
+            value: promptConfigValue,
+            description: 'User prompt configuration (language and scene)'
+          })
+        )
+      }
     }
 
     await Promise.all(promises)
@@ -77,12 +83,11 @@ export const settingsApi = {
     const settings = await this.getSettings()
     const settingsData = settings.data?.list || settings.data || []
 
-    const languageSetting = settingsData.find((s) => s.key === 'language')
-    const timezoneSetting = settingsData.find((s) => s.key === 'timezone')
+    const promptConfigSetting = settingsData.find((s) => s.key === 'prompt_config')
 
     return {
-      language: languageSetting?.value?.language || null,
-      timezone: timezoneSetting?.value?.timezone || null
+      language: promptConfigSetting?.value?.language || null,
+      scene: promptConfigSetting?.value?.scene || null
     }
   },
 

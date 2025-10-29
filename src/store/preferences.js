@@ -50,28 +50,29 @@ export const usePreferencesStore = defineStore('preferences', {
       this.isLoaded = true
     },
 
+    // DEPRECATED: This method is no longer used
+    // Timezone is a frontend-only setting and should not be synced to backend
+    // AI prompt language is managed separately via prompt_config
     async syncToBackend(settingsApi) {
-      try {
-        await settingsApi.updatePreferences({
-          language: this.language,
-          timezone: this.timezone
-        })
-      } catch (error) {
-        console.error('Failed to sync preferences to backend:', error)
-        throw error
-      }
+      console.warn('syncToBackend is deprecated. Use Settings.vue to update prompt_config instead.')
+      // Note: timezone should NOT be synced to backend as it's frontend-only
+      // AI prompt language is managed via prompt_config in Settings.vue
     },
 
     loadFromBackend(preferences) {
-      if (preferences.language) {
-        this.language = preferences.language
-        i18n.global.locale.value = preferences.language
-        localStorage.setItem('userLanguage', preferences.language)
-      }
+      // Note: preferences.language here is AI prompt language, not UI language
+      // UI language should remain separate and be managed independently
+      // We do NOT sync AI prompt language to UI language anymore
 
-      if (preferences.timezone) {
-        this.timezone = preferences.timezone
-        localStorage.setItem('userTimezone', preferences.timezone)
+      // Note: timezone is no longer returned from backend
+      // It's a frontend-only setting and should be loaded from localStorage
+      // or auto-detected, not from backend preferences
+
+      // Timezone handling is now frontend-only
+      // Load from localStorage if available, otherwise keep auto-detected value
+      const savedTimezone = localStorage.getItem('userTimezone')
+      if (savedTimezone) {
+        this.timezone = savedTimezone
       }
 
       this.isLoaded = true

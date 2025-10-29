@@ -21,7 +21,9 @@ export const useUserStore = defineStore('user', () => {
       const preferencesStore = usePreferencesStore()
       const preferences = await settingsApi.getPreferences()
 
-      if (preferences.language || preferences.timezone) {
+      // Note: preferences.timezone is no longer returned from backend
+      // timezone is a frontend-only setting for UI display
+      if (preferences.language || preferences.scene) {
         preferencesStore.loadFromBackend(preferences)
       }
     } catch (err) {

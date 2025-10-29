@@ -216,6 +216,9 @@
     "saveSettings": "Guardar configuración",
     "settingsSaved": "Configuración guardada exitosamente",
     "settingsError": "Error al guardar configuración",
+    "scene": "Escena",
+    "sceneDesc": "Seleccione el modo de escena utilizado por la IA al procesar correos. Diferentes escenas utilizan diferentes métodos de procesamiento y plantillas de indicaciones.",
+    "preferenceChangeWarning": "Nota: Cambiar esta configuración afectará el idioma de salida para resúmenes, etiquetas y metadatos de la IA en el procesamiento futuro de correos. Cambiar la escena afecta los métodos de procesamiento de la IA y las plantillas de indicaciones. La nueva configuración tendrá efecto en el próximo correo procesado.",
     "languages": {
       "en": "English",
       "zh-CN": "简体中文",

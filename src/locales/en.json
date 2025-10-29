@@ -217,9 +217,13 @@
     "saveSettings": "Save settings",
     "settingsSaved": "Settings saved successfully",
     "settingsError": "Failed to save settings",
+    "scene": "Scene",
+    "sceneDesc": "Select the scene mode used by AI when processing emails. Different scenes use different processing methods and prompt templates.",
+    "preferenceChangeWarning": "Note: Changing this setting will affect the output language for AI summaries, tags, and metadata in future email processing. Scene switching affects AI processing methods and prompt templates. The new setting will take effect on the next email processed.",
     "languages": {
       "en": "English",
-      "zh-CN": "简体中文"
+      "zh-CN": "简体中文",
+      "es": "Español"
     },
     "emailAliases": "Email Aliases",
     "emailAliasesDesc": "Manage additional email addresses",
