@@ -23,7 +23,7 @@ export default defineConfig({
     },
     proxy: {
       '/api': {
-        target: 'http://192.168.8.182:8000',
+        target: process.env.VITE_API_BASE_URL || 'http://localhost:8000',
         changeOrigin: true,
         secure: false,
         configure: (proxy, options) => {
@@ -37,6 +37,11 @@ export default defineConfig({
             console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
           });
         },
+      },
+      '/accounts': {
+        target: process.env.VITE_API_BASE_URL || 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
       }
     }
   }

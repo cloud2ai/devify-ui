@@ -374,6 +374,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store/user'
 import { sendRegistrationEmail, resetPassword } from '@/api/auth'
+import apiConfig from '@/config/api'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher.vue'
@@ -409,12 +410,9 @@ const resetErrorMessage = ref('')
 const resetEmailSent = ref(false)
 
 const googleOAuthUrl = computed(() => {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api'
-  const backendUrl = baseUrl.replace('/api', '')
-
-  // Use traditional OAuth endpoint (works with HEADLESS_ONLY=False)
-  // The CustomSocialAccountAdapter ensures proper redirect to frontend
-  return `${backendUrl}/accounts/google/login/`
+  // Use centralized API configuration
+  // Returns the configured Google OAuth login endpoint
+  return apiConfig.endpoints.googleLogin()
 })
 
 watch(activeTab, (newTab) => {
@@ -552,5 +550,10 @@ const closeForgotPassword = () => {
   resetLoading.value = false
   resetErrorMessage.value = ''
   resetEmailSent.value = false
+}
+
+const handleGoogleLogin = () => {
+  console.log('Google OAuth URL:', googleOAuthUrl.value)
+  window.location.href = googleOAuthUrl.value
 }
 </script>

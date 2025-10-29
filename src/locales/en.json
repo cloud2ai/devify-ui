@@ -183,7 +183,19 @@
     "textView": "Text View",
     "searchPlaceholderDetailed": "Search titles, content, tags... Supports multiple keywords",
     "noResults": "No matching results found",
-    "tags": "Tags"
+    "tags": "Tags",
+    "basicInformation": "Basic Information",
+    "aiSummary": "AI Summary",
+    "processedContent": "Conversation Notes",
+    "summaryProcessing": "AI summary is being processed...",
+    "processedContentProcessing": "Conversation notes being processed...",
+    "processedContentDesc": "This section will show organized conversation notes when available",
+    "category": "Category",
+    "scene": "Scene",
+    "project": "Project",
+    "participants": "Participants",
+    "locations": "Locations",
+    "timeline": "Timeline"
   },
   "settings": {
     "title": "Settings",

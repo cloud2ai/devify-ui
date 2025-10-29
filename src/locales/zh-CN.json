@@ -193,7 +193,19 @@
     "textView": "文本视图",
     "searchPlaceholderDetailed": "搜索标题、内容、标签...支持多关键词",
     "noResults": "未找到匹配结果",
-    "tags": "标签"
+    "tags": "标签",
+    "basicInformation": "基本信息",
+    "aiSummary": "智能总结",
+    "processedContent": "对话记录",
+    "summaryProcessing": "智能总结处理中...",
+    "processedContentProcessing": "对话记录处理中...",
+    "processedContentDesc": "当内容可用时将显示对话记录",
+    "category": "分类",
+    "scene": "场景",
+    "project": "项目",
+    "participants": "参与者",
+    "locations": "位置",
+    "timeline": "时间线"
   },
   "settings": {
     "title": "设置",

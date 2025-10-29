@@ -24,13 +24,28 @@
 
     <div v-else-if="threadline" class="space-y-6">
       <!-- Header -->
-      <div class="md:flex md:items-center md:justify-between">
+      <div class="md:flex md:items-start md:justify-between">
         <div class="flex-1 min-w-0">
-          <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-            {{ threadline.summary_title || threadline.subject || 'No Subject' }}
-          </h2>
-          <p class="mt-1 text-sm text-gray-500">
-            From: {{ threadline.sender }} • {{ formatDate(threadline.received_at || threadline.created_at) }}
+          <div class="flex items-start gap-3">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate flex-1">
+              {{ threadline.summary_title || threadline.subject || 'No Subject' }}
+            </h2>
+            <!-- Status Icon Badge -->
+            <div class="flex-shrink-0 mt-1">
+              <div
+                class="w-10 h-10 rounded-lg flex items-center justify-center"
+                :class="getStatusIconClass(threadline.status)"
+                :title="threadline.status || 'Unknown'"
+              >
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <!-- Date/Time -->
+          <p class="mt-2 text-sm text-gray-500">
+            {{ formatDate(threadline.received_at || threadline.created_at) }}
           </p>
         </div>
         <div class="mt-4 flex md:mt-0 md:ml-4">
@@ -47,51 +62,94 @@
         </div>
       </div>
 
-      <!-- Status and Metadata -->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <BaseCard>
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
+      <!-- Metadata Information -->
+      <BaseCard v-if="threadline.metadata && Object.keys(threadline.metadata).length > 0" :title="t('chats.basicInformation')">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Category -->
+          <div v-if="threadline.metadata.category" class="flex items-start space-x-2 p-3 rounded-lg bg-blue-50 border border-blue-100">
+            <div class="flex-shrink-0 mt-0.5">
+              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+              </svg>
             </div>
-            <div class="ml-3">
-              <p class="text-sm font-medium text-gray-500">Status</p>
-              <p class="text-sm text-gray-900">
-                <span
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                  :class="getStatusClass(threadline.status)"
-                >
-                  {{ threadline.status || 'Unknown' }}
-                </span>
-              </p>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-medium text-blue-600 uppercase">{{ t('chats.category') }}</p>
+              <p class="text-sm text-blue-900 font-medium">{{ threadline.metadata.category }}</p>
             </div>
           </div>
-        </BaseCard>
 
-        <BaseCard>
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <div class="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-                </svg>
-              </div>
+          <!-- Scene -->
+          <div v-if="threadline.metadata.scene" class="flex items-start space-x-2 p-3 rounded-lg bg-purple-50 border border-purple-100">
+            <div class="flex-shrink-0 mt-0.5">
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
             </div>
-            <div class="ml-3">
-              <p class="text-sm font-medium text-gray-500">Recipients</p>
-              <p class="text-sm text-gray-900">{{ threadline.recipients || 'N/A' }}</p>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-medium text-purple-600 uppercase">{{ t('chats.scene') }}</p>
+              <p class="text-sm text-purple-900 font-medium">{{ threadline.metadata.scene }}</p>
             </div>
           </div>
-        </BaseCard>
 
-      </div>
+          <!-- Project -->
+          <div v-if="threadline.metadata.project_name" class="flex items-start space-x-2 p-3 rounded-lg bg-indigo-50 border border-indigo-100">
+            <div class="flex-shrink-0 mt-0.5">
+              <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6a3 3 0 013-3h10a1 1 0 01.832 1.555L18 9l1.832 1.445A1 1 0 0120 11H8a3 3 0 01-2.12-.879L4 8.586V6zM8 18h8M8 15h8" />
+              </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-medium text-indigo-600 uppercase">{{ t('chats.project') }}</p>
+              <p class="text-sm text-indigo-900 font-medium">{{ threadline.metadata.project_name }}</p>
+            </div>
+          </div>
+
+          <!-- Participants -->
+          <div v-if="threadline.metadata.participants && threadline.metadata.participants.length > 0" class="space-y-2">
+            <p class="text-xs font-medium text-gray-500 uppercase">{{ t('chats.participants') }}</p>
+            <div class="flex flex-wrap gap-2">
+              <span v-for="(p, i) in threadline.metadata.participants" :key="i"
+                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                {{ p }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Locations -->
+          <div v-if="threadline.metadata.locations && threadline.metadata.locations.length > 0" class="space-y-2">
+            <p class="text-xs font-medium text-gray-500 uppercase">{{ t('chats.locations') }}</p>
+            <div class="flex flex-wrap gap-2">
+              <span v-for="(l, i) in threadline.metadata.locations" :key="i"
+                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-800">
+                {{ l }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Timeline -->
+          <div v-if="threadline.metadata.timeline && threadline.metadata.timeline.length > 0" class="space-y-2">
+            <p class="text-xs font-medium text-gray-500 uppercase">{{ t('chats.timeline') }}</p>
+            <div class="flex flex-wrap gap-2">
+              <span v-for="(d, i) in threadline.metadata.timeline" :key="i"
+                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                {{ d }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div v-if="threadline.metadata.keywords && threadline.metadata.keywords.length > 0" class="mt-6 space-y-2">
+          <p class="text-xs font-medium text-gray-500 uppercase">{{ t('chats.tags') }}</p>
+          <div class="flex flex-wrap gap-2">
+            <span v-for="(k, i) in threadline.metadata.keywords" :key="i"
+              class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                {{ k }}
+            </span>
+          </div>
+        </div>
+      </BaseCard>
 
       <!-- Summary Content -->
-      <BaseCard title="Summary">
+      <BaseCard :title="t('chats.aiSummary')">
         <div v-if="threadline.summary_title || threadline.summary_content" class="space-y-4">
           <div v-if="threadline.summary_title">
             <h3 class="text-lg font-medium text-gray-900 mb-2">{{ threadline.summary_title }}</h3>
@@ -104,13 +162,13 @@
           <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          <p>AI summary is being processed...</p>
-          <p class="text-sm mt-2">Status: {{ threadline.status || 'pending' }}</p>
+          <p>{{ t('chats.summaryProcessing') }}</p>
+          <p class="text-sm mt-2">{{ t('common.status') }}: {{ threadline.status || 'pending' }}</p>
         </div>
       </BaseCard>
 
       <!-- LLM Content (AI Processed) -->
-      <BaseCard title="Processed Content">
+      <BaseCard :title="t('chats.processedContent')">
         <div v-if="threadline.llm_content">
           <MarkdownRenderer :content="threadline.llm_content" />
         </div>
@@ -118,76 +176,10 @@
           <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
           </svg>
-          <p>LLM content is being processed...</p>
-          <p class="text-sm mt-2">This section will show AI-processed content when available</p>
+          <p>{{ t('chats.processedContentProcessing') }}</p>
+          <p class="text-sm mt-2">{{ t('chats.processedContentDesc') }}</p>
         </div>
       </BaseCard>
-
-      <!-- Email Content (Original) -->
-      <BaseCard title="Email Content">
-        <div class="space-y-4">
-          <!-- HTML Content -->
-          <div v-if="threadline.html_content" class="prose max-w-none">
-            <h4 class="text-sm font-medium text-gray-700 mb-2">HTML Content:</h4>
-            <div v-html="threadline.html_content"></div>
-          </div>
-
-          <!-- Text Content -->
-          <div v-if="threadline.text_content" class="prose max-w-none">
-            <h4 class="text-sm font-medium text-gray-700 mb-2">Text Content:</h4>
-            <div class="whitespace-pre-wrap text-gray-700">{{ threadline.text_content }}</div>
-          </div>
-
-          <!-- Raw Content (if no other content available) -->
-          <div v-if="!threadline.html_content && !threadline.text_content && threadline.raw_content" class="prose max-w-none">
-            <h4 class="text-sm font-medium text-gray-700 mb-2">Raw Content:</h4>
-            <div class="whitespace-pre-wrap text-gray-700 text-xs">{{ threadline.raw_content }}</div>
-          </div>
-
-          <div v-if="!threadline.html_content && !threadline.text_content && !threadline.raw_content" class="text-gray-500 italic">
-            No content available
-          </div>
-        </div>
-      </BaseCard>
-
-      <!-- Metadata/Tags -->
-      <BaseCard v-if="threadline.metadata && Object.keys(threadline.metadata).length > 0" title="Metadata">
-        <div class="space-y-4">
-          <div v-if="threadline.metadata.keywords && threadline.metadata.keywords.length > 0" class="space-y-2">
-            <h4 class="text-sm font-medium text-gray-700">Keywords</h4>
-            <div class="flex flex-wrap gap-2">
-              <span
-                v-for="(keyword, index) in threadline.metadata.keywords"
-                :key="index"
-                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800"
-              >
-                {{ keyword }}
-              </span>
-            </div>
-          </div>
-          <div v-if="threadline.metadata.category" class="space-y-2">
-            <h4 class="text-sm font-medium text-gray-700">Category</h4>
-            <p class="text-sm text-gray-600">{{ threadline.metadata.category }}</p>
-          </div>
-          <div v-if="threadline.metadata.scene" class="space-y-2">
-            <h4 class="text-sm font-medium text-gray-700">Scene</h4>
-            <p class="text-sm text-gray-600">{{ threadline.metadata.scene }}</p>
-          </div>
-          <div v-if="threadline.metadata.participants && threadline.metadata.participants.length > 0" class="space-y-2">
-            <h4 class="text-sm font-medium text-gray-700">Participants</h4>
-            <div class="flex flex-wrap gap-2">
-              <span
-                v-for="(participant, index) in threadline.metadata.participants"
-                :key="index"
-                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800"
-              >
-                {{ participant }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </BaseCard>
-
     </div>
   </AppLayout>
 </template>
@@ -247,7 +239,6 @@ const deleteThreadline = async () => {
   }
 }
 
-
 const formatDate = (dateString) => {
   if (!dateString) return t('common.noData')
 
@@ -264,7 +255,6 @@ const formatDate = (dateString) => {
   )
 }
 
-
 const getStatusClass = (status) => {
   const classes = {
     pending: 'bg-yellow-100 text-yellow-800',
@@ -273,6 +263,16 @@ const getStatusClass = (status) => {
     processing: 'bg-blue-100 text-blue-800'
   }
   return classes[status] || 'bg-gray-100 text-gray-800'
+}
+
+const getStatusIconClass = (status) => {
+  const classes = {
+    pending: 'bg-yellow-100 text-yellow-600',
+    completed: 'bg-green-100 text-green-600',
+    failed: 'bg-red-100 text-red-600',
+    processing: 'bg-blue-100 text-blue-600'
+  }
+  return classes[status] || 'bg-gray-100 text-gray-600'
 }
 
 onMounted(() => {
