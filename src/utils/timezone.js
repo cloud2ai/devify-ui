@@ -2,10 +2,12 @@ import { format, formatDistanceToNow } from 'date-fns'
 import { formatInTimeZone, toZonedTime } from 'date-fns-tz'
 import { zhCN } from 'date-fns/locale/zh-CN'
 import { enUS } from 'date-fns/locale/en-US'
+import { es } from 'date-fns/locale/es'
 
 const localeMap = {
   'zh-CN': zhCN,
-  'en': enUS
+  'en': enUS,
+  'es': es
 }
 
 export function detectTimezone() {
@@ -22,6 +24,10 @@ export function detectLanguage() {
 
   if (browserLang.startsWith('zh')) {
     return 'zh-CN'
+  }
+
+  if (browserLang.startsWith('es')) {
+    return 'es'
   }
 
   return 'en'
@@ -72,7 +78,8 @@ export function getFriendlyLanguageName(languageCode) {
   const languageNames = {
     'en': 'English',
     'zh-CN': '简体中文',
-    'zh': '简体中文'
+    'zh': '简体中文',
+    'es': 'Español'
   }
   return languageNames[languageCode] || languageCode
 }

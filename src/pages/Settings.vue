@@ -198,9 +198,10 @@
             >
               <option value="en">{{ t('settings.languages.en') }}</option>
               <option value="zh-CN">{{ t('settings.languages.zh-CN') }}</option>
+              <option value="es">{{ t('settings.languages.es') }}</option>
             </select>
             <p class="mt-1 text-xs text-gray-400">
-              {{ t('settings.detected', { value: detectedLanguage === 'zh-CN' ? '简体中文' : 'English' }) }}
+              {{ t('settings.detected', { value: getFriendlyLanguageName(detectedLanguage) }) }}
             </p>
           </div>
 
@@ -211,21 +212,11 @@
             <p class="mt-1 text-xs text-gray-500">
               {{ t('settings.timezoneDesc') }}
             </p>
-            <select
-              id="timezone"
-              v-model="formData.timezone"
-              class="mt-2 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 rounded-md"
-            >
-              <option
-                v-for="tz in timezones"
-                :key="tz.value"
-                :value="tz.value"
-              >
-                {{ tz.label }}
-              </option>
-            </select>
+            <div class="mt-2 block w-full pl-3 pr-10 py-2 text-base border-gray-300 bg-gray-50 text-gray-600 rounded-md">
+              {{ getFriendlyTimezoneName(detectedTimezone) }}
+            </div>
             <p class="mt-1 text-xs text-gray-400">
-              {{ t('settings.detected', { value: detectedTimezone }) }}
+              {{ t('settings.autoDetected') }}
             </p>
           </div>
 
@@ -343,8 +334,7 @@ import { useUserStore } from '@/store/user'
 import { usePreferencesStore } from '@/store/preferences'
 import { settingsApi } from '@/api/settings'
 import { authApi } from '@/api/auth'
-import { detectTimezone, detectLanguage } from '@/utils/timezone'
-import { getLocalizedTimezones } from '@/utils/timezones'
+import { detectTimezone, detectLanguage, getFriendlyLanguageName, getFriendlyTimezoneName } from '@/utils/timezone'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import BaseCard from '@/components/ui/BaseCard.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -372,10 +362,6 @@ const resetEmailSent = ref(false)
 const resetEmailError = ref('')
 const showPasswordResetConfirm = ref(false)
 
-// Computed timezone list that updates when language changes
-const timezones = computed(() => {
-  return getLocalizedTimezones(preferencesStore.currentLanguage)
-})
 
 // Watch language changes and update timezone list
 watch(() => preferencesStore.currentLanguage, (newLang) => {

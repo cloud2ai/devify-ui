@@ -80,7 +80,7 @@ export const COMMON_TIMEZONES = [
 
 // Get localized timezone list
 export function getLocalizedTimezones(language = 'en') {
-  const lang = language === 'zh-CN' ? 'zh' : 'en'
+  const lang = language === 'zh-CN' ? 'zh' : language === 'es' ? 'es' : 'en'
   return COMMON_TIMEZONES.map(tz => ({
     value: tz.value,
     label: typeof tz.label === 'string' ? tz.label : tz.label[lang]

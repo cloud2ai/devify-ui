@@ -103,20 +103,11 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">
               {{ t('settings.timezone') }}
             </label>
-            <select
-              v-model="formData.timezone"
-              class="input w-full"
-            >
-              <option
-                v-for="tz in timezones"
-                :key="tz.value"
-                :value="tz.value"
-              >
-                {{ tz.label }}
-              </option>
-            </select>
+            <div class="input w-full bg-gray-50 text-gray-600 cursor-not-allowed">
+              {{ getFriendlyTimezoneName(detectedTimezone) }}
+            </div>
             <p class="mt-1 text-xs text-gray-500">
-              {{ t('settings.detectedText') }}: {{ getFriendlyTimezoneName(detectedTimezone) }}
+              {{ t('settings.autoDetected') }}
             </p>
           </div>
         </div>
@@ -154,7 +145,6 @@ import {
   getFriendlyLanguageName,
   getFriendlyTimezoneName
 } from '@/utils/timezone'
-import { getLocalizedTimezones } from '@/utils/timezones'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import VirtualEmailInput from '@/components/ui/VirtualEmailInput.vue'
@@ -209,17 +199,14 @@ const errors = ref({
 const errorMessage = ref('')
 const usernameValid = ref(false)
 const showAdvanced = ref(false)
-const timezones = computed(() => {
-  // Use global UI language for timezone labels, independent
-  // from the registration form language selection below.
-  return getLocalizedTimezones(locale.value)
-})
 
 const languageOptions = computed(() => {
-  const codes = ['zh-CN', 'en']
+  const codes = ['zh-CN', 'en', 'es']
   return codes.map(code => ({
     value: code,
-    label: code === 'en' ? t('settings.languages.en') : t('settings.languages.zh-CN')
+    label: code === 'en' ? t('settings.languages.en') :
+           code === 'zh-CN' ? t('settings.languages.zh-CN') :
+           t('settings.languages.es')
   }))
 })
 

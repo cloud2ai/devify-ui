@@ -65,7 +65,8 @@ const dropdownRef = ref(null)
 
 const languages = [
   { value: 'en', label: 'English', flag: '🇺🇸' },
-  { value: 'zh-CN', label: '简体中文', flag: '🇨🇳' }
+  { value: 'zh-CN', label: '简体中文', flag: '🇨🇳' },
+  { value: 'es', label: 'Español', flag: '🇪🇸' }
 ]
 
 const currentLanguageDisplay = computed(() => {
