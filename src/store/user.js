@@ -190,6 +190,20 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  const setUser = (userData) => {
+    user.value = userData
+  }
+
+  const setToken = (tokenValue, refreshValue = null) => {
+    token.value = tokenValue
+    if (tokenValue) {
+      localStorage.setItem('access_token', tokenValue)
+    }
+    if (refreshValue) {
+      localStorage.setItem('refresh_token', refreshValue)
+    }
+  }
+
   return {
     // State
     user,
@@ -205,6 +219,10 @@ export const useUserStore = defineStore('user', () => {
     checkAuth,
     checkAuthStatus,
     updateProfile,
-    register
+    register,
+    setUser,
+    setToken,
+    // Helper functions
+    loadUserPreferences
   }
 })

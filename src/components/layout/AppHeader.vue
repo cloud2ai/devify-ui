@@ -183,8 +183,6 @@ const userInitials = computed(() => {
   return username.charAt(0).toUpperCase()
 })
 
-const authInfo = computed(() => userStore.userInfo?.auth_info || null)
-
 const toggleUserMenu = () => {
   showUserMenu.value = !showUserMenu.value
   if (!showUserMenu.value) {
@@ -226,8 +224,14 @@ const handleClickOutside = (event) => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   document.addEventListener('click', handleClickOutside)
+
+  // Refresh user info to ensure we have the latest data (including virtual_email)
+  // This is important after OAuth setup completion
+  if (userStore.user && !userStore.userInfo?.virtual_email) {
+    await userStore.checkAuthStatus()
+  }
 })
 
 onUnmounted(() => {

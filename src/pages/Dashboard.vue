@@ -460,8 +460,9 @@ const getRemainingTagsCount = (tags) => {
 }
 
 onMounted(async () => {
-  // Ensure user data is loaded before rendering
-  if (!userStore.user) {
+  // Refresh user info if missing virtual_email (important after OAuth setup completion)
+  // Otherwise use existing user data from store
+  if (!userStore.userInfo?.virtual_email) {
     await userStore.checkAuthStatus()
   }
   loadData()

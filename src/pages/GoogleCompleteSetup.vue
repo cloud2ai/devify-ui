@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store/user'
@@ -62,8 +62,25 @@ const handleComplete = async (formValues) => {
     const responseData = response.data.data || response.data
 
     if (responseData.success || response.data.code === 0) {
-      // Refresh to fetch server-side generated fields (virtual_email)
-      await userStore.checkAuth()
+      // Update token if provided in response
+      if (responseData.access) {
+        userStore.setToken(responseData.access, responseData.refresh)
+      }
+
+      // Update user info directly from response if available
+      // The response now includes full user info with virtual_email from UserDetailsSerializer
+      if (responseData.user) {
+        userStore.setUser(responseData.user)
+        // Load preferences to sync language and timezone settings
+        await userStore.loadUserPreferences()
+      } else {
+        // Fallback: refresh user info if not in response
+        await userStore.checkAuth()
+      }
+
+      // Wait for next tick to ensure all reactive updates are complete
+      await nextTick()
+
       router.push('/chats')
     }
   } catch (error) {
