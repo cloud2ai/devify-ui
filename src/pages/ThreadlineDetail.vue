@@ -3,7 +3,7 @@
     <div v-if="loading" class="flex items-center justify-center py-12">
       <div class="text-center">
         <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-        <p class="mt-2 text-sm text-gray-500">Loading threadline...</p>
+        <p class="mt-2 text-sm text-gray-500">{{ t('common.loading') }}</p>
       </div>
     </div>
 
@@ -13,11 +13,11 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
         </svg>
       </div>
-      <h3 class="mt-2 text-sm font-medium text-gray-900">Error loading threadline</h3>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">{{ t('chats.errorLoading') }}</h3>
       <p class="mt-1 text-sm text-gray-500">{{ error }}</p>
       <div class="mt-6">
         <BaseButton @click="loadThreadline" variant="primary">
-          Try again
+          {{ t('common.tryAgain') }}
         </BaseButton>
       </div>
     </div>
@@ -31,7 +31,7 @@
               class="text-xl font-bold leading-7 text-gray-900 sm:text-2xl flex-1"
               style="display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
             >
-              {{ threadline.summary_title || threadline.subject || 'No Subject' }}
+              {{ threadline.summary_title || threadline.subject || t('common.noSubject') }}
             </h2>
           </div>
           <!-- Date/Time -->
@@ -57,99 +57,120 @@
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
-            Delete
+            {{ t('common.delete') }}
           </BaseButton>
         </div>
       </div>
 
       <!-- Metadata Information -->
-      <BaseCard v-if="threadline.metadata && Object.keys(threadline.metadata).length > 0" :title="t('chats.basicInformation')">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <!-- Category -->
-          <div v-if="threadline.metadata.category" class="flex items-start space-x-2 p-3 rounded-lg bg-blue-50 border border-blue-100">
-            <div class="flex-shrink-0 mt-0.5">
-              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+      <div class="relative">
+        <BaseCard v-if="threadline.metadata" :header-muted="true">
+          <template #header>
+            <div class="flex items-center gap-2 text-gray-800">
+              <svg class="w-5 h-5 -mt-px flex-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18" />
               </svg>
+              <h3 class="text-base font-semibold leading-5">{{ t('metadata.sectionTitle') }}</h3>
             </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-xs font-medium text-blue-600 uppercase">{{ t('chats.category') }}</p>
-              <p class="text-sm text-blue-900 font-medium">{{ threadline.metadata.category }}</p>
-            </div>
-          </div>
+          </template>
+          <template #default>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <!-- 分类 -->
+              <div class="p-3 rounded-lg border border-blue-100 bg-blue-50">
+                <p class="text-sm font-semibold text-blue-700 mb-1 flex items-center gap-2">
+                  <svg class="w-4 h-4 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5l7 7-7 7H7a4 4 0 01-4-4V7a4 4 0 014-4z" />
+                  </svg>
+                  {{ t('metadata.category.title') }}
+                </p>
+                <p class="text-xs text-blue-600/70 mb-2">{{ t('metadata.category.desc') }}</p>
+                <MetadataChipsEditor
+                  :model-value="threadline.metadata.category || ''"
+                  :disabled="isSaving('category')"
+                  variant="blue"
+                  @update:modelValue="v => onChipsChange('category', v)"
+                  @change="v => onChipsSave('category', v)"
+                />
+                <p v-if="fieldError('category')" class="mt-2 text-xs text-red-600">{{ fieldError('category') }}</p>
+              </div>
 
-          <!-- Scene -->
-          <div v-if="threadline.metadata.scene" class="flex items-start space-x-2 p-3 rounded-lg bg-purple-50 border border-purple-100">
-            <div class="flex-shrink-0 mt-0.5">
-              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-xs font-medium text-purple-600 uppercase">{{ t('chats.scene') }}</p>
-              <p class="text-sm text-purple-900 font-medium">{{ threadline.metadata.scene }}</p>
-            </div>
-          </div>
+              <!-- 参与者 -->
+              <div class="p-3 rounded-lg border border-green-100 bg-green-50">
+                <p class="text-sm font-semibold text-green-700 mb-1 flex items-center gap-2">
+                  <svg class="w-4 h-4 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m10-5.13a4 4 0 11-8 0 4 4 0 018 0zM7 10a4 4 0 100-8 4 4 0 000 8z" />
+                  </svg>
+                  {{ t('metadata.participants.title') }}
+                </p>
+                <p class="text-xs text-green-700/70 mb-2">{{ t('metadata.participants.desc') }}</p>
+                <MetadataChipsEditor
+                  :model-value="threadline.metadata.participants || []"
+                  :disabled="isSaving('participants')"
+                  variant="green"
+                  @update:modelValue="v => onChipsChange('participants', v)"
+                  @change="v => onChipsSave('participants', v)"
+                />
+                <p v-if="fieldError('participants')" class="mt-2 text-xs text-red-600">{{ fieldError('participants') }}</p>
+              </div>
 
-          <!-- Project -->
-          <div v-if="threadline.metadata.project_name" class="flex items-start space-x-2 p-3 rounded-lg bg-indigo-50 border border-indigo-100">
-            <div class="flex-shrink-0 mt-0.5">
-              <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6a3 3 0 013-3h10a1 1 0 01.832 1.555L18 9l1.832 1.445A1 1 0 0120 11H8a3 3 0 01-2.12-.879L4 8.586V6zM8 18h8M8 15h8" />
-              </svg>
+              <!-- 时间线 -->
+              <div class="p-3 rounded-lg border border-purple-100 bg-purple-50">
+                <p class="text-sm font-semibold text-purple-700 mb-1 flex items-center gap-2">
+                  <svg class="w-4 h-4 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {{ t('metadata.timeline.title') }}
+                </p>
+                <p class="text-xs text-purple-700/70 mb-2">{{ t('metadata.timeline.desc') }}</p>
+                <MetadataChipsEditor
+                  :model-value="threadline.metadata.timeline || []"
+                  :disabled="isSaving('timeline')"
+                  variant="purple"
+                  @update:modelValue="v => onChipsChange('timeline', v)"
+                  @change="v => onChipsSave('timeline', v)"
+                />
+                <p v-if="fieldError('timeline')" class="mt-2 text-xs text-red-600">{{ fieldError('timeline') }}</p>
+              </div>
             </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-xs font-medium text-indigo-600 uppercase">{{ t('chats.project') }}</p>
-              <p class="text-sm text-indigo-900 font-medium">{{ threadline.metadata.project_name }}</p>
-            </div>
-          </div>
 
-          <!-- Participants -->
-          <div v-if="threadline.metadata.participants && threadline.metadata.participants.length > 0" class="space-y-2">
-            <p class="text-xs font-medium text-gray-500 uppercase">{{ t('chats.participants') }}</p>
-            <div class="flex flex-wrap gap-2">
-              <span v-for="(p, i) in threadline.metadata.participants" :key="i"
-                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
-                {{ p }}
-              </span>
+            <!-- 标签独立一行 -->
+            <div class="mt-4 p-3 rounded-lg border border-rose-100 bg-rose-50">
+              <p class="text-sm font-semibold text-rose-700 mb-1 flex items-center gap-2">
+                <svg class="w-4 h-4 text-rose-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M3 7a4 4 0 014-4h5l7 7a2 2 0 010 2.828l-5.172 5.172a2 2 0 01-2.828 0L3 12V7z" />
+                </svg>
+                {{ t('metadata.keywords.title') }}
+              </p>
+              <p class="text-xs text-rose-700/70 mb-2">{{ t('metadata.keywords.desc') }}</p>
+              <MetadataChipsEditor
+                :model-value="threadline.metadata.keywords || []"
+                :disabled="isSaving('keywords')"
+                variant="rose"
+                @update:modelValue="v => onChipsChange('keywords', v)"
+                @change="v => onChipsSave('keywords', v)"
+              />
+              <p v-if="fieldError('keywords')" class="mt-2 text-xs text-red-600">{{ fieldError('keywords') }}</p>
             </div>
-          </div>
-
-          <!-- Locations -->
-          <div v-if="threadline.metadata.locations && threadline.metadata.locations.length > 0" class="space-y-2">
-            <p class="text-xs font-medium text-gray-500 uppercase">{{ t('chats.locations') }}</p>
-            <div class="flex flex-wrap gap-2">
-              <span v-for="(l, i) in threadline.metadata.locations" :key="i"
-                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-800">
-                {{ l }}
-              </span>
-            </div>
-          </div>
-
-          <!-- Timeline -->
-          <div v-if="threadline.metadata.timeline && threadline.metadata.timeline.length > 0" class="space-y-2">
-            <p class="text-xs font-medium text-gray-500 uppercase">{{ t('chats.timeline') }}</p>
-            <div class="flex flex-wrap gap-2">
-              <span v-for="(d, i) in threadline.metadata.timeline" :key="i"
-                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                {{ d }}
-              </span>
-            </div>
-          </div>
+          </template>
+        </BaseCard>
+        <div v-if="isAnySaving" class="absolute inset-0 z-10 flex items-center justify-center bg-white/60">
+          <svg class="w-7 h-7 animate-spin text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke-width="4"></circle>
+            <path class="opacity-75" stroke-width="4" d="M4 12a8 8 0 018-8"/>
+          </svg>
         </div>
-        <div v-if="threadline.metadata.keywords && threadline.metadata.keywords.length > 0" class="mt-6 space-y-2">
-          <p class="text-xs font-medium text-gray-500 uppercase">{{ t('chats.tags') }}</p>
-          <div class="flex flex-wrap gap-2">
-            <span v-for="(k, i) in threadline.metadata.keywords" :key="i"
-              class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                {{ k }}
-            </span>
-          </div>
-        </div>
-      </BaseCard>
+      </div>
 
       <!-- Summary Content -->
-      <BaseCard :title="t('chats.aiSummary')">
+      <BaseCard :header-muted="true">
+        <template #header>
+          <div class="flex items-center gap-2 text-gray-800">
+            <svg class="w-5 h-5 -mt-px flex-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6M5 7h14" />
+            </svg>
+            <h3 class="text-base font-semibold leading-5">{{ t('chats.aiSummary') }}</h3>
+          </div>
+        </template>
         <div v-if="threadline.summary_title || threadline.summary_content" class="space-y-4">
           <div v-if="threadline.summary_title">
             <h3 class="text-lg font-medium text-gray-900 mb-2">{{ threadline.summary_title }}</h3>
@@ -168,7 +189,15 @@
       </BaseCard>
 
       <!-- LLM Content (AI Processed) -->
-      <BaseCard :title="t('chats.processedContent')">
+      <BaseCard :header-muted="true">
+        <template #header>
+          <div class="flex items-center gap-2 text-gray-800">
+            <svg class="w-5 h-5 -mt-px flex-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+            </svg>
+            <h3 class="text-base font-semibold leading-5">{{ t('chats.processedContent') }}</h3>
+          </div>
+        </template>
         <div v-if="threadline.llm_content">
           <MarkdownRenderer :content="threadline.llm_content" />
         </div>
@@ -181,16 +210,26 @@
         </div>
       </BaseCard>
     </div>
+    <MetadataFieldEditor
+      :show="showEditor"
+      :field-key="editorKey"
+      :value="editorValue"
+      @cancel="closeEditor"
+      @save="saveEditor"
+    />
   </AppLayout>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { usePreferencesStore } from '@/store/preferences'
 import { formatDate as formatDateUtil } from '@/utils/timezone'
 import { chatApi } from '@/api/chat'
+import { metadataApi } from '@/api/metadata'
+import MetadataFieldEditor from '@/components/MetadataFieldEditor.vue'
+import MetadataChipsEditor from '@/components/MetadataChipsEditor.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import BaseCard from '@/components/ui/BaseCard.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -205,6 +244,77 @@ const threadline = ref(null)
 const loading = ref(false)
 const error = ref('')
 const deleting = ref(false)
+
+const showEditor = ref(false)
+const editorKey = ref('')
+const editorValue = ref(null)
+const savingKeys = ref(new Set())
+const errorsByKey = ref({})
+
+const openEdit = (key) => {
+  editorKey.value = key
+  editorValue.value = threadline.value?.metadata ? threadline.value.metadata[key] : null
+  showEditor.value = true
+}
+
+const openAdd = () => {
+  const k = prompt('Enter new metadata key')
+  if (!k) return
+  editorKey.value = k
+  editorValue.value = ''
+  showEditor.value = true
+}
+
+const closeEditor = () => {
+  showEditor.value = false
+}
+
+const saveEditor = async (newValue) => {
+  if (!threadline.value) return
+  const id = route.params.id
+  const key = editorKey.value
+
+  const prev = threadline.value.metadata ? { ...threadline.value.metadata } : {}
+  const next = { ...prev, [key]: newValue }
+
+  threadline.value = { ...threadline.value, metadata: next }
+  showEditor.value = false
+  try {
+    savingKeys.value.add(key)
+    delete errorsByKey.value[key]
+    await metadataApi.patchThreadlineMetadata(id, { [key]: newValue })
+  } catch (err) {
+    console.error('Failed to save metadata:', err)
+    threadline.value = { ...threadline.value, metadata: prev }
+    errorsByKey.value[key] = err?.response?.data?.message || '保存失败'
+  } finally {
+    savingKeys.value.delete(key)
+  }
+}
+
+const onChipsChange = (key, value) => {
+  if (!threadline.value) return
+  const prev = threadline.value.metadata ? { ...threadline.value.metadata } : {}
+  const next = { ...prev, [key]: value }
+  threadline.value = { ...threadline.value, metadata: next }
+}
+
+const onChipsSave = async (key, value) => {
+  if (!threadline.value) return
+  const id = route.params.id
+  const prev = threadline.value.metadata ? { ...threadline.value.metadata } : {}
+  try {
+    savingKeys.value.add(key)
+    delete errorsByKey.value[key]
+    await metadataApi.patchThreadlineMetadata(id, { [key]: value })
+  } catch (err) {
+    console.error('Failed to save metadata:', err)
+    threadline.value = { ...threadline.value, metadata: prev }
+    errorsByKey.value[key] = err?.response?.data?.message || '保存失败'
+  } finally {
+    savingKeys.value.delete(key)
+  }
+}
 
 const loadThreadline = async () => {
   loading.value = true
@@ -278,4 +388,11 @@ const getStatusClass = (status) => {
 onMounted(() => {
   loadThreadline()
 })
+
+const isSaving = (key) => savingKeys.value.has(key)
+const fieldError = (key) => errorsByKey.value[key]
+
+const isAnySaving = computed(() => (
+  isSaving('category') || isSaving('participants') || isSaving('timeline') || isSaving('keywords')
+));
 </script>

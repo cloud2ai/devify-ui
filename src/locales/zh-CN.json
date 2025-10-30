@@ -25,7 +25,9 @@
     "noData": "暂无数据",
     "error": "错误",
     "success": "成功",
-    "language": "语言"
+    "language": "语言",
+    "tryAgain": "重试",
+    "noSubject": "无主题"
   },
   "virtualEmail": {
     "yourAddress": "您的AI智能邮箱"
@@ -205,7 +207,28 @@
     "project": "项目",
     "participants": "参与者",
     "locations": "位置",
-    "timeline": "时间线"
+    "timeline": "时间线",
+    "errorLoading": "加载对话详情失败",
+    "errorLoadingDesc": "无法加载对话详情"
+  },
+  "metadata": {
+    "sectionTitle": "基本信息",
+    "category": {
+      "title": "分类",
+      "desc": "请选择归属类别（如“产品/设计/反馈/运营”）"
+    },
+    "participants": {
+      "title": "参与者",
+      "desc": "请添加相关人员（如同事姓名或邮箱）"
+    },
+    "timeline": {
+      "title": "时间线",
+      "desc": "补充关键时间节点（如“2025-10-30立项”）"
+    },
+    "keywords": {
+      "title": "标签",
+      "desc": "自定义标签辅助检索（如“高优先级/外部/方案讨论”）"
+    }
   },
   "settings": {
     "title": "设置",

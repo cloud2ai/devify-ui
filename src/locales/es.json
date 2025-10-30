@@ -25,7 +25,9 @@
     "noData": "No hay datos disponibles",
     "error": "Error",
     "success": "Éxito",
-    "language": "Idioma"
+    "language": "Idioma",
+    "tryAgain": "Intentar de nuevo",
+    "noSubject": "Sin asunto"
   },
   "virtualEmail": {
     "yourAddress": "Tu Email IA"
@@ -195,7 +197,28 @@
     "project": "Proyecto",
     "participants": "Participantes",
     "locations": "Ubicaciones",
-    "timeline": "Cronología"
+    "timeline": "Cronología",
+    "errorLoading": "Error al cargar el hilo de conversación",
+    "errorLoadingDesc": "No se pudieron cargar los detalles de la conversación"
+  },
+  "metadata": {
+    "sectionTitle": "Información Básica",
+    "category": {
+      "title": "Categoría",
+      "desc": "Elige una categoría (p. ej., Producto/Diseño)"
+    },
+    "participants": {
+      "title": "Participantes",
+      "desc": "Agrega personas relacionadas (nombre o correo)"
+    },
+    "timeline": {
+      "title": "Cronología",
+      "desc": "Agrega hitos clave (p. ej., 2025-10-30 Inicio)"
+    },
+    "keywords": {
+      "title": "Etiquetas",
+      "desc": "Etiquetas personalizadas para búsqueda (p. ej., Alta prioridad/Externo/Discusión)"
+    }
   },
   "settings": {
     "title": "Configuración",

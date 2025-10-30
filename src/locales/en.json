@@ -25,7 +25,9 @@
     "noData": "No data available",
     "error": "Error",
     "success": "Success",
-    "language": "Language"
+    "language": "Language",
+    "tryAgain": "Try again",
+    "noSubject": "No Subject"
   },
   "virtualEmail": {
     "yourAddress": "Your AI Email"
@@ -195,7 +197,28 @@
     "project": "Project",
     "participants": "Participants",
     "locations": "Locations",
-    "timeline": "Timeline"
+    "timeline": "Timeline",
+    "errorLoading": "Error loading threadline",
+    "errorLoadingDesc": "Failed to load conversation details"
+  },
+  "metadata": {
+    "sectionTitle": "Basic Information",
+    "category": {
+      "title": "Category",
+      "desc": "Choose a category (e.g., Product/Design)"
+    },
+    "participants": {
+      "title": "Participants",
+      "desc": "Add related people (name or email)"
+    },
+    "timeline": {
+      "title": "Timeline",
+      "desc": "Add key milestones (e.g., 2025-10-30 Initiation)"
+    },
+    "keywords": {
+      "title": "Tags",
+      "desc": "Custom tags for search (e.g., High priority/External/Discussion)"
+    }
   },
   "settings": {
     "title": "Settings",

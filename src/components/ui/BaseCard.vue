@@ -2,7 +2,7 @@
   <div :class="cardClasses">
     <div
       v-if="$slots.header || title"
-      class="card-header"
+      :class="headerClasses"
     >
       <slot name="header">
         <h3 v-if="title" class="text-lg font-semibold text-gray-900">
@@ -41,6 +41,14 @@ const props = defineProps({
     type: String,
     default: 'sm',
     validator: (value) => ['none', 'sm', 'md', 'lg'].includes(value)
+  },
+  headerMuted: {
+    type: Boolean,
+    default: false
+  },
+  headerClass: {
+    type: String,
+    default: ''
   }
 })
 
@@ -64,5 +72,13 @@ const cardClasses = computed(() => {
     paddingClasses[props.padding],
     shadowClasses[props.shadow]
   ].filter(Boolean).join(' ')
+})
+
+const headerClasses = computed(() => {
+  const base = 'card-header'
+  const muted = props.headerMuted
+    ? 'bg-gray-50 border-b border-gray-100 px-4 py-3'
+    : ''
+  return [base, muted, props.headerClass].filter(Boolean).join(' ')
 })
 </script>

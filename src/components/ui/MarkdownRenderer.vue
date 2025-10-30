@@ -87,11 +87,11 @@ const renderedContent = computed(() => {
 }
 
 .markdown-content :deep(ul) {
-  @apply list-disc list-inside mb-3 space-y-1;
+  @apply list-disc list-outside mb-3 space-y-1 ml-6;
 }
 
 .markdown-content :deep(ol) {
-  @apply list-decimal list-inside mb-3 space-y-1;
+  @apply list-decimal list-outside mb-3 space-y-1 ml-6;
 }
 
 .markdown-content :deep(li) {
@@ -107,16 +107,22 @@ const renderedContent = computed(() => {
 }
 
 .markdown-content :deep(pre) {
-  @apply bg-gray-100 text-gray-800 p-4 rounded-lg overflow-x-auto my-4 text-sm;
+  @apply bg-gray-900 border border-gray-700 p-4 rounded-lg my-4 text-sm overflow-x-auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
 .markdown-content :deep(pre code) {
-  @apply bg-transparent p-0;
+  @apply bg-transparent p-0 text-gray-100;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
-/* Custom styles for summary content */
+/* Custom styles for code highlighting - terminal theme */
 .markdown-content :deep(.hljs) {
-  @apply bg-gray-100;
+  @apply bg-gray-900;
 }
 
 .markdown-content :deep(table) {
