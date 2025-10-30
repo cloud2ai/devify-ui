@@ -27,28 +27,28 @@
       <div class="md:flex md:items-start md:justify-between">
         <div class="flex-1 min-w-0">
           <div class="flex items-start gap-3">
-            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate flex-1">
+            <h2
+              class="text-xl font-bold leading-7 text-gray-900 sm:text-2xl flex-1"
+              style="display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
+            >
               {{ threadline.summary_title || threadline.subject || 'No Subject' }}
             </h2>
-            <!-- Status Icon Badge -->
-            <div class="flex-shrink-0 mt-1">
-              <div
-                class="w-10 h-10 rounded-lg flex items-center justify-center"
-                :class="getStatusIconClass(threadline.status)"
-                :title="threadline.status || 'Unknown'"
-              >
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-            </div>
           </div>
           <!-- Date/Time -->
           <p class="mt-2 text-sm text-gray-500">
             {{ formatDate(threadline.received_at || threadline.created_at) }}
           </p>
         </div>
-        <div class="mt-4 flex md:mt-0 md:ml-4">
+        <div class="mt-4 flex md:mt-0 md:ml-4 space-x-2">
+          <BaseButton
+            @click="goBack"
+            variant="secondary"
+          >
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            {{ t('common.back') }}
+          </BaseButton>
           <BaseButton
             @click="deleteThreadline"
             variant="danger"
@@ -239,6 +239,14 @@ const deleteThreadline = async () => {
   }
 }
 
+const goBack = () => {
+  if (window.history.length > 1) {
+    router.back()
+  } else {
+    router.push('/dashboard')
+  }
+}
+
 const formatDate = (dateString) => {
   if (!dateString) return t('common.noData')
 
@@ -265,15 +273,7 @@ const getStatusClass = (status) => {
   return classes[status] || 'bg-gray-100 text-gray-800'
 }
 
-const getStatusIconClass = (status) => {
-  const classes = {
-    pending: 'bg-yellow-100 text-yellow-600',
-    completed: 'bg-green-100 text-green-600',
-    failed: 'bg-red-100 text-red-600',
-    processing: 'bg-blue-100 text-blue-600'
-  }
-  return classes[status] || 'bg-gray-100 text-gray-600'
-}
+
 
 onMounted(() => {
   loadThreadline()
