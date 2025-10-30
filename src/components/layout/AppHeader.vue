@@ -43,12 +43,15 @@
               @click="toggleUserMenu"
               class="flex items-center space-x-2 text-sm text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-lg px-2 py-1"
             >
-              <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                <span class="text-gray-600 font-medium text-sm">
+              <div
+                :class="avatarBgColor"
+                class="w-8 h-8 rounded-full flex items-center justify-center"
+              >
+                <span class="text-white font-medium text-sm">
                   {{ userInitials }}
                 </span>
               </div>
-              <span class="hidden sm:block">{{ userStore.userInfo?.username || 'User' }}</span>
+              <span class="hidden sm:block">{{ displayName }}</span>
               <svg
                 class="w-4 h-4 transition-transform"
                 :class="{ 'rotate-180': showUserMenu }"
@@ -75,7 +78,7 @@
               >
                 <!-- User Info -->
                 <div class="px-4 py-2 border-b border-gray-100">
-                  <div class="font-semibold text-gray-900 truncate">{{ userStore.userInfo?.username || 'User' }}</div>
+                  <div class="font-semibold text-gray-900 truncate">{{ displayName }}</div>
                 </div>
 
                 <!-- AI Email Card (Always at the top) -->
@@ -180,9 +183,61 @@ const showUserMenu = ref(false)
 const userMenuRef = ref(null)
 const copied = ref(false)
 
+const displayName = computed(() => {
+  const userInfo = userStore.userInfo
+  if (!userInfo) return 'User'
+
+  // Prioritize display_name from backend (uses first_name + last_name for OAuth users)
+  if (userInfo.display_name) {
+    return userInfo.display_name
+  }
+
+  // Fallback to first_name + last_name if available
+  if (userInfo.first_name && userInfo.last_name) {
+    return `${userInfo.first_name} ${userInfo.last_name}`
+  }
+
+  // Fallback to first_name only
+  if (userInfo.first_name) {
+    return userInfo.first_name
+  }
+
+  // Final fallback to username
+  return userInfo.username || 'User'
+})
+
 const userInitials = computed(() => {
-  const username = userStore.userInfo?.username || 'U'
-  return username.charAt(0).toUpperCase()
+  const name = displayName.value
+  // Extract first character from display name (could be first name or full name)
+  const firstChar = name.trim().charAt(0).toUpperCase()
+  return firstChar || 'U'
+})
+
+const avatarBgColor = computed(() => {
+  // Generate consistent background color based on user's first initial
+  const initial = userInitials.value
+  const colors = [
+    'bg-blue-500',
+    'bg-indigo-500',
+    'bg-purple-500',
+    'bg-pink-500',
+    'bg-rose-500',
+    'bg-red-500',
+    'bg-orange-500',
+    'bg-amber-500',
+    'bg-yellow-500',
+    'bg-lime-500',
+    'bg-green-500',
+    'bg-emerald-500',
+    'bg-teal-500',
+    'bg-cyan-500',
+    'bg-sky-500',
+  ]
+
+  // Use character code to deterministically select a color
+  const charCode = initial.charCodeAt(0)
+  const colorIndex = charCode % colors.length
+  return colors[colorIndex]
 })
 
 const toggleUserMenu = () => {
