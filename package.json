@@ -1,8 +1,9 @@
 {
   "name": "devify-ui",
   "version": "1.0.0",
-  "description": "Devify Frontend Application",
+  "description": "Devify is an AI Agent-powered personal productivity platform that leverages intelligent automation to enhance daily work efficiency.",
   "type": "module",
+  "license": "SEE LICENSE",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
