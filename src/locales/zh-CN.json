@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "AimyChats",
+    "appName": "AImyChats",
     "loading": "加载中...",
     "save": "保存",
     "cancel": "取消",
@@ -33,7 +33,7 @@
   "auth": {
     "login": "登录",
     "register": "注册",
-    "loginTitle": "登录 AimyChats",
+    "loginTitle": "登录 AImyChats",
     "registerTitle": "创建您的账户",
     "tabs": {
       "login": "登录",

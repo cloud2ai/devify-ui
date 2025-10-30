@@ -8,9 +8,11 @@
             to="/chats"
             class="flex items-center space-x-2"
           >
-            <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-              <span class="text-white font-bold text-sm">A</span>
-            </div>
+            <img
+              src="/android-chrome-192x192.png"
+              alt="AImyChats Logo"
+              class="w-8 h-8"
+            />
             <span class="text-xl font-semibold text-gray-900">{{ t('common.appName') }}</span>
           </router-link>
         </div>

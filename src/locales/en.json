@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "AimyChats",
+    "appName": "AImyChats",
     "loading": "Loading...",
     "save": "Save",
     "cancel": "Cancel",
@@ -33,7 +33,7 @@
   "auth": {
     "login": "Login",
     "register": "Register",
-    "loginTitle": "Sign in to AimyChats",
+    "loginTitle": "Sign in to AImyChats",
     "registerTitle": "Create your account",
     "username": "Username",
     "virtualEmailUsername": "AI Email Username",

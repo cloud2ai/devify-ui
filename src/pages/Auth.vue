@@ -3,13 +3,18 @@
     <div class="max-w-md w-full space-y-8">
       <!-- Header -->
       <div>
-        <div class="flex items-center justify-center">
-          <h2 class="text-3xl font-extrabold text-gray-900">
-            {{ activeTab === 'login' ? t('auth.loginTitle') : t('auth.registerTitle') }}
-          </h2>
-          <div class="ml-3">
-            <LanguageSwitcher />
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-3">
+            <img
+              src="/android-chrome-192x192.png"
+              alt="AImyChats Logo"
+              class="w-10 h-10"
+            />
+            <h2 class="text-2xl font-bold text-gray-900">
+              {{ activeTab === 'login' ? t('auth.loginTitle') : t('auth.registerTitle') }}
+            </h2>
           </div>
+          <LanguageSwitcher />
         </div>
       </div>
 
