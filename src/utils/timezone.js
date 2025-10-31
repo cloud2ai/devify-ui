@@ -38,11 +38,26 @@ export function formatDate(date, timezone, pattern = 'yyyy-MM-dd HH:mm:ss', lang
 
   try {
     const dateObj = typeof date === 'string' ? new Date(date) : date
-    const locale = localeMap[language] || enUS
 
-    return formatInTimeZone(dateObj, timezone || 'UTC', pattern, { locale })
+    // Normalize language code to match localeMap keys
+    let normalizedLanguage = language
+    if (language && language.startsWith('zh')) {
+      normalizedLanguage = 'zh-CN'
+    } else if (language && language.startsWith('en')) {
+      normalizedLanguage = 'en'
+    } else if (language && language.startsWith('es')) {
+      normalizedLanguage = 'es'
+    }
+
+    const locale = localeMap[normalizedLanguage] || enUS
+
+    // date-fns formatInTimeZone supports Chinese characters in pattern string
+    // The locale parameter affects relative time and month/day names, not the pattern itself
+    const result = formatInTimeZone(dateObj, timezone || 'UTC', pattern, { locale })
+
+    return result
   } catch (error) {
-    console.error('Failed to format date:', error)
+    console.error('Failed to format date:', error, { date, timezone, pattern, language })
     return ''
   }
 }

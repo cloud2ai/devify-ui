@@ -62,5 +62,14 @@ export const chatApi = {
       params: { format },
       responseType: 'blob'
     })
+  },
+
+  // Retry threadline processing
+  retryThreadline(id, options = {}) {
+    return api.post(`/v1/threadlines/${id}/retry`, {
+      language: options.language,
+      scene: options.scene,
+      force: options.force || false
+    })
   }
 }

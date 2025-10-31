@@ -213,7 +213,7 @@
     },
     "timeline": {
       "title": "Cronología",
-      "desc": "Agrega hitos clave (p. ej., 2025-10-30 Inicio)"
+      "desc": "Agrega hitos clave, formato: YYYY-MM-DD HH:mm (formato de 24 horas, preciso al minuto). Ejemplo: \"2025-10-30 14:30\""
     },
     "keywords": {
       "title": "Etiquetas",
@@ -333,5 +333,22 @@
     "daysAgo": "hace {count} días",
     "weeksAgo": "hace {count} semanas",
     "monthsAgo": "hace {count} meses"
+  },
+  "retry": {
+    "dialogTitle": "Reintentar procesamiento de correo",
+    "language": "Idioma de procesamiento",
+    "languageHint": "Seleccione el idioma para el procesamiento de IA (deje vacío para usar el predeterminado)",
+    "useDefaultLanguage": "Usar idioma predeterminado",
+    "scene": "Escena de procesamiento",
+    "sceneHint": "Seleccione el modo de escena para el procesamiento de IA (deje vacío para usar el predeterminado)",
+    "useDefaultScene": "Usar escena predeterminada",
+    "forceMode": "Forzar reintento",
+    "forceModeHint": "El reintento forzado reprocesará OCR y LLM incluso si los resultados ya existen",
+    "forceModeWarning": "El reintento forzado eliminará todos los registros generados anteriormente, volverá a identificar imágenes y realizará un resumen inteligente.",
+    "confirmRetry": "Reintentar",
+    "retryButton": "Reintentar",
+    "retrying": "Reintentando...",
+    "retrySuccess": "Tarea de reintento iniciada correctamente",
+    "retryError": "Error al iniciar el reintento, inténtelo de nuevo"
   }
 }

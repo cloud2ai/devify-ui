@@ -123,6 +123,11 @@ npm run lint
 - 查看原始邮件内容（HTML/文本视图）
 - 查看和预览附件
 - 复制功能（摘要、原文、链接）
+- **邮件重试功能**：支持对所有状态的邮件进行重试处理
+  - 可以选择处理语言和场景进行重新处理
+  - 支持强制重试模式（会重新识别图片和调用LLM）
+  - 自动轮询状态，等待处理完成
+  - 重试过程中按钮保持loading状态，防止重复操作
 
 ### 4. 设置
 
@@ -144,6 +149,12 @@ npm run lint
 - `GET /api/v1/threadline/threadlines` - 获取对话列表
 - `GET /api/v1/threadline/threadlines/:id` - 获取对话详情
 - `PATCH /api/v1/threadline/threadlines/:id` - 更新对话
+- `POST /api/v1/threadline/threadlines/:id/retry` - 重试邮件处理
+  - 请求参数：
+    - `language` (可选): 处理语言（如 'zh-CN', 'en-US'）
+    - `scene` (可选): 处理场景（如 'chat', 'product_issue'）
+    - `force` (可选, 默认false): 强制重试，会重新识别图片和调用LLM
+  - 返回：任务已触发的确认信息
 
 ### 设置端点
 

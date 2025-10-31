@@ -50,9 +50,21 @@
             {{ t('common.back') }}
           </BaseButton>
           <BaseButton
+            @click="handleRetryClick"
+            variant="primary"
+            :loading="retrying || isProcessing"
+            :disabled="deleting || retrying || isProcessing"
+          >
+            <svg v-if="!retrying && !isProcessing" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            {{ (retrying || isProcessing) ? t('retry.retrying') : t('retry.retryButton') }}
+          </BaseButton>
+          <BaseButton
             @click="deleteThreadline"
             variant="danger"
             :loading="deleting"
+            :disabled="retrying || isProcessing"
           >
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -217,11 +229,17 @@
       @cancel="closeEditor"
       @save="saveEditor"
     />
+    <RetryDialog
+      :show="showRetryDialog"
+      :status="threadline?.status"
+      @close="showRetryDialog = false"
+      @confirm="handleRetry"
+    />
   </AppLayout>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { usePreferencesStore } from '@/store/preferences'
@@ -230,6 +248,7 @@ import { chatApi } from '@/api/chat'
 import { metadataApi } from '@/api/metadata'
 import MetadataFieldEditor from '@/components/MetadataFieldEditor.vue'
 import MetadataChipsEditor from '@/components/MetadataChipsEditor.vue'
+import RetryDialog from '@/components/RetryDialog.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import BaseCard from '@/components/ui/BaseCard.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -244,6 +263,11 @@ const threadline = ref(null)
 const loading = ref(false)
 const error = ref('')
 const deleting = ref(false)
+const retrying = ref(false)
+const showRetryDialog = ref(false)
+let retryPollInterval = null
+let retryPollStartTime = null
+const MAX_POLL_DURATION = 5 * 60 * 1000 // 5 minutes max polling
 
 const showEditor = ref(false)
 const editorKey = ref('')
@@ -326,6 +350,16 @@ const loadThreadline = async () => {
     const data = response.data.data || response.data
     threadline.value = data
 
+    // If status is processing, start polling and show loading state
+    if (data.status === 'processing') {
+      retrying.value = true
+      stopRetryPolling() // Clear any existing polling
+      retryPollStartTime = Date.now()
+      retryPollInterval = setInterval(pollThreadlineStatus, 2000)
+      // Poll immediately
+      pollThreadlineStatus()
+    }
+
   } catch (err) {
     console.error('Failed to load threadline:', err)
     error.value = err.response?.data?.message || 'Failed to load threadline'
@@ -354,6 +388,88 @@ const goBack = () => {
     router.back()
   } else {
     router.push('/dashboard')
+  }
+}
+
+const stopRetryPolling = () => {
+  if (retryPollInterval) {
+    clearInterval(retryPollInterval)
+    retryPollInterval = null
+  }
+  retryPollStartTime = null
+}
+
+const pollThreadlineStatus = async () => {
+  try {
+    // Check if we've been polling too long
+    if (retryPollStartTime && Date.now() - retryPollStartTime > MAX_POLL_DURATION) {
+      stopRetryPolling()
+      retrying.value = false
+      console.warn('Polling timeout: exceeded maximum duration')
+      return
+    }
+
+    const response = await chatApi.getThreadline(route.params.id)
+    const data = response.data.data || response.data
+    threadline.value = data
+
+    // Check if processing is complete
+    const status = data.status
+
+    // Keep retrying state true if status is processing
+    if (status === 'processing') {
+      retrying.value = true
+      // Continue polling, don't stop
+      return
+    }
+
+    if (status === 'success' || status === 'failed') {
+      // Processing complete, stop polling
+      stopRetryPolling()
+      retrying.value = false
+
+      // Success or failure is already visible in the UI through status update
+      // No need for alert
+    }
+    // For other statuses (like fetched), continue polling until we get processing or final status
+  } catch (err) {
+    console.error('Failed to poll threadline status:', err)
+    // On error, stop polling
+    stopRetryPolling()
+    retrying.value = false
+  }
+}
+
+const handleRetryClick = () => {
+  // Prevent opening dialog if already processing or retrying
+  if (isProcessing.value || retrying.value || deleting.value) {
+    return
+  }
+  showRetryDialog.value = true
+}
+
+const handleRetry = async (options) => {
+  showRetryDialog.value = false
+  retrying.value = true
+
+  try {
+    await chatApi.retryThreadline(route.params.id, options)
+
+    // Backend now immediately sets status to PROCESSING
+    // Start polling for status updates right away
+    stopRetryPolling() // Clear any existing polling
+    retryPollStartTime = Date.now()
+    retryPollInterval = setInterval(pollThreadlineStatus, 2000)
+
+    // Poll immediately to get the updated status
+    await pollThreadlineStatus()
+
+  } catch (err) {
+    console.error('Retry failed:', err)
+    stopRetryPolling()
+    retrying.value = false
+    retryPollStartTime = null
+    alert(err.response?.data?.message || t('retry.retryError'))
   }
 }
 
@@ -389,8 +505,17 @@ onMounted(() => {
   loadThreadline()
 })
 
+onUnmounted(() => {
+  stopRetryPolling()
+})
+
 const isSaving = (key) => savingKeys.value.has(key)
 const fieldError = (key) => errorsByKey.value[key]
+
+// Check if email is currently processing
+const isProcessing = computed(() => {
+  return threadline.value?.status === 'processing'
+})
 
 const isAnySaving = computed(() => (
   isSaving('category') || isSaving('participants') || isSaving('timeline') || isSaving('keywords')
