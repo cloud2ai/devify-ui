@@ -9,7 +9,9 @@
     "close": "关闭",
     "confirm": "确认",
     "back": "返回",
-    "next": "下一步",
+    "next": "下一页",
+    "previous": "上一页",
+    "pageInfo": "第 {current} 页，共 {total} 页",
     "submit": "提交",
     "search": "搜索",
     "filter": "筛选",
@@ -27,7 +29,18 @@
     "success": "成功",
     "language": "语言",
     "tryAgain": "重试",
-    "noSubject": "无主题"
+    "noSubject": "无主题",
+    "yes": "是",
+    "no": "否",
+    "status": {
+      "success": "成功",
+      "failed": "失败",
+      "processing": "处理中",
+      "fetched": "待处理",
+      "pending": "等待中",
+      "completed": "已完成",
+      "unknown": "未知"
+    }
   },
   "virtualEmail": {
     "yourAddress": "您的AI智能邮箱"
@@ -164,7 +177,7 @@
     "recentChats": "最近的对话",
     "recentConversations": "最近的对话",
     "noChats": "未找到对话",
-    "noChatsDesc": "还没有处理过的邮件对话。",
+    "noChatsDesc": "还没有处理过的对话。",
     "noConversations": "暂无对话",
     "noConversationsDesc": "当您收到邮件时，它们会显示在这里。",
     "searchPlaceholder": "搜索对话...",
@@ -197,7 +210,6 @@
     "noResults": "未找到匹配结果",
     "tags": "标签",
     "basicInformation": "基本信息",
-    "aiSummary": "智能总结",
     "processedContent": "对话记录",
     "summaryProcessing": "智能总结处理中...",
     "processedContentProcessing": "对话记录处理中...",
@@ -251,8 +263,8 @@
     "settingsSaved": "设置保存成功",
     "settingsError": "保存设置失败",
     "scene": "场景",
-    "sceneDesc": "选择AI处理邮件时使用的场景模式，不同场景使用不同的处理方式和提示词模板。",
-    "preferenceChangeWarning": "提示：更改此设置将影响后续邮件处理时的智能总结、标签和元数据的输出语言。场景切换会影响AI的处理方式和提示词模板。新设置将在下次处理邮件时生效。",
+    "sceneDesc": "选择AI处理对话时使用的场景模式，不同场景使用不同的处理方式和提示词模板。",
+    "preferenceChangeWarning": "提示：更改此设置将影响后续对话处理时的智能总结、标签和元数据的输出语言。场景切换会影响AI的处理方式和提示词模板。新设置将在下次处理对话时生效。",
     "languages": {
       "en": "English",
       "zh-CN": "简体中文",
@@ -277,12 +289,13 @@
     "canChangePassword": "可以修改密码",
     "cannotChangePassword": "无法修改密码",
     "sendPasswordReset": "发送密码重置邮件",
+    "resetPassword": "重置密码",
     "sendingResetEmail": "正在发送...",
     "passwordResetEmailSent": "密码重置邮件已发送",
     "passwordResetEmailSentDesc": "请检查您的安全邮箱，点击邮件中的链接完成密码重置",
     "passwordResetError": "发送密码重置邮件失败",
     "loginEmail": "登录邮箱",
-    "loginEmailDesc": "您的专属AI邮箱，用于登录和接收邮件进行AI智能化处理",
+    "loginEmailDesc": "您的专属AI邮箱，用于登录和接收消息进行AI智能化处理",
     "securityEmail": "安全邮箱",
     "securityEmailDesc": "用于密码重置和安全验证",
     "noVirtualEmail": "未设置虚拟邮箱",
@@ -346,7 +359,7 @@
     "monthsAgo": "{count} 个月前"
   },
   "retry": {
-    "dialogTitle": "重新处理邮件",
+    "dialogTitle": "重新处理对话",
     "language": "处理语言",
     "languageHint": "选择AI处理时使用的语言（留空使用默认设置）",
     "useDefaultLanguage": "使用默认语言",
@@ -361,5 +374,122 @@
     "retrying": "重试中...",
     "retrySuccess": "重试任务已触发",
     "retryError": "触发重试失败，请重试"
+  },
+  "billing": {
+    "menuTitle": "订阅与账单",
+    "title": "订阅与账单",
+    "description": "管理您的订阅计划和查看使用情况",
+    "currentSubscription": {
+      "title": "当前订阅",
+      "provider": "支付方式",
+      "periodStart": "周期开始",
+      "periodEnd": "周期结束",
+      "remaining": "剩余时间",
+      "daysRemaining": "剩余{days}天",
+      "daysRemainingValue": "{days}天",
+      "autoRenew": "自动续费",
+      "creditsUsage": "积分使用情况",
+      "creditsRemaining": "剩余 {remaining} 积分",
+      "noSubscription": "暂无订阅",
+      "upgradePrompt": "升级到付费计划以获得更多功能和积分",
+      "freePlanDesc": "免费计划 - 升级以获得更多功能"
+    },
+    "plans": {
+      "title": "订阅计划",
+      "current": "当前计划",
+      "currentPlan": "当前计划",
+      "perMonth": "/月",
+      "creditsPerPeriod": "积分/周期",
+      "daysPeriod": "天周期",
+      "manageSubscription": "管理订阅",
+      "cancelSubscription": "取消订阅",
+      "cancelScheduled": "已安排取消",
+      "resumeSubscription": "恢复订阅",
+      "upgrade": "升级",
+      "upgradeTo": "升级到 {plan}",
+      "downgrade": "降级",
+      "downgradeTo": "降级到 {plan}",
+      "unavailable": "不可用",
+      "notAvailable": "不可用",
+      "stripeNotConfigured": "Stripe支付未配置",
+      "upgradeFailed": "升级失败，请重试",
+      "portalFailed": "无法打开管理页面，请重试",
+      "cancelSuccess": "订阅已取消，将在当前周期结束后失效",
+      "cancelFailed": "取消订阅失败，请重试",
+      "resumeFailed": "恢复订阅失败，请重试",
+      "storage": "存储",
+      "retentionNotSet": "未设置",
+      "retentionPermanent": "永久保留",
+      "retentionYears": "{years}年保留",
+      "retentionDays": "{days}天保留"
+    },
+    "downgrade": {
+      "title": "降级订阅",
+      "confirmMessage": "确定要降级到 {plan} 吗？",
+      "effectiveNote": "注意：降级将在当前周期结束后生效。在此之前，您仍可使用当前计划的所有功能。",
+      "availableUntil": "您可以继续使用当前计划至 {date}",
+      "confirm": "确认降级",
+      "success": "降级已安排，将在当前周期结束后生效",
+      "failed": "降级失败，请重试"
+    },
+    "cancel": {
+      "title": "取消订阅",
+      "confirmMessage": "确定要取消订阅吗？取消后您仍可使用到当前周期结束。",
+      "effectiveNote": "注意：取消订阅将在当前周期结束后生效，本周期内仍可正常使用。",
+      "availableUntil": "您可以继续使用至 {date}",
+      "confirm": "确认取消"
+    },
+    "resume": {
+      "title": "恢复订阅",
+      "confirmMessage": "确定要恢复订阅吗？",
+      "effectiveNote": "恢复后将在当前周期结束时自动续费。",
+      "nextBillingDate": "下次扣费时间：{date}",
+      "confirm": "确认恢复"
+    },
+    "usageStats": {
+      "title": "使用情况统计",
+      "totalConsumed": "总消耗",
+      "available": "剩余可用",
+      "totalCredits": "总额度",
+      "creditsConsumed": "消耗积分"
+    },
+    "creditUsage": {
+      "title": "对话积分消耗明细",
+      "last7Days": "最近 7 天",
+      "last30Days": "最近 30 天",
+      "last90Days": "最近 90 天",
+      "noData": "该时间段内暂无积分消耗记录",
+      "noSubject": "无主题"
+    },
+    "creditsInfo": {
+      "title": "关于积分",
+      "description": "每个积分允许您处理一条包含所有功能的对话",
+      "emailLimit": "对话上限",
+      "emails": "条",
+      "attachmentLimit": "附件数量",
+      "attachments": "个",
+      "storageQuota": "存储容量",
+      "retentionPeriod": "数据保留期",
+      "retentionNotSet": "未设置",
+      "retentionPermanent": "永久保留",
+      "retentionYears": "{years}年",
+      "retentionDays": "{days}天"
+    },
+    "status": {
+      "active": "有效",
+      "canceled": "已取消",
+      "trialing": "试用中",
+      "pastDue": "逾期"
+    },
+    "messages": {
+      "paymentSuccess": "支付成功！您的订阅已激活。",
+      "paymentCanceled": "支付已取消",
+      "cancelSuccess": "订阅已取消，将在当前周期结束后失效",
+      "downgradeSuccess": "降级已安排，将在当前周期结束后生效",
+      "resumeSuccess": "订阅已恢复，将继续自动续费"
+    },
+    "errors": {
+      "fetchFailed": "获取账单信息失败"
+    }
   }
 }

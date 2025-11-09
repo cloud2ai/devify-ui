@@ -10,6 +10,8 @@
     "confirm": "Confirm",
     "back": "Back",
     "next": "Next",
+    "previous": "Previous",
+    "pageInfo": "Page {current} of {total}",
     "submit": "Submit",
     "search": "Search",
     "filter": "Filter",
@@ -27,7 +29,18 @@
     "success": "Success",
     "language": "Language",
     "tryAgain": "Try again",
-    "noSubject": "No Subject"
+    "noSubject": "No Subject",
+    "yes": "Yes",
+    "no": "No",
+    "status": {
+      "success": "Success",
+      "failed": "Failed",
+      "processing": "Processing",
+      "fetched": "Fetched",
+      "pending": "Pending",
+      "completed": "Completed",
+      "unknown": "Unknown"
+    }
   },
   "virtualEmail": {
     "yourAddress": "Your AI Email"
@@ -154,7 +167,7 @@
     "recentChats": "Recent Chats",
     "recentConversations": "Recent Conversations",
     "noChats": "No chats found",
-    "noChatsDesc": "No email chats have been processed yet.",
+    "noChatsDesc": "No chats have been processed yet.",
     "noConversations": "No conversations yet",
     "noConversationsDesc": "When you receive emails, they will appear here.",
     "searchPlaceholder": "Search chats...",
@@ -237,12 +250,12 @@
     "detectedTimezone": "Detected timezone: {value}",
     "detectedText": "Detected",
     "advancedOptions": "Advanced Options",
-    "saveSettings": "Save settings",
+    "saveSettings": "Save Settings",
     "settingsSaved": "Settings saved successfully",
     "settingsError": "Failed to save settings",
     "scene": "Scene",
-    "sceneDesc": "Select the scene mode used by AI when processing emails. Different scenes use different processing methods and prompt templates.",
-    "preferenceChangeWarning": "Note: Changing this setting will affect the output language for AI summaries, tags, and metadata in future email processing. Scene switching affects AI processing methods and prompt templates. The new setting will take effect on the next email processed.",
+    "sceneDesc": "Select the scene mode used by AI when processing chats. Different scenes use different processing methods and prompt templates.",
+    "preferenceChangeWarning": "Note: Changing this setting will affect the output language for AI summaries, tags, and metadata in future chat processing. Scene switching affects AI processing methods and prompt templates. The new setting will take effect on the next chat processed.",
     "languages": {
       "en": "English",
       "zh-CN": "简体中文",
@@ -267,12 +280,13 @@
     "canChangePassword": "Can change password",
     "cannotChangePassword": "Cannot change password",
     "sendPasswordReset": "Send Password Reset Email",
+    "resetPassword": "Reset Password",
     "sendingResetEmail": "Sending...",
     "passwordResetEmailSent": "Password reset email sent",
     "passwordResetEmailSentDesc": "Please check your security email and click the link to complete password reset",
     "passwordResetError": "Failed to send password reset email",
     "loginEmail": "Login Email",
-    "loginEmailDesc": "Your exclusive AI email for login and receiving emails for AI intelligent processing",
+    "loginEmailDesc": "Your exclusive AI email for login and receiving messages for AI intelligent processing",
     "securityEmail": "Security Email",
     "securityEmailDesc": "Used for password reset and security verification",
     "noVirtualEmail": "No virtual email set",
@@ -289,7 +303,7 @@
       "pending": "Pending",
       "completed": "Completed"
     },
-    "recentMessages": "Recent Email Messages",
+    "recentMessages": "Recent Chats",
     "viewAll": "View all"
   },
   "password": {
@@ -336,7 +350,7 @@
     "monthsAgo": "{count} months ago"
   },
   "retry": {
-    "dialogTitle": "Retry Email Processing",
+    "dialogTitle": "Retry Chat Processing",
     "language": "Processing Language",
     "languageHint": "Select the language for AI processing (leave empty to use default)",
     "useDefaultLanguage": "Use default language",
@@ -351,5 +365,122 @@
     "retrying": "Retrying...",
     "retrySuccess": "Retry task triggered successfully",
     "retryError": "Failed to trigger retry, please try again"
+  },
+  "billing": {
+    "menuTitle": "Plan & Billing",
+    "title": "Plan & Billing",
+    "description": "Manage your subscription plan and view usage statistics",
+    "currentSubscription": {
+      "title": "Current Subscription",
+      "provider": "Payment Provider",
+      "periodStart": "Period Start",
+      "periodEnd": "Period End",
+      "remaining": "Remaining",
+      "daysRemaining": "{days} days left",
+      "daysRemainingValue": "{days} days",
+      "autoRenew": "Auto Renew",
+      "creditsUsage": "Credits Usage",
+      "creditsRemaining": "{remaining} credits remaining",
+      "noSubscription": "No Active Subscription",
+      "upgradePrompt": "Upgrade to a paid plan to get more features and credits",
+      "freePlanDesc": "Free Plan - Upgrade for more features"
+    },
+    "plans": {
+      "title": "Subscription Plans",
+      "current": "Current",
+      "currentPlan": "Current",
+      "perMonth": "/month",
+      "creditsPerPeriod": "credits/period",
+      "daysPeriod": "days period",
+      "manageSubscription": "Manage Subscription",
+      "cancelSubscription": "Cancel",
+      "cancelScheduled": "Cancellation Scheduled",
+      "resumeSubscription": "Resume",
+      "upgrade": "Upgrade",
+      "upgradeTo": "Upgrade to {plan}",
+      "downgrade": "Downgrade",
+      "downgradeTo": "Downgrade to {plan}",
+      "unavailable": "Unavailable",
+      "notAvailable": "Not Available",
+      "stripeNotConfigured": "Stripe payment not configured",
+      "upgradeFailed": "Upgrade failed, please try again",
+      "portalFailed": "Failed to open management portal, please try again",
+      "cancelSuccess": "Subscription canceled. Will take effect at the end of current period.",
+      "cancelFailed": "Failed to cancel subscription, please try again",
+      "resumeFailed": "Failed to resume subscription, please try again",
+      "storage": "storage",
+      "retentionNotSet": "Not Set",
+      "retentionPermanent": "Permanent",
+      "retentionYears": "{years}-year retention",
+      "retentionDays": "{days}-day retention"
+    },
+    "downgrade": {
+      "title": "Downgrade Subscription",
+      "confirmMessage": "Are you sure you want to downgrade to {plan}?",
+      "effectiveNote": "Note: The downgrade will take effect at the end of the current billing period. Until then, you can continue using all features of your current plan.",
+      "availableUntil": "You can continue using your current plan until {date}",
+      "confirm": "Confirm Downgrade",
+      "success": "Downgrade scheduled. Will take effect at the end of current period.",
+      "failed": "Failed to schedule downgrade, please try again"
+    },
+    "cancel": {
+      "title": "Cancel Subscription",
+      "confirmMessage": "Are you sure you want to cancel your subscription? You can continue using until the end of current period.",
+      "effectiveNote": "Note: Cancellation will take effect at the end of the current billing period. You can still use the service until then.",
+      "availableUntil": "You can continue using until {date}",
+      "confirm": "Confirm Cancellation"
+    },
+    "resume": {
+      "title": "Resume Subscription",
+      "confirmMessage": "Are you sure you want to resume your subscription?",
+      "effectiveNote": "After resuming, your subscription will auto-renew at the end of current period.",
+      "nextBillingDate": "Next billing date: {date}",
+      "confirm": "Confirm Resume"
+    },
+    "usageStats": {
+      "title": "Usage Statistics",
+      "totalConsumed": "Total Consumed",
+      "available": "Available",
+      "totalCredits": "Total Credits",
+      "creditsConsumed": "Credits Consumed"
+    },
+    "creditUsage": {
+      "title": "Credit Usage by Chats",
+      "last7Days": "Last 7 days",
+      "last30Days": "Last 30 days",
+      "last90Days": "Last 90 days",
+      "noData": "No credit usage found in this period",
+      "noSubject": "No Subject"
+    },
+    "creditsInfo": {
+      "title": "About Credits",
+      "description": "Each credit allows you to process one chat with all its features",
+      "emailLimit": "Chat Limit",
+      "emails": "chats",
+      "attachmentLimit": "Attachment Limit",
+      "attachments": "attachments",
+      "storageQuota": "Storage Quota",
+      "retentionPeriod": "Data Retention",
+      "retentionNotSet": "Not Set",
+      "retentionPermanent": "Permanent",
+      "retentionYears": "{years} years",
+      "retentionDays": "{days} days"
+    },
+    "status": {
+      "active": "Active",
+      "canceled": "Canceled",
+      "trialing": "Trialing",
+      "pastDue": "Past Due"
+    },
+    "messages": {
+      "paymentSuccess": "Payment successful! Your subscription is now active.",
+      "paymentCanceled": "Payment was canceled",
+      "cancelSuccess": "Subscription canceled. Will take effect at the end of current period.",
+      "downgradeSuccess": "Downgrade scheduled. Will take effect at the end of current period.",
+      "resumeSuccess": "Subscription resumed. Auto-renewal is now active."
+    },
+    "errors": {
+      "fetchFailed": "Failed to fetch billing information"
+    }
   }
 }

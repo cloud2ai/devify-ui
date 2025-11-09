@@ -103,12 +103,11 @@ export function getFriendlyLanguageName(languageCode) {
 export function getFriendlyTimezoneName(timezone) {
   try {
     const now = new Date()
-    const utcOffset = formatInTimeZone(now, timezone, 'XXX') // Gets offset like +08:00
+    const utcOffset = formatInTimeZone(now, timezone, 'XXX')
     const offsetHours = parseInt(utcOffset.substring(1, 3))
     const offsetMinutes = parseInt(utcOffset.substring(4, 6))
     const offsetSign = utcOffset.substring(0, 1)
 
-    // Convert to GMT format
     let gmtOffset = ''
     if (offsetHours === 0 && offsetMinutes === 0) {
       gmtOffset = 'GMT'
@@ -119,10 +118,36 @@ export function getFriendlyTimezoneName(timezone) {
       }
     }
 
-    // Return full timezone name with GMT offset
     return `${timezone} (${gmtOffset})`
   } catch (error) {
     console.error('Failed to get friendly timezone name:', error)
     return timezone
   }
+}
+
+export function formatRelativeDate(dateString, t) {
+  const date = new Date(dateString)
+  const now = new Date()
+  const diff = Math.floor((now - date) / 1000)
+
+  if (diff < 60) {
+    return t('time.justNow')
+  }
+
+  if (diff < 3600) {
+    const minutes = Math.floor(diff / 60)
+    return t('time.minutesAgo', { count: minutes })
+  }
+
+  if (diff < 86400) {
+    const hours = Math.floor(diff / 3600)
+    return t('time.hoursAgo', { count: hours })
+  }
+
+  if (diff < 604800) {
+    const days = Math.floor(diff / 86400)
+    return t('time.daysAgo', { count: days })
+  }
+
+  return date.toLocaleDateString()
 }

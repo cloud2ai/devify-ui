@@ -558,7 +558,6 @@ const closeForgotPassword = () => {
 }
 
 const handleGoogleLogin = () => {
-  console.log('Google OAuth URL:', googleOAuthUrl.value)
   window.location.href = googleOAuthUrl.value
 }
 </script>

@@ -22,12 +22,12 @@
         </div>
 
         <div class="min-w-0 flex-1">
-          <div class="flex items-center gap-1.5 flex-wrap sm:flex-nowrap">
-            <span class="text-xs font-medium text-blue-800 whitespace-nowrap">
+          <div class="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-1.5">
+            <span class="text-xs font-medium text-blue-800 shrink-0">
               {{ label }}:
             </span>
             <code
-              class="text-xs sm:text-sm font-mono font-medium text-blue-900 truncate"
+              class="text-xs sm:text-sm font-mono font-medium text-blue-900 truncate block"
               :title="virtualEmail"
             >
               {{ virtualEmail }}

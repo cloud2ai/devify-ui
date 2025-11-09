@@ -1,7 +1,13 @@
 import axios from 'axios'
 import apiConfig from '@/config/api'
 
-// Create axios instance using centralized configuration
+function getCookie(name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+  return null
+}
+
 const api = axios.create({
   baseURL: apiConfig.apiBaseUrl,
   timeout: 10000,
@@ -11,13 +17,18 @@ const api = axios.create({
   withCredentials: true
 })
 
-// Request interceptor
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('access_token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+
+    const csrfToken = getCookie('csrftoken')
+    if (csrfToken) {
+      config.headers['X-CSRFToken'] = csrfToken
+    }
+
     return config
   },
   (error) => {

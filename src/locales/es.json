@@ -266,6 +266,7 @@
     "canChangePassword": "Puede cambiar contraseña",
     "cannotChangePassword": "No puede cambiar contraseña",
     "sendPasswordReset": "Enviar Correo de Restablecimiento de Contraseña",
+    "resetPassword": "Restablecer Contraseña",
     "sendingResetEmail": "Enviando...",
     "passwordResetEmailSent": "Correo de restablecimiento de contraseña enviado",
     "passwordResetEmailSentDesc": "Por favor revisa tu correo de seguridad y haz clic en el enlace para completar el restablecimiento de contraseña",
