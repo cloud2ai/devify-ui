@@ -25,15 +25,15 @@ const getApiBaseUrl = () => {
 }
 
 // Get OAuth base URL (for OAuth endpoints like Google login)
-// OAuth must use localhost (not private IP) for Google compatibility
+// For production, use the same base URL as API
+// For development without env variable, use window.location.origin
 const getOAuthBaseUrl = () => {
-  // Always use localhost for OAuth, not the proxied URL
   const envUrl = import.meta.env.VITE_API_BASE_URL
   if (envUrl) {
     return envUrl.endsWith('/api') ? envUrl.replace('/api', '') : envUrl
   }
-  // Use localhost:8000 directly for OAuth
-  return 'http://localhost:8000'
+  // Use current origin as fallback (works for both dev and production)
+  return window.location.origin
 }
 
 // Export configuration
