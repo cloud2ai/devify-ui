@@ -136,7 +136,7 @@
               :class="{ 'input-error': errors.username }"
             />
             <span class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-              @devify.local
+              @{{ emailDomain }}
             </span>
           </div>
           <p v-if="errors.username" class="mt-1 text-sm text-red-600">
@@ -390,6 +390,9 @@ const route = useRoute()
 const userStore = useUserStore()
 
 const activeTab = ref(route.query.tab === 'register' ? 'register' : 'login')
+
+// Get email domain from environment variable
+const emailDomain = import.meta.env.VITE_EMAIL_DOMAIN || 'devify.local'
 
 const formData = reactive({
   username: '',

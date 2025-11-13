@@ -4,6 +4,12 @@ FROM node:22-alpine AS builder
 # Set working directory
 WORKDIR /app
 
+# Build arguments for configuration
+ARG VITE_EMAIL_DOMAIN=devify.local
+
+# Set as environment variable for build
+ENV VITE_EMAIL_DOMAIN=${VITE_EMAIL_DOMAIN}
+
 # Copy package files
 COPY package*.json ./
 
@@ -13,7 +19,7 @@ RUN npm ci --only=production=false
 # Copy source code
 COPY . .
 
-# Build the application with feature flags
+# Build the application
 RUN npm run build
 
 # Production stage

@@ -13,6 +13,7 @@
         :label="t('register.virtualEmail.label')"
         :placeholder="t('register.virtualEmail.placeholder')"
         :help-text="t('register.virtualEmail.info')"
+        :domain="emailDomain"
         :error="errors.virtualEmailUsername"
         @validation="handleUsernameValidation"
       />
@@ -149,6 +150,9 @@ import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import VirtualEmailInput from '@/components/ui/VirtualEmailInput.vue'
 import SceneSelector from '@/components/ui/SceneSelector.vue'
+
+// Get email domain from environment variable
+const emailDomain = import.meta.env.VITE_EMAIL_DOMAIN || 'devify.local'
 
 const props = defineProps({
   displayEmail: {
