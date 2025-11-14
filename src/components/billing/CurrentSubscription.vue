@@ -164,7 +164,7 @@
                 </div>
                 <div class="flex justify-between">
                   <span class="text-gray-600">{{ t('billing.creditsInfo.attachmentLimit') }}</span>
-                  <span class="font-medium text-gray-900">{{ planMetadata?.max_attachment_size_mb || '-' }} {{ t('billing.creditsInfo.attachments') }}</span>
+                  <span class="font-medium text-gray-900">{{ planMetadata?.max_attachment_count || '-' }} {{ t('billing.creditsInfo.attachments') }}</span>
                 </div>
                 <div class="flex justify-between">
                   <span class="text-gray-600">{{ t('billing.creditsInfo.storageQuota') }}</span>

@@ -50,6 +50,19 @@ export const usePreferencesStore = defineStore('preferences', {
       this.isLoaded = true
     },
 
+    loadFromBackend(preferences) {
+      if (preferences.language) {
+        this.setLanguage(preferences.language)
+      }
+
+      if (preferences.scene) {
+        // Store scene preference if needed
+        localStorage.setItem('userScene', preferences.scene)
+      }
+
+      this.isLoaded = true
+    },
+
     reset() {
       this.language = this.detectedLanguage
       this.timezone = this.detectedTimezone

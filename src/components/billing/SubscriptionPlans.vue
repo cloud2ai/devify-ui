@@ -39,7 +39,7 @@
                 <p v-if="plan.metadata" class="flex items-center gap-1 flex-wrap">
                   <span class="whitespace-nowrap">{{ t('billing.creditsInfo.emailLimit') }}: {{ plan.metadata.max_emails_per_period || plan.credits_per_period }} {{ t('billing.creditsInfo.emails') }}</span>
                   <span class="text-gray-400">·</span>
-                  <span class="whitespace-nowrap">{{ t('billing.creditsInfo.attachmentLimit') }}: {{ plan.metadata.max_attachment_size_mb }} {{ t('billing.creditsInfo.attachments') }}</span>
+                  <span class="whitespace-nowrap">{{ t('billing.creditsInfo.attachmentLimit') }}: {{ plan.metadata.max_attachment_count }} {{ t('billing.creditsInfo.attachments') }}</span>
                 </p>
                 <p v-if="plan.metadata" class="flex items-center gap-1 flex-wrap">
                   <span class="whitespace-nowrap">{{ t('billing.creditsInfo.storageQuota') }}: {{ formatPlanStorage(plan.metadata.storage_quota_mb) }}</span>
