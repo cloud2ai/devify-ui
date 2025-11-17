@@ -54,6 +54,7 @@
             <button
               v-if="isCurrentPlan(plan) && plan.slug !== 'free' && currentSubscription?.auto_renew === false"
               @click="handleResumeClick"
+              :disabled="isInternalUser"
               :class="getButtonClass('resume')"
             >
               {{ t('billing.plans.resumeSubscription') }}
@@ -62,6 +63,7 @@
             <button
               v-else-if="isCurrentPlan(plan) && plan.slug !== 'free'"
               @click="handleManageSubscription"
+              :disabled="isInternalUser"
               :class="getButtonClass('cancel')"
             >
               {{ t('billing.plans.cancelSubscription') }}
@@ -78,7 +80,7 @@
             <button
               v-else-if="canUpgrade(plan)"
               @click="handleUpgrade(plan)"
-              :disabled="upgrading"
+              :disabled="upgrading || isInternalUser"
               :class="getButtonClass('upgrade')"
             >
               {{ upgrading ? t('common.loading') : t('billing.plans.upgrade') }}
@@ -87,7 +89,7 @@
             <button
               v-else-if="canDowngrade(plan)"
               @click="handleDowngradeClick(plan)"
-              :disabled="downgrading"
+              :disabled="downgrading || isInternalUser"
               :class="getButtonClass('downgrade')"
             >
               {{ downgrading ? t('common.loading') : t('billing.plans.downgrade') }}
@@ -326,6 +328,12 @@ const currentPlanSlug = computed(() => {
   return props.currentSubscription?.plan_slug || 'free'
 })
 
+const isInternalUser = computed(() => {
+  return props.currentSubscription?.plan_slug === 'internal' ||
+         props.currentSubscription?.plan_is_internal ||
+         props.currentSubscription?.plan?.is_internal
+})
+
 const formattedPeriodEnd = computed(() => {
   if (!props.currentSubscription?.current_period_end) return ''
 
@@ -347,8 +355,8 @@ const PRICE_WIDTH_CLASS = 'w-auto sm:w-36'
 const BASE_BUTTON_CLASS = 'px-4 py-2 text-sm font-medium rounded-md transition-colors whitespace-nowrap flex items-center justify-center'
 
 const BUTTON_STYLES = {
-  resume: 'text-green-700 bg-green-50 border border-green-200 hover:bg-green-100',
-  cancel: 'text-red-700 bg-red-50 border border-red-200 hover:bg-red-100',
+  resume: 'text-green-700 bg-green-50 border border-green-200 hover:bg-green-100 disabled:opacity-50 disabled:cursor-not-allowed',
+  cancel: 'text-red-700 bg-red-50 border border-red-200 hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed',
   current: 'text-gray-600 bg-gray-100 cursor-not-allowed',
   upgrade: 'text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed',
   downgrade: 'text-orange-700 bg-orange-50 border border-orange-200 hover:bg-orange-100 disabled:opacity-50 disabled:cursor-not-allowed',
@@ -370,12 +378,18 @@ function getButtonClass(type) {
 }
 
 function canUpgrade(plan) {
+  if (isInternalUser.value) {
+    return false
+  }
   const currentOrder = planOrder[currentPlanSlug.value] || 0
   const targetOrder = planOrder[plan.slug] || 0
   return targetOrder > currentOrder
 }
 
 function canDowngrade(plan) {
+  if (isInternalUser.value) {
+    return false
+  }
   if (isCanceledButActive.value) {
     return false
   }
@@ -420,6 +434,9 @@ async function fetchPlans() {
 }
 
 async function handleUpgrade(plan) {
+  if (isInternalUser.value) {
+    return
+  }
   if (!plan.stripe_price_id) {
     alert(t('billing.plans.stripeNotConfigured'))
     return
@@ -446,15 +463,24 @@ async function handleUpgrade(plan) {
 }
 
 function handleManageSubscription() {
+  if (isInternalUser.value) {
+    return
+  }
   showCancelDialog.value = true
 }
 
 function handleDowngradeClick(plan) {
+  if (isInternalUser.value) {
+    return
+  }
   selectedDowngradePlan.value = plan
   showDowngradeDialog.value = true
 }
 
 async function confirmDowngrade() {
+  if (isInternalUser.value) {
+    return
+  }
   if (!selectedDowngradePlan.value) return
 
   downgrading.value = true
@@ -473,6 +499,9 @@ async function confirmDowngrade() {
 }
 
 async function confirmCancelSubscription() {
+  if (isInternalUser.value) {
+    return
+  }
   if (!props.currentSubscription) {
     return
   }
@@ -494,10 +523,16 @@ async function confirmCancelSubscription() {
 }
 
 function handleResumeClick() {
+  if (isInternalUser.value) {
+    return
+  }
   showResumeDialog.value = true
 }
 
 async function confirmResumeSubscription() {
+  if (isInternalUser.value) {
+    return
+  }
   if (!props.currentSubscription) {
     return
   }
