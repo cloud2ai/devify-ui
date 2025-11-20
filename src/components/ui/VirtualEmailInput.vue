@@ -20,7 +20,9 @@
             }"
             :disabled="disabled"
           />
-          <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+          <div
+            class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
+          >
             <svg
               v-if="checking"
               class="animate-spin h-5 w-5 text-gray-400"
@@ -68,7 +70,9 @@
             </svg>
           </div>
         </div>
-        <span class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+        <span
+          class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm"
+        >
           @{{ domain }}
         </span>
       </div>
@@ -150,7 +154,8 @@ const generateUsernameSuggestions = (baseUsername) => {
 const translateErrorMessage = (message, currentUsername) => {
   const errorMap = {
     'This username is reserved and cannot be used': t('auth.usernameReserved'),
-    'Username can only contain letters, numbers, dots, hyphens, and underscores': t('auth.usernameInvalidChars'),
+    'Username can only contain letters, numbers, dots, hyphens, and underscores':
+      t('auth.usernameInvalidChars'),
     'Username cannot start or end with a dot': t('auth.usernameInvalidDot')
   }
 
@@ -184,8 +189,12 @@ const checkUsername = async (value) => {
       emit('validation', { valid: true, error: '' })
     } else {
       isValid.value = false
-      const translatedMessage = translateErrorMessage(responseData.message, value)
-      validationError.value = translatedMessage || t('auth.usernameNotAvailable')
+      const translatedMessage = translateErrorMessage(
+        responseData.message,
+        value
+      )
+      validationError.value =
+        translatedMessage || t('auth.usernameNotAvailable')
       emit('validation', { valid: false, error: validationError.value })
     }
   } catch (error) {
@@ -215,27 +224,39 @@ const handleInput = () => {
 }
 
 const handleBlur = () => {
-  if (username.value && !isValid.value && !checking.value && !validationError.value) {
+  if (
+    username.value &&
+    !isValid.value &&
+    !checking.value &&
+    !validationError.value
+  ) {
     debouncedCheck(username.value)
   }
 }
 
-watch(() => props.modelValue, (newValue, oldValue) => {
-  username.value = newValue
+watch(
+  () => props.modelValue,
+  (newValue, oldValue) => {
+    username.value = newValue
 
-  // Auto-validate immediately when modelValue is set from parent
-  // No debounce needed since it's not user typing
-  if (newValue && newValue.length >= 3 && newValue !== oldValue) {
-    checkUsername(newValue)
-  }
-}, { immediate: true })
+    // Auto-validate immediately when modelValue is set from parent
+    // No debounce needed since it's not user typing
+    if (newValue && newValue.length >= 3 && newValue !== oldValue) {
+      checkUsername(newValue)
+    }
+  },
+  { immediate: true }
+)
 
-watch(() => props.error, (newError) => {
-  if (newError) {
-    validationError.value = newError
-    isValid.value = false
+watch(
+  () => props.error,
+  (newError) => {
+    if (newError) {
+      validationError.value = newError
+      isValid.value = false
+    }
   }
-})
+)
 </script>
 
 <style scoped>

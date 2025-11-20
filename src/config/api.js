@@ -9,9 +9,7 @@ const getBaseUrl = () => {
 
   if (envUrl) {
     // If VITE_API_BASE_URL includes /api, strip it
-    return envUrl.endsWith('/api')
-      ? envUrl.replace('/api', '')
-      : envUrl
+    return envUrl.endsWith('/api') ? envUrl.replace('/api', '') : envUrl
   }
 
   // Default for development in Docker
@@ -46,6 +44,6 @@ export default {
   endpoints: {
     googleLogin: () => `${getOAuthBaseUrl()}/accounts/google/login/`,
     wechatLogin: () => `${getOAuthBaseUrl()}/accounts/weixin/login/`,
-    oauthCallback: () => `${getOAuthBaseUrl()}/accounts/oauth/callback/`,
+    oauthCallback: () => `${getOAuthBaseUrl()}/accounts/oauth/callback/`
   }
 }

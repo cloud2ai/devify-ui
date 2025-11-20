@@ -5,10 +5,8 @@ module.exports = {
     browser: true,
     es2022: true
   },
-  extends: [
-    'eslint:recommended',
-    '@vue/eslint-config-prettier'
-  ],
+  parser: 'vue-eslint-parser',
+  extends: ['eslint:recommended', '@vue/eslint-config-prettier'],
   parserOptions: {
     ecmaVersion: 2022,
     sourceType: 'module'

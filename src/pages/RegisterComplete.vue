@@ -1,5 +1,7 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div
+    class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
+  >
     <div class="max-w-md w-full space-y-8">
       <div>
         <div class="flex items-center justify-center">
@@ -16,7 +18,9 @@
       </div>
 
       <div v-if="verifying" class="text-center py-12">
-        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div
+          class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"
+        ></div>
         <p class="mt-4 text-gray-600">{{ t('register.complete.verifying') }}</p>
       </div>
 
@@ -76,10 +80,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store/user'
-import {
-  verifyRegistrationToken,
-  completeRegistration
-} from '@/api/auth'
+import { verifyRegistrationToken, completeRegistration } from '@/api/auth'
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher.vue'
 import UserSetupForm from '@/components/ui/UserSetupForm.vue'
 
@@ -159,7 +160,7 @@ const handleComplete = async (formValues) => {
     const errorData = error.response?.data?.data || error.response?.data
 
     if (errorData?.errors) {
-      Object.keys(errorData.errors).forEach(key => {
+      Object.keys(errorData.errors).forEach((key) => {
         setupFormRef.value?.setError(key, errorData.errors[key][0])
       })
     }

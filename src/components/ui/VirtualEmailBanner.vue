@@ -22,7 +22,9 @@
         </div>
 
         <div class="min-w-0 flex-1">
-          <div class="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-1.5">
+          <div
+            class="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-1.5"
+          >
             <span class="text-xs font-medium text-blue-800 shrink-0">
               {{ label }}:
             </span>

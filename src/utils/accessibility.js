@@ -30,7 +30,7 @@ export function isFocusable(element) {
     '[contenteditable="true"]'
   ]
 
-  return focusableSelectors.some(selector => element.matches(selector))
+  return focusableSelectors.some((selector) => element.matches(selector))
 }
 
 /**

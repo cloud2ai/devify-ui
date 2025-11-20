@@ -3,12 +3,14 @@
     "appName": "AImyChats",
     "loading": "加载中...",
     "save": "保存",
+    "saving": "保存中",
     "cancel": "取消",
     "delete": "删除",
     "edit": "编辑",
     "close": "关闭",
     "confirm": "确认",
     "back": "返回",
+    "required": "必填",
     "next": "下一页",
     "previous": "上一页",
     "pageInfo": "第 {current} 页，共 {total} 页",
@@ -32,6 +34,7 @@
     "noSubject": "无主题",
     "yes": "是",
     "no": "否",
+    "markdownSupported": "支持 Markdown 格式",
     "status": {
       "success": "成功",
       "failed": "失败",
@@ -240,6 +243,9 @@
     "keywords": {
       "title": "标签",
       "desc": "自定义标签辅助检索（如“高优先级/外部/方案讨论”）"
+    },
+    "createdAt": {
+      "title": "创建时间"
     }
   },
   "settings": {
@@ -490,6 +496,66 @@
     },
     "errors": {
       "fetchFailed": "获取账单信息失败"
+    }
+  },
+  "todos": {
+    "title": "待办事项",
+    "calendar": "日历视图",
+    "list": "列表视图",
+    "add": "添加待办",
+    "edit": "编辑",
+    "delete": "删除",
+    "completed": "已完成",
+    "incomplete": "未完成",
+    "priority": {
+      "high": "高优先级",
+      "medium": "中优先级",
+      "low": "低优先级",
+      "label": "优先级"
+    },
+    "addPriority": "添加优先级",
+    "addOwner": "添加负责人",
+    "addDeadline": "添加截止日期",
+    "addLocation": "添加地点",
+    "details": "详情",
+    "keyProcess": "关键流程",
+    "deadline": "截止日期",
+    "owner": "负责人",
+    "location": "地点",
+    "content": "内容",
+    "markCompleted": "标记为已完成",
+    "markIncomplete": "标记为未完成",
+    "addTodo": "添加待办事项",
+    "editTodo": "编辑待办事项",
+    "deleteTodo": "删除待办事项",
+    "deleteConfirm": "确定要删除这个待办事项吗？",
+    "confirmDelete": "确认删除该待办？",
+    "notSet": "暂未设置",
+    "save": "保存",
+    "cancel": "取消",
+    "noTodos": "暂无待办事项",
+    "noTodosForDate": "该日期没有待办事项",
+    "stats": {
+      "total": "总数",
+      "completed": "已完成",
+      "incomplete": "未完成",
+      "completionRate": "完成率",
+      "byPriority": "按优先级"
+    },
+    "filters": {
+      "all": "全部",
+      "completed": "已完成",
+      "incomplete": "未完成",
+      "priority": "优先级",
+      "owner": "负责人",
+      "search": "搜索待办事项..."
+    },
+    "newFormat": {
+      "details": "核心主题",
+      "keyProcess": "关键流程",
+      "todos": "待办事项",
+      "keyProcessPlaceholder": "每行一个流程项",
+      "keyProcessHint": "每行输入一个关键流程，支持多行"
     }
   }
 }

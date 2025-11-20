@@ -71,16 +71,22 @@ const routes = [
   },
   {
     path: '/conversations/:id',
-    redirect: to => `/chats/${to.params.id}`
+    redirect: (to) => `/chats/${to.params.id}`
   },
   {
     path: '/threadlines/:id',
-    redirect: to => `/chats/${to.params.id}`
+    redirect: (to) => `/chats/${to.params.id}`
   },
   {
     path: '/settings',
     name: 'Settings',
     component: () => import('@/pages/Settings.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/todos',
+    name: 'Todos',
+    component: () => import('@/pages/TodosPage.vue'),
     meta: { requiresAuth: true }
   },
   {

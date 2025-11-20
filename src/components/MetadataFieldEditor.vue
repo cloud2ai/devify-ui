@@ -2,37 +2,60 @@
   <BaseModal :show="show" :title="modalTitle" @close="onCancel">
     <div class="space-y-4">
       <div class="flex items-center justify-between">
-        <div class="text-xs text-gray-500">{{ t('common.key') }}: <span class="font-medium text-gray-700">{{ fieldKey || '-' }}</span></div>
+        <div class="text-xs text-gray-500">
+          {{ t('common.key') }}:
+          <span class="font-medium text-gray-700">{{ fieldKey || '-' }}</span>
+        </div>
         <div class="flex items-center gap-2">
           <button
             class="px-2 py-1 text-xs rounded-md border border-gray-200 hover:bg-gray-50"
             @click="resetToOriginal"
             type="button"
             title="Reset"
-          >Reset</button>
+          >
+            Reset
+          </button>
           <button
             class="px-2 py-1 text-xs rounded-md border border-gray-200 hover:bg-gray-50"
             @click="clearValue"
             type="button"
             title="Clear"
-          >Clear</button>
+          >
+            Clear
+          </button>
         </div>
       </div>
 
       <div class="flex items-center gap-2 text-xs">
         <button
-          :class="['px-2 py-1 rounded-md border', inputMode === 'text' ? 'bg-primary-50 border-primary-200 text-primary-700' : 'border-gray-200 hover:bg-gray-50']"
+          :class="[
+            'px-2 py-1 rounded-md border',
+            inputMode === 'text'
+              ? 'bg-primary-50 border-primary-200 text-primary-700'
+              : 'border-gray-200 hover:bg-gray-50'
+          ]"
           @click="forceTextMode"
           type="button"
-        >Text</button>
+        >
+          Text
+        </button>
         <button
-          :class="['px-2 py-1 rounded-md border', inputMode === 'json' ? 'bg-primary-50 border-primary-200 text-primary-700' : 'border-gray-200 hover:bg-gray-50']"
+          :class="[
+            'px-2 py-1 rounded-md border',
+            inputMode === 'json'
+              ? 'bg-primary-50 border-primary-200 text-primary-700'
+              : 'border-gray-200 hover:bg-gray-50'
+          ]"
           @click="forceJsonMode"
           type="button"
-        >JSON</button>
+        >
+          JSON
+        </button>
       </div>
       <div v-if="inputMode === 'text'">
-        <label class="block text-sm font-medium text-gray-700 mb-1">{{ fieldLabel }}</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1">{{
+          fieldLabel
+        }}</label>
         <input
           v-model="localValue"
           type="text"
@@ -40,11 +63,15 @@
           :placeholder="placeholder"
           autofocus
         />
-        <div class="mt-1 text-xs text-gray-400">{{ textCount }} {{ t('common.characters') }}</div>
+        <div class="mt-1 text-xs text-gray-400">
+          {{ textCount }} {{ t('common.characters') }}
+        </div>
       </div>
 
       <div v-else>
-        <label class="block text-sm font-medium text-gray-700 mb-1">{{ fieldLabel }} (JSON)</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >{{ fieldLabel }} (JSON)</label
+        >
         <textarea
           v-model="localText"
           rows="6"
@@ -52,7 +79,13 @@
           :placeholder="jsonPlaceholder"
         />
         <div class="mt-2 flex items-center gap-2">
-          <button class="px-2 py-1 text-xs rounded-md border border-gray-200 hover:bg-gray-50" type="button" @click="beautifyJson">Beautify</button>
+          <button
+            class="px-2 py-1 text-xs rounded-md border border-gray-200 hover:bg-gray-50"
+            type="button"
+            @click="beautifyJson"
+          >
+            Beautify
+          </button>
           <span class="text-xs text-gray-400">{{ jsonBytes }} bytes</span>
         </div>
         <p v-if="error" class="mt-2 text-sm text-red-600">{{ error }}</p>
@@ -61,8 +94,12 @@
 
     <template #footer>
       <div class="w-full flex items-center justify-end gap-2">
-        <BaseButton variant="secondary" @click="onCancel">{{ t('common.cancel') }}</BaseButton>
-        <BaseButton :loading="saving" variant="primary" @click="onSave">{{ t('common.save') }}</BaseButton>
+        <BaseButton variant="secondary" @click="onCancel">{{
+          t('common.cancel')
+        }}</BaseButton>
+        <BaseButton :loading="saving" variant="primary" @click="onSave">{{
+          t('common.save')
+        }}</BaseButton>
       </div>
     </template>
   </BaseModal>
@@ -92,7 +129,9 @@ const localText = ref('')
 const jsonPlaceholder = 'Enter JSON value, e.g. [tag1, tag2]'
 const originalValue = ref(undefined)
 
-const modalTitle = computed(() => props.fieldKey ? `${t('common.edit')} ${props.fieldKey}` : t('common.edit'))
+const modalTitle = computed(() =>
+  props.fieldKey ? `${t('common.edit')} ${props.fieldKey}` : t('common.edit')
+)
 const fieldLabel = computed(() => props.fieldKey || t('common.value'))
 
 const mode = ref('auto')
@@ -102,36 +141,52 @@ const inputMode = computed(() => {
   if (mode.value === 'text') return 'text'
   if (mode.value === 'json') return 'json'
   const v = props.value
-  const isTextLike = typeof v === 'string' || typeof v === 'number' || v === null || v === undefined || typeof v === 'boolean'
+  const isTextLike =
+    typeof v === 'string' ||
+    typeof v === 'number' ||
+    v === null ||
+    v === undefined ||
+    typeof v === 'boolean'
   return isTextLike ? 'text' : 'json'
 })
 
-watch(() => props.value, (v) => {
-  error.value = ''
-  originalValue.value = v
-  if (inputMode.value === 'text') {
-    localValue.value = v ?? ''
-  } else {
-    try {
-      localText.value = v !== undefined ? JSON.stringify(v, null, 2) : ''
-    } catch (e) {
-      localText.value = ''
+watch(
+  () => props.value,
+  (v) => {
+    error.value = ''
+    originalValue.value = v
+    if (inputMode.value === 'text') {
+      localValue.value = v ?? ''
+    } else {
+      try {
+        localText.value = v !== undefined ? JSON.stringify(v, null, 2) : ''
+      } catch (e) {
+        localText.value = ''
+      }
     }
-  }
-}, { immediate: true })
+  },
+  { immediate: true }
+)
 
 const textCount = computed(() => String(localValue.value ?? '').length)
 const jsonBytes = computed(() => new Blob([String(localText.value ?? '')]).size)
 
-const forceTextMode = () => { mode.value = 'text' }
-const forceJsonMode = () => { mode.value = 'json' }
+const forceTextMode = () => {
+  mode.value = 'text'
+}
+const forceJsonMode = () => {
+  mode.value = 'json'
+}
 const resetToOriginal = () => {
   error.value = ''
   if (inputMode.value === 'text') {
     localValue.value = originalValue.value ?? ''
   } else {
     try {
-      localText.value = originalValue.value !== undefined ? JSON.stringify(originalValue.value, null, 2) : ''
+      localText.value =
+        originalValue.value !== undefined
+          ? JSON.stringify(originalValue.value, null, 2)
+          : ''
     } catch (e) {
       localText.value = ''
     }
@@ -182,5 +237,4 @@ const onSave = async () => {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

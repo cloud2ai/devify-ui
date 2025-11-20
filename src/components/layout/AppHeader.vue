@@ -8,20 +8,29 @@
             @click="toggleMobileMenu"
             class="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             </svg>
           </button>
-          <router-link
-            to="/chats"
-            class="flex items-center space-x-2"
-          >
+          <router-link to="/chats" class="flex items-center space-x-2">
             <img
               src="/android-chrome-192x192.png"
               alt="AImyChats Logo"
               class="w-8 h-8"
             />
-            <span class="text-xl font-semibold text-gray-900">{{ t('common.appName') }}</span>
+            <span class="text-xl font-semibold text-gray-900">{{
+              t('common.appName')
+            }}</span>
           </router-link>
         </div>
 
@@ -33,6 +42,13 @@
             :class="{ 'nav-link-active': $route.name === 'Chats' }"
           >
             {{ t('chats.title') }}
+          </router-link>
+          <router-link
+            to="/todos"
+            class="nav-link"
+            :class="{ 'nav-link-active': $route.name === 'Todos' }"
+          >
+            {{ t('todos.title') }}
           </router-link>
           <router-link
             to="/settings"
@@ -74,7 +90,12 @@
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
 
@@ -93,21 +114,40 @@
               >
                 <!-- User Info -->
                 <div class="px-4 py-2 border-b border-gray-100">
-                  <div class="font-semibold text-gray-900 truncate">{{ displayName }}</div>
+                  <div class="font-semibold text-gray-900 truncate">
+                    {{ displayName }}
+                  </div>
                 </div>
 
                 <!-- AI Email Card (Always at the top) -->
                 <div v-if="userStore.userInfo?.virtual_email" class="px-4 py-2">
-                  <div class="bg-gradient-to-r from-primary-50 to-blue-50 rounded-lg p-3 border border-primary-100">
+                  <div
+                    class="bg-gradient-to-r from-primary-50 to-blue-50 rounded-lg p-3 border border-primary-100"
+                  >
                     <div class="flex items-center gap-2 mb-2">
-                      <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      <svg
+                        class="w-4 h-4 text-primary-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                        />
                       </svg>
-                      <span class="text-xs text-primary-700 font-semibold">{{ t('virtualEmail.yourAddress') }}</span>
+                      <span class="text-xs text-primary-700 font-semibold">{{
+                        t('virtualEmail.yourAddress')
+                      }}</span>
                     </div>
                     <div class="flex items-center gap-2">
                       <div class="flex-1 min-w-0">
-                        <div class="text-primary-900 text-sm font-medium truncate" :title="userStore.userInfo?.virtual_email">
+                        <div
+                          class="text-primary-900 text-sm font-medium truncate"
+                          :title="userStore.userInfo?.virtual_email"
+                        >
                           {{ userStore.userInfo?.virtual_email }}
                         </div>
                       </div>
@@ -156,9 +196,24 @@
                     class="flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md px-2 py-1.5 transition-colors"
                     @click="showUserMenu = false"
                   >
-                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <svg
+                      class="w-4 h-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                      />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
                     </svg>
                     <span>{{ t('common.settings') }}</span>
                   </router-link>
@@ -210,14 +265,28 @@
         v-if="showMobileMenu"
         class="md:hidden fixed inset-y-0 left-0 w-64 bg-white shadow-xl z-50 flex flex-col"
       >
-        <div class="flex items-center justify-between p-4 border-b border-gray-200">
-          <span class="text-lg font-semibold text-gray-900">{{ t('common.appName') }}</span>
+        <div
+          class="flex items-center justify-between p-4 border-b border-gray-200"
+        >
+          <span class="text-lg font-semibold text-gray-900">{{
+            t('common.appName')
+          }}</span>
           <button
             @click="showMobileMenu = false"
             class="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -226,34 +295,106 @@
           <router-link
             to="/chats"
             class="flex items-center gap-3 px-3 py-2.5 rounded-md text-base font-medium transition-colors"
-            :class="$route.name === 'Chats' ? 'bg-primary-50 text-primary-600' : 'text-gray-700 hover:bg-gray-50'"
+            :class="
+              $route.name === 'Chats'
+                ? 'bg-primary-50 text-primary-600'
+                : 'text-gray-700 hover:bg-gray-50'
+            "
             @click="showMobileMenu = false"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+              />
             </svg>
             <span>{{ t('chats.title') }}</span>
           </router-link>
           <router-link
-            to="/settings"
+            to="/todos"
             class="flex items-center gap-3 px-3 py-2.5 rounded-md text-base font-medium transition-colors"
-            :class="$route.name === 'Settings' ? 'bg-primary-50 text-primary-600' : 'text-gray-700 hover:bg-gray-50'"
+            :class="
+              $route.name === 'Todos'
+                ? 'bg-primary-50 text-primary-600'
+                : 'text-gray-700 hover:bg-gray-50'
+            "
             @click="showMobileMenu = false"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+              />
+            </svg>
+            <span>{{ t('todos.title') }}</span>
+          </router-link>
+          <router-link
+            to="/settings"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-md text-base font-medium transition-colors"
+            :class="
+              $route.name === 'Settings'
+                ? 'bg-primary-50 text-primary-600'
+                : 'text-gray-700 hover:bg-gray-50'
+            "
+            @click="showMobileMenu = false"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
             </svg>
             <span>{{ t('common.settings') }}</span>
           </router-link>
           <router-link
             to="/billing"
             class="flex items-center gap-3 px-3 py-2.5 rounded-md text-base font-medium transition-colors"
-            :class="$route.name === 'Billing' ? 'bg-primary-50 text-primary-600' : 'text-gray-700 hover:bg-gray-50'"
+            :class="
+              $route.name === 'Billing'
+                ? 'bg-primary-50 text-primary-600'
+                : 'text-gray-700 hover:bg-gray-50'
+            "
             @click="showMobileMenu = false"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+              />
             </svg>
             <span>{{ t('billing.menuTitle') }}</span>
           </router-link>
@@ -333,7 +474,7 @@ const avatarBgColor = computed(() => {
     'bg-emerald-500',
     'bg-teal-500',
     'bg-cyan-500',
-    'bg-sky-500',
+    'bg-sky-500'
   ]
 
   // Use character code to deterministically select a color

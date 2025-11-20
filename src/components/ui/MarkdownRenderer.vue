@@ -34,7 +34,7 @@ const props = defineProps({
 
 // Configure marked options
 marked.setOptions({
-  highlight: function(code, lang) {
+  highlight: function (code, lang) {
     if (props.enableHighlight && lang && hljs.getLanguage(lang)) {
       try {
         return hljs.highlight(code, { language: lang }).value

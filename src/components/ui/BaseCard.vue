@@ -1,9 +1,6 @@
 <template>
   <div :class="cardClasses">
-    <div
-      v-if="$slots.header || title"
-      :class="headerClasses"
-    >
+    <div v-if="$slots.header || title" :class="headerClasses">
       <slot name="header">
         <h3 v-if="title" class="text-lg font-semibold text-gray-900">
           {{ title }}
@@ -15,10 +12,7 @@
       <slot />
     </div>
 
-    <div
-      v-if="$slots.footer"
-      class="card-footer"
-    >
+    <div v-if="$slots.footer" class="card-footer">
       <slot name="footer" />
     </div>
   </div>
@@ -71,7 +65,9 @@ const cardClasses = computed(() => {
     baseClasses,
     paddingClasses[props.padding],
     shadowClasses[props.shadow]
-  ].filter(Boolean).join(' ')
+  ]
+    .filter(Boolean)
+    .join(' ')
 })
 
 const headerClasses = computed(() => {

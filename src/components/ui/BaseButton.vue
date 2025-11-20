@@ -40,7 +40,8 @@ const props = defineProps({
   variant: {
     type: String,
     default: 'primary',
-    validator: (value) => ['primary', 'secondary', 'danger', 'outline'].includes(value)
+    validator: (value) =>
+      ['primary', 'secondary', 'danger', 'outline'].includes(value)
   },
   size: {
     type: String,
@@ -65,7 +66,7 @@ const props = defineProps({
   }
 })
 
-    const emit = defineEmits(['click'])
+const emit = defineEmits(['click'])
 
 const handleClick = (event) => {
   if (!props.disabled && !props.loading) {
@@ -74,7 +75,11 @@ const handleClick = (event) => {
 }
 
 const handleKeydown = (event) => {
-  if ((event.key === 'Enter' || event.key === ' ') && !props.disabled && !props.loading) {
+  if (
+    (event.key === 'Enter' || event.key === ' ') &&
+    !props.disabled &&
+    !props.loading
+  ) {
     event.preventDefault()
     emit('click', event)
   }
@@ -100,6 +105,8 @@ const buttonClasses = computed(() => {
     variantClasses[props.variant],
     sizeClasses[props.size],
     blockClass
-  ].filter(Boolean).join(' ')
+  ]
+    .filter(Boolean)
+    .join(' ')
 })
 </script>

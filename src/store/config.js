@@ -18,10 +18,12 @@ export const useConfigStore = defineStore('config', () => {
 
   // Getters
   const isSmtpConfigured = computed(() => {
-    return smtpConfig.value.host &&
-           smtpConfig.value.username &&
-           smtpConfig.value.password &&
-           smtpConfig.value.from_email
+    return (
+      smtpConfig.value.host &&
+      smtpConfig.value.username &&
+      smtpConfig.value.password &&
+      smtpConfig.value.from_email
+    )
   })
 
   // Actions
@@ -36,10 +38,9 @@ export const useConfigStore = defineStore('config', () => {
       // Handle paginated response or direct data
       const data = responseData.list || responseData.results || responseData
 
-
       if (Array.isArray(data) && data.length > 0) {
         // Find SMTP config from settings list
-        const smtpSetting = data.find(setting => setting.category === 'smtp')
+        const smtpSetting = data.find((setting) => setting.category === 'smtp')
         if (smtpSetting && smtpSetting.value) {
           smtpConfig.value = JSON.parse(smtpSetting.value)
         }

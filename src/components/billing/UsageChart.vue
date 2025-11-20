@@ -5,7 +5,9 @@
         {{ t('billing.usageStats.title') }}
       </h3>
 
-      <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+      <div
+        class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between"
+      >
         <div class="flex gap-2">
           <button
             v-for="period in periods"
@@ -69,7 +71,7 @@
       </div>
     </div>
 
-    <div class="relative" style="height: 240px;">
+    <div class="relative" style="height: 240px">
       <Line
         v-if="!loading && chartData"
         :data="chartData"
@@ -132,12 +134,12 @@ const chartData = computed(() => {
     return null
   }
 
-  const dates = stats.value.stats.map(item => {
+  const dates = stats.value.stats.map((item) => {
     const date = new Date(item.date)
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   })
 
-  const consumed = stats.value.stats.map(item => item.consumed)
+  const consumed = stats.value.stats.map((item) => item.consumed)
 
   return {
     labels: dates,
@@ -165,7 +167,7 @@ const chartOptions = {
       mode: 'index',
       intersect: false,
       callbacks: {
-        label: function(context) {
+        label: function (context) {
           return `${context.dataset.label}: ${context.parsed.y} credits`
         }
       }
@@ -208,10 +210,7 @@ function selectPeriod(days) {
   const startDate = new Date()
   startDate.setDate(startDate.getDate() - days)
 
-  fetchUsageStats(
-    startDate.toISOString(),
-    endDate.toISOString()
-  )
+  fetchUsageStats(startDate.toISOString(), endDate.toISOString())
 }
 
 function handleCustomDateChange() {
@@ -221,10 +220,7 @@ function handleCustomDateChange() {
     const startDate = new Date(customStartDate.value)
     const endDate = new Date(customEndDate.value)
 
-    fetchUsageStats(
-      startDate.toISOString(),
-      endDate.toISOString()
-    )
+    fetchUsageStats(startDate.toISOString(), endDate.toISOString())
   }
 }
 

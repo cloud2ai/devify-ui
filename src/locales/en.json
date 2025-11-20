@@ -3,12 +3,14 @@
     "appName": "AImyChats",
     "loading": "Loading...",
     "save": "Save",
+    "saving": "Saving",
     "cancel": "Cancel",
     "delete": "Delete",
     "edit": "Edit",
     "close": "Close",
     "confirm": "Confirm",
     "back": "Back",
+    "required": "Required",
     "next": "Next",
     "previous": "Previous",
     "pageInfo": "Page {current} of {total}",
@@ -32,6 +34,7 @@
     "noSubject": "No Subject",
     "yes": "Yes",
     "no": "No",
+    "markdownSupported": "Markdown format supported",
     "status": {
       "success": "Success",
       "failed": "Failed",
@@ -200,7 +203,6 @@
     "noResults": "No matching results found",
     "tags": "Tags",
     "basicInformation": "Basic Information",
-    "aiSummary": "AI Summary",
     "processedContent": "Conversation Notes",
     "summaryProcessing": "AI summary is being processed...",
     "processedContentProcessing": "Conversation notes being processed...",
@@ -231,6 +233,9 @@
     "keywords": {
       "title": "Tags",
       "desc": "Custom tags for search (e.g., High priority/External/Discussion)"
+    },
+    "createdAt": {
+      "title": "Created"
     }
   },
   "settings": {
@@ -481,6 +486,66 @@
     },
     "errors": {
       "fetchFailed": "Failed to fetch billing information"
+    }
+  },
+  "todos": {
+    "title": "Todos",
+    "calendar": "Calendar View",
+    "list": "List View",
+    "add": "Add Todo",
+    "edit": "Edit",
+    "delete": "Delete",
+    "completed": "Completed",
+    "incomplete": "Incomplete",
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low",
+      "label": "Priority"
+    },
+    "addPriority": "Add Priority",
+    "addOwner": "Add Owner",
+    "addDeadline": "Add Deadline",
+    "addLocation": "Add Location",
+    "details": "Details",
+    "keyProcess": "Key Process",
+    "deadline": "Deadline",
+    "owner": "Owner",
+    "location": "Location",
+    "content": "Content",
+    "markCompleted": "Mark as Completed",
+    "markIncomplete": "Mark as Incomplete",
+    "addTodo": "Add Todo",
+    "editTodo": "Edit Todo",
+    "deleteTodo": "Delete Todo",
+    "deleteConfirm": "Are you sure you want to delete this todo?",
+    "confirmDelete": "Delete this todo?",
+    "notSet": "Not set yet",
+    "save": "Save",
+    "cancel": "Cancel",
+    "noTodos": "No todos available",
+    "noTodosForDate": "No todos for this date",
+    "stats": {
+      "total": "Total",
+      "completed": "Completed",
+      "incomplete": "Incomplete",
+      "completionRate": "Completion Rate",
+      "byPriority": "By Priority"
+    },
+    "filters": {
+      "all": "All",
+      "completed": "Completed",
+      "incomplete": "Incomplete",
+      "priority": "Priority",
+      "owner": "Owner",
+      "search": "Search todos..."
+    },
+    "newFormat": {
+      "details": "Details",
+      "keyProcess": "Key Process",
+      "todos": "Todos",
+      "keyProcessPlaceholder": "One process item per line",
+      "keyProcessHint": "Enter one key process per line, supports multiple lines"
     }
   }
 }

@@ -6,8 +6,8 @@ import { es } from 'date-fns/locale/es'
 
 const localeMap = {
   'zh-CN': zhCN,
-  'en': enUS,
-  'es': es
+  en: enUS,
+  es: es
 }
 
 export function detectTimezone() {
@@ -33,7 +33,12 @@ export function detectLanguage() {
   return 'en'
 }
 
-export function formatDate(date, timezone, pattern = 'yyyy-MM-dd HH:mm:ss', language = 'en') {
+export function formatDate(
+  date,
+  timezone,
+  pattern = 'yyyy-MM-dd HH:mm:ss',
+  language = 'en'
+) {
   if (!date) return ''
 
   try {
@@ -53,11 +58,18 @@ export function formatDate(date, timezone, pattern = 'yyyy-MM-dd HH:mm:ss', lang
 
     // date-fns formatInTimeZone supports Chinese characters in pattern string
     // The locale parameter affects relative time and month/day names, not the pattern itself
-    const result = formatInTimeZone(dateObj, timezone || 'UTC', pattern, { locale })
+    const result = formatInTimeZone(dateObj, timezone || 'UTC', pattern, {
+      locale
+    })
 
     return result
   } catch (error) {
-    console.error('Failed to format date:', error, { date, timezone, pattern, language })
+    console.error('Failed to format date:', error, {
+      date,
+      timezone,
+      pattern,
+      language
+    })
     return ''
   }
 }
@@ -91,10 +103,10 @@ export function convertToUserTimezone(date, timezone) {
 // Get friendly language display name
 export function getFriendlyLanguageName(languageCode) {
   const languageNames = {
-    'en': 'English',
+    en: 'English',
     'zh-CN': '简体中文',
-    'zh': '简体中文',
-    'es': 'Español'
+    zh: '简体中文',
+    es: 'Español'
   }
   return languageNames[languageCode] || languageCode
 }

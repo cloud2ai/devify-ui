@@ -11,15 +11,29 @@
         <BaseCard>
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              <div
+                class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center"
+              >
+                <svg
+                  class="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
                 </svg>
               </div>
             </div>
             <div class="ml-3 flex-1 min-w-0">
               <dl>
-                <dt class="text-xs sm:text-sm font-medium text-gray-500 truncate">
+                <dt
+                  class="text-xs sm:text-sm font-medium text-gray-500 truncate"
+                >
                   {{ t('dashboard.stats.totalMessages') }}
                 </dt>
                 <dd class="text-lg font-medium text-gray-900">
@@ -33,15 +47,29 @@
         <BaseCard>
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <div class="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              <div
+                class="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center"
+              >
+                <svg
+                  class="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
                 </svg>
               </div>
             </div>
             <div class="ml-3 flex-1 min-w-0">
               <dl>
-                <dt class="text-xs sm:text-sm font-medium text-gray-500 truncate">
+                <dt
+                  class="text-xs sm:text-sm font-medium text-gray-500 truncate"
+                >
                   {{ t('dashboard.stats.thisWeek') }}
                 </dt>
                 <dd class="text-lg font-medium text-gray-900">
@@ -55,15 +83,29 @@
         <BaseCard>
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <div class="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <div
+                class="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center"
+              >
+                <svg
+                  class="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
               </div>
             </div>
             <div class="ml-3 flex-1 min-w-0">
               <dl>
-                <dt class="text-xs sm:text-sm font-medium text-gray-500 truncate">
+                <dt
+                  class="text-xs sm:text-sm font-medium text-gray-500 truncate"
+                >
                   {{ t('dashboard.stats.pending') }}
                 </dt>
                 <dd class="text-lg font-medium text-gray-900">
@@ -77,15 +119,29 @@
         <BaseCard>
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              <div
+                class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center"
+              >
+                <svg
+                  class="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  />
                 </svg>
               </div>
             </div>
             <div class="ml-3 flex-1 min-w-0">
               <dl>
-                <dt class="text-xs sm:text-sm font-medium text-gray-500 truncate">
+                <dt
+                  class="text-xs sm:text-sm font-medium text-gray-500 truncate"
+                >
                   {{ t('dashboard.stats.completed') }}
                 </dt>
                 <dd class="text-lg font-medium text-gray-900">
@@ -102,8 +158,18 @@
         <template #header>
           <div class="flex items-center justify-between gap-4">
             <div class="flex items-center gap-2 text-gray-800">
-              <svg class="w-5 h-5 -mt-px flex-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              <svg
+                class="w-5 h-5 -mt-px flex-none"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
               </svg>
               <h3 class="text-base font-semibold leading-5">
                 {{ t('dashboard.recentMessages') }}
@@ -117,8 +183,18 @@
                   :placeholder="t('chats.searchPlaceholderDetailed')"
                   class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
                 />
-                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <svg
+                  class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
                 </svg>
               </div>
               <BaseButton
@@ -128,8 +204,18 @@
                 size="sm"
               >
                 <template v-if="!loading">
-                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  <svg
+                    class="w-4 h-4 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    />
                   </svg>
                 </template>
                 {{ t('common.refresh') }}
@@ -138,13 +224,25 @@
           </div>
         </template>
         <div v-if="loading" class="text-center py-8">
-          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+          <div
+            class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"
+          ></div>
           <p class="mt-2 text-sm text-gray-500">{{ t('common.loading') }}</p>
         </div>
 
         <div v-else-if="results.length === 0" class="text-center py-8">
-          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          <svg
+            class="mx-auto h-12 w-12 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
           </svg>
           <h3 class="mt-2 text-sm font-medium text-gray-900">
             {{ searchQuery ? t('chats.noResults') : t('chats.noChats') }}
@@ -161,25 +259,49 @@
             class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors cursor-pointer"
             @click="viewResult(result.uuid || result.id)"
           >
-            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+            <div
+              class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3"
+            >
               <div class="flex-1 min-w-0 space-y-2">
                 <h4 class="text-sm font-medium text-gray-900 truncate">
-                  {{ result.summary_title || result.subject || `Email #${result.id}` }}
+                  {{
+                    result.summary_title ||
+                    result.subject ||
+                    `Email #${result.id}`
+                  }}
                 </h4>
                 <div class="text-sm text-gray-500 line-clamp-2 break-words">
                   {{ getPreviewText(result) }}
                 </div>
-                <div class="flex flex-wrap items-center text-xs text-gray-400 gap-x-2 gap-y-1">
-                  <span class="whitespace-nowrap">{{ formatDateTime(result.received_at || result.created_at) }}</span>
+                <div
+                  class="flex flex-wrap items-center text-xs text-gray-400 gap-x-2 gap-y-1"
+                >
+                  <span class="whitespace-nowrap">{{
+                    formatDateTime(result.received_at || result.created_at)
+                  }}</span>
                   <span class="hidden sm:inline">•</span>
-                  <span class="truncate max-w-40">{{ t('chats.from') }}: {{ getSender(result.sender) }}</span>
+                  <span class="truncate max-w-40"
+                    >{{ t('chats.from') }}: {{ getSender(result.sender) }}</span
+                  >
                   <span class="hidden sm:inline">•</span>
-                  <span class="whitespace-nowrap">{{ t('chats.attachments', { count: result.attachments?.length || 0 }) }}</span>
+                  <span class="whitespace-nowrap">{{
+                    t('chats.attachments', {
+                      count: result.attachments?.length || 0
+                    })
+                  }}</span>
                 </div>
                 <!-- Tags Display -->
-                <div v-if="result.metadata?.keywords && result.metadata.keywords.length > 0" class="flex flex-wrap items-center gap-2 mt-2">
+                <div
+                  v-if="
+                    result.metadata?.keywords &&
+                    result.metadata.keywords.length > 0
+                  "
+                  class="flex flex-wrap items-center gap-2 mt-2"
+                >
                   <span
-                    v-for="(tag, index) in getVisibleTags(result.metadata.keywords)"
+                    v-for="(tag, index) in getVisibleTags(
+                      result.metadata.keywords
+                    )"
                     :key="index"
                     class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800"
                   >
@@ -193,10 +315,22 @@
                   </span>
                 </div>
               </div>
-              <div class="flex items-center justify-between sm:justify-end sm:flex-col sm:items-end space-x-2 sm:space-x-0 sm:space-y-2 flex-shrink-0">
+              <div
+                class="flex items-center justify-between sm:justify-end sm:flex-col sm:items-end space-x-2 sm:space-x-0 sm:space-y-2 flex-shrink-0"
+              >
                 <StatusBadge :status="result.status" />
-                <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                <svg
+                  class="w-5 h-5 text-gray-400 flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </div>
             </div>
@@ -305,7 +439,9 @@ const loadData = async (isLoadMore = false) => {
         page: responseData.pagination.page || pagination.value.page,
         pageSize: responseData.pagination.pageSize || pagination.value.pageSize,
         total: responseData.pagination.total || 0,
-        hasMore: responseData.pagination.next !== null && responseData.pagination.next !== undefined
+        hasMore:
+          responseData.pagination.next !== null &&
+          responseData.pagination.next !== undefined
       }
     }
 
@@ -313,9 +449,11 @@ const loadData = async (isLoadMore = false) => {
     if (!isLoadMore) {
       stats.value = {
         totalResults: pagination.value.total,
-        thisWeek: results.value.filter(r => isThisWeek(r.received_at || r.created_at)).length,
-        pending: results.value.filter(r => r.status === 'pending').length,
-        completed: results.value.filter(r => r.status === 'completed').length
+        thisWeek: results.value.filter((r) =>
+          isThisWeek(r.received_at || r.created_at)
+        ).length,
+        pending: results.value.filter((r) => r.status === 'pending').length,
+        completed: results.value.filter((r) => r.status === 'completed').length
       }
     }
   } catch (error) {
@@ -345,9 +483,10 @@ const formatDateTime = (dateString) => {
   if (!dateString) return t('common.noData')
 
   // Use different date format based on language
-  const dateFormat = preferencesStore.currentLanguage === 'zh-CN'
-    ? 'yyyy年MM月dd日 HH:mm'
-    : 'MMM dd, yyyy HH:mm'
+  const dateFormat =
+    preferencesStore.currentLanguage === 'zh-CN'
+      ? 'yyyy年MM月dd日 HH:mm'
+      : 'MMM dd, yyyy HH:mm'
 
   return formatDate(
     dateString,
@@ -429,7 +568,8 @@ const getPreviewText = (result) => {
 const getSender = (sender) => {
   if (!sender) return t('common.noData')
   if (typeof sender === 'string') return sender
-  if (typeof sender === 'object') return sender.name || sender.email || sender.address || t('common.noData')
+  if (typeof sender === 'object')
+    return sender.name || sender.email || sender.address || t('common.noData')
   return ''
 }
 

@@ -218,6 +218,9 @@
     "keywords": {
       "title": "Etiquetas",
       "desc": "Etiquetas personalizadas para búsqueda (p. ej., Alta prioridad/Externo/Discusión)"
+    },
+    "createdAt": {
+      "title": "Creado"
     }
   },
   "settings": {

@@ -1,5 +1,7 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div
+    class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
+  >
     <div class="max-w-md w-full space-y-8">
       <!-- Header -->
       <div>
@@ -11,7 +13,11 @@
               class="w-10 h-10"
             />
             <h2 class="text-2xl font-bold text-gray-900">
-              {{ activeTab === 'login' ? t('auth.loginTitle') : t('auth.registerTitle') }}
+              {{
+                activeTab === 'login'
+                  ? t('auth.loginTitle')
+                  : t('auth.registerTitle')
+              }}
             </h2>
           </div>
           <LanguageSwitcher />
@@ -23,18 +29,22 @@
         <button
           @click="activeTab = 'login'"
           class="flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors"
-          :class="activeTab === 'login'
-            ? 'border-primary-600 text-primary-600'
-            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          :class="
+            activeTab === 'login'
+              ? 'border-primary-600 text-primary-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          "
         >
           {{ t('auth.tabs.login') }}
         </button>
         <button
           @click="activeTab = 'register'"
           class="flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors"
-          :class="activeTab === 'register'
-            ? 'border-primary-600 text-primary-600'
-            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          :class="
+            activeTab === 'register'
+              ? 'border-primary-600 text-primary-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          "
         >
           {{ t('auth.tabs.register') }}
         </button>
@@ -64,7 +74,9 @@
               {{ t('register.emailSent.title') }}
             </h3>
             <div class="mt-2 text-sm text-green-700">
-              <p>{{ t('register.emailSent.message', { email: formData.email }) }}</p>
+              <p>
+                {{ t('register.emailSent.message', { email: formData.email }) }}
+              </p>
             </div>
           </div>
         </div>
@@ -76,10 +88,7 @@
           :href="googleOAuthUrl"
           class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
         >
-          <svg
-            class="w-5 h-5 mr-2"
-            viewBox="0 0 24 24"
-          >
+          <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24">
             <path
               fill="#4285F4"
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -135,7 +144,9 @@
               class="input rounded-r-none flex-1"
               :class="{ 'input-error': errors.username }"
             />
-            <span class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+            <span
+              class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm"
+            >
               @{{ emailDomain }}
             </span>
           </div>
@@ -164,14 +175,18 @@
               name="remember-me"
               type="checkbox"
               class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-            >
+            />
             <label for="remember-me" class="ml-2 block text-sm text-gray-900">
               {{ t('auth.rememberMe') }}
             </label>
           </div>
 
           <div class="text-sm">
-            <a href="#" @click.prevent="showForgotPassword = true" class="font-medium text-primary-600 hover:text-primary-500">
+            <a
+              href="#"
+              @click.prevent="showForgotPassword = true"
+              class="font-medium text-primary-600 hover:text-primary-500"
+            >
               {{ t('auth.forgotPassword') }}
             </a>
           </div>
@@ -248,7 +263,9 @@
       role="dialog"
       aria-modal="true"
     >
-      <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <div
+        class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+      >
         <!-- Background overlay -->
         <div
           class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
@@ -257,13 +274,22 @@
         ></div>
 
         <!-- Center modal -->
-        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <span
+          class="hidden sm:inline-block sm:align-middle sm:h-screen"
+          aria-hidden="true"
+          >&#8203;</span
+        >
 
         <!-- Modal content -->
-        <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+        <div
+          class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6"
+        >
           <div>
             <div class="mt-3 text-center sm:mt-5">
-              <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+              <h3
+                class="text-lg leading-6 font-medium text-gray-900"
+                id="modal-title"
+              >
                 {{ t('auth.forgotPassword') }}
               </h3>
               <div class="mt-2">
@@ -281,7 +307,11 @@
           >
             <div class="flex">
               <div class="flex-shrink-0">
-                <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                <svg
+                  class="h-5 w-5 text-green-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
                   <path
                     fill-rule="evenodd"
                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -304,7 +334,11 @@
           >
             <div class="flex">
               <div class="flex-shrink-0">
-                <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                <svg
+                  class="h-5 w-5 text-red-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
                   <path
                     fill-rule="evenodd"
                     d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
@@ -321,9 +355,16 @@
           </div>
 
           <!-- Email input form -->
-          <form v-if="!resetEmailSent" @submit.prevent="handleForgotPassword" class="mt-5">
+          <form
+            v-if="!resetEmailSent"
+            @submit.prevent="handleForgotPassword"
+            class="mt-5"
+          >
             <div>
-              <label for="reset-email" class="block text-sm font-medium text-gray-700">
+              <label
+                for="reset-email"
+                class="block text-sm font-medium text-gray-700"
+              >
                 {{ t('settings.securityEmail') }}
               </label>
               <div class="mt-1">
@@ -333,13 +374,18 @@
                   type="email"
                   required
                   class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                  :placeholder="t('auth.securityEmailPlaceholder') || t('auth.emailPlaceholder')"
+                  :placeholder="
+                    t('auth.securityEmailPlaceholder') ||
+                    t('auth.emailPlaceholder')
+                  "
                   :disabled="resetLoading"
                 />
               </div>
             </div>
 
-            <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+            <div
+              class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense"
+            >
               <button
                 type="submit"
                 :disabled="resetLoading || !resetEmail"

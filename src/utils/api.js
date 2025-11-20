@@ -16,7 +16,11 @@
  */
 export function extractResponseData(response) {
   // Handle unified response format: { code, message, data }
-  if (response.data && typeof response.data === 'object' && 'data' in response.data) {
+  if (
+    response.data &&
+    typeof response.data === 'object' &&
+    'data' in response.data
+  ) {
     return response.data.data
   }
 
@@ -30,7 +34,10 @@ export function extractResponseData(response) {
  * @param {string} defaultMessage - Default error message
  * @returns {string} - Error message
  */
-export function extractErrorMessage(error, defaultMessage = 'An error occurred') {
+export function extractErrorMessage(
+  error,
+  defaultMessage = 'An error occurred'
+) {
   if (error.response?.data) {
     const data = error.response.data
 
@@ -50,8 +57,8 @@ export function extractErrorMessage(error, defaultMessage = 'An error occurred')
     }
 
     // Handle field-specific errors
-    const firstFieldError = Object.values(data).find(value =>
-      Array.isArray(value) && value.length > 0
+    const firstFieldError = Object.values(data).find(
+      (value) => Array.isArray(value) && value.length > 0
     )
     if (firstFieldError) {
       return firstFieldError[0]
@@ -73,7 +80,11 @@ export function isApiSuccess(response) {
   }
 
   // Unified response format check
-  if (response.data && typeof response.data === 'object' && 'code' in response.data) {
+  if (
+    response.data &&
+    typeof response.data === 'object' &&
+    'code' in response.data
+  ) {
     return response.data.code === 0
   }
 

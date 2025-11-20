@@ -2,9 +2,25 @@
   <BaseModal :show="show" :title="t('retry.dialogTitle')" @close="handleClose">
     <div v-if="initializing" class="flex items-center justify-center py-8">
       <div class="text-center">
-        <svg class="animate-spin h-8 w-8 text-primary-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        <svg
+          class="animate-spin h-8 w-8 text-primary-600 mx-auto"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
         </svg>
         <p class="mt-4 text-sm text-gray-600">{{ t('common.loading') }}</p>
       </div>
@@ -40,12 +56,9 @@
           <option value="" disabled>
             {{ loadingScenes ? t('common.loading') : t('auth.selectScene') }}
           </option>
-          <option
-            v-for="scene in scenes"
-            :key="scene.key"
-            :value="scene.key"
-          >
-            {{ scene.name }}{{ scene.description ? ` - ${scene.description}` : '' }}
+          <option v-for="scene in scenes" :key="scene.key" :value="scene.key">
+            {{ scene.name
+            }}{{ scene.description ? ` - ${scene.description}` : '' }}
           </option>
         </select>
       </div>
@@ -63,17 +76,30 @@
             />
           </div>
           <div class="flex-1 min-w-0">
-            <label for="force-retry" class="block text-sm font-medium text-gray-700 cursor-pointer">
+            <label
+              for="force-retry"
+              class="block text-sm font-medium text-gray-700 cursor-pointer"
+            >
               {{ t('retry.forceMode') }}
             </label>
           </div>
         </div>
         <div class="mt-2">
-          <div class="py-3 px-4 sm:px-6 bg-yellow-50 border border-yellow-200 rounded-md">
+          <div
+            class="py-3 px-4 sm:px-6 bg-yellow-50 border border-yellow-200 rounded-md"
+          >
             <div class="flex gap-2">
               <div class="flex-shrink-0">
-                <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                <svg
+                  class="h-5 w-5 text-yellow-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
               </div>
               <div class="flex-1 min-w-0">
@@ -88,7 +114,9 @@
     </div>
 
     <template #footer>
-      <div class="w-full flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2">
+      <div
+        class="w-full flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2"
+      >
         <BaseButton
           variant="secondary"
           @click="handleClose"
@@ -186,33 +214,39 @@ const handleRetry = () => {
   })
 }
 
-watch(() => props.show, async (newValue) => {
-  if (newValue) {
-    initializing.value = true
-    // Set force based on status: if success, force must be true
-    localForce.value = forceRequired.value
-    // Reset to empty first
-    localLanguage.value = ''
-    localScene.value = ''
+watch(
+  () => props.show,
+  async (newValue) => {
+    if (newValue) {
+      initializing.value = true
+      // Set force based on status: if success, force must be true
+      localForce.value = forceRequired.value
+      // Reset to empty first
+      localLanguage.value = ''
+      localScene.value = ''
 
-    // Load defaults and scenes in parallel
-    await Promise.all([loadDefaults(), loadScenes()])
+      // Load defaults and scenes in parallel
+      await Promise.all([loadDefaults(), loadScenes()])
 
-    // Set defaults after loading both preferences and scenes
-    // This ensures the select options are populated before setting values
-    if (defaultLanguage.value) {
-      localLanguage.value = defaultLanguage.value
+      // Set defaults after loading both preferences and scenes
+      // This ensures the select options are populated before setting values
+      if (defaultLanguage.value) {
+        localLanguage.value = defaultLanguage.value
+      }
+      if (
+        defaultScene.value &&
+        scenes.value.some((s) => s.key === defaultScene.value)
+      ) {
+        localScene.value = defaultScene.value
+      } else if (scenes.value.length > 0 && !localScene.value) {
+        // If default scene not found, use first available scene
+        localScene.value = scenes.value[0].key
+      }
+
+      initializing.value = false
     }
-    if (defaultScene.value && scenes.value.some(s => s.key === defaultScene.value)) {
-      localScene.value = defaultScene.value
-    } else if (scenes.value.length > 0 && !localScene.value) {
-      // If default scene not found, use first available scene
-      localScene.value = scenes.value[0].key
-    }
-
-    initializing.value = false
   }
-})
+)
 
 onMounted(async () => {
   if (props.show) {
@@ -224,7 +258,10 @@ onMounted(async () => {
     if (defaultLanguage.value) {
       localLanguage.value = defaultLanguage.value
     }
-    if (defaultScene.value && scenes.value.some(s => s.key === defaultScene.value)) {
+    if (
+      defaultScene.value &&
+      scenes.value.some((s) => s.key === defaultScene.value)
+    ) {
       localScene.value = defaultScene.value
     } else if (scenes.value.length > 0 && !localScene.value) {
       localScene.value = scenes.value[0].key

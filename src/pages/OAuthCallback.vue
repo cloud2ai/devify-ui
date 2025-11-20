@@ -1,9 +1,15 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
+  <div
+    class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4"
+  >
     <div class="max-w-md w-full space-y-8">
       <div v-if="processing" class="text-center py-12">
-        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-        <p class="mt-4 text-gray-600">{{ t('auth.processing') || 'Processing...' }}</p>
+        <div
+          class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"
+        ></div>
+        <p class="mt-4 text-gray-600">
+          {{ t('auth.processing') || 'Processing...' }}
+        </p>
       </div>
 
       <div v-else-if="needsSetup">
@@ -17,7 +23,10 @@
             </div>
           </div>
           <p class="mt-2 text-center text-sm text-gray-600">
-            {{ t('register.oauthSetup.subtitle') || 'Please complete your profile setup' }}
+            {{
+              t('register.oauthSetup.subtitle') ||
+              'Please complete your profile setup'
+            }}
           </p>
         </div>
 
@@ -129,7 +138,7 @@ const handleComplete = async (formValues) => {
     const errorData = err.response?.data?.data || err.response?.data
 
     if (errorData?.errors) {
-      Object.keys(errorData.errors).forEach(key => {
+      Object.keys(errorData.errors).forEach((key) => {
         setupFormRef.value?.setError(key, errorData.errors[key][0])
       })
     }

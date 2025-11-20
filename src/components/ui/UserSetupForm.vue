@@ -1,6 +1,9 @@
 <template>
   <div class="space-y-6">
-    <div v-if="displayEmail" class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+    <div
+      v-if="displayEmail"
+      class="bg-blue-50 border border-blue-200 rounded-lg p-4"
+    >
       <p class="text-sm text-blue-800">
         <span class="font-medium">{{ emailLabel }}:</span>
         {{ displayEmail }}
@@ -26,7 +29,11 @@
           name="password"
           autocomplete="new-password"
           :placeholder="t('register.complete.passwordPlaceholder')"
-          :help="!errors.password && !passwordTouched ? t('auth.passwordHelpComplex') : ''"
+          :help="
+            !errors.password && !passwordTouched
+              ? t('auth.passwordHelpComplex')
+              : ''
+          "
           required
           :error="errors.password"
           :valid="isPasswordValid"
@@ -83,10 +90,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">
               {{ t('settings.language') }}
             </label>
-            <select
-              v-model="formData.language"
-              class="input w-full"
-            >
+            <select v-model="formData.language" class="input w-full">
               <option
                 v-for="opt in languageOptions"
                 :key="opt.value"
@@ -96,7 +100,8 @@
               </option>
             </select>
             <p class="mt-1 text-xs text-gray-500">
-              {{ t('settings.detectedText') }}: {{ getFriendlyLanguageName(detectedLanguage) }}
+              {{ t('settings.detectedText') }}:
+              {{ getFriendlyLanguageName(detectedLanguage) }}
             </p>
           </div>
 
@@ -104,7 +109,9 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">
               {{ t('settings.timezone') }}
             </label>
-            <div class="input w-full bg-gray-50 text-gray-600 cursor-not-allowed">
+            <div
+              class="input w-full bg-gray-50 text-gray-600 cursor-not-allowed"
+            >
               {{ getFriendlyTimezoneName(detectedTimezone) }}
             </div>
             <p class="mt-1 text-xs text-gray-500">
@@ -132,7 +139,11 @@
       :disabled="loading || !isFormValid"
       @click="handleSubmit"
     >
-      {{ loading ? t('register.complete.submitting') : t('register.complete.submit') }}
+      {{
+        loading
+          ? t('register.complete.submitting')
+          : t('register.complete.submit')
+      }}
     </BaseButton>
   </div>
 </template>
@@ -206,11 +217,14 @@ const showAdvanced = ref(false)
 
 const languageOptions = computed(() => {
   const codes = ['zh-CN', 'en', 'es']
-  return codes.map(code => ({
+  return codes.map((code) => ({
     value: code,
-    label: code === 'en' ? t('settings.languages.en') :
-           code === 'zh-CN' ? t('settings.languages.zh-CN') :
-           t('settings.languages.es')
+    label:
+      code === 'en'
+        ? t('settings.languages.en')
+        : code === 'zh-CN'
+          ? t('settings.languages.zh-CN')
+          : t('settings.languages.es')
   }))
 })
 
@@ -240,14 +254,13 @@ const isConfirmPasswordValid = computed(() => {
 })
 
 const isFormValid = computed(() => {
-  const baseValid = (
+  const baseValid =
     formData.value.virtualEmailUsername &&
     formData.value.scene &&
     formData.value.language &&
     formData.value.timezone &&
     usernameValid.value &&
-    !Object.values(errors.value).some(error => error)
-  )
+    !Object.values(errors.value).some((error) => error)
 
   if (props.requirePassword) {
     return (
@@ -382,11 +395,15 @@ const setGeneralError = (message) => {
   errorMessage.value = message
 }
 
-watch(() => props.initialUsername, (newValue) => {
-  if (newValue) {
-    formData.value.virtualEmailUsername = newValue
-  }
-}, { immediate: true })
+watch(
+  () => props.initialUsername,
+  (newValue) => {
+    if (newValue) {
+      formData.value.virtualEmailUsername = newValue
+    }
+  },
+  { immediate: true }
+)
 
 defineExpose({
   formData,

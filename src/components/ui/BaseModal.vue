@@ -32,7 +32,9 @@
             @click.stop
           >
             <!-- Header -->
-            <div class="flex-shrink-0 bg-white px-4 pt-5 pb-3 sm:px-6 sm:pt-6 sm:pb-4 border-b border-gray-200">
+            <div
+              class="flex-shrink-0 bg-white px-4 pt-5 pb-3 sm:px-6 sm:pt-6 sm:pb-4 border-b border-gray-200"
+            >
               <h3
                 v-if="title"
                 class="text-base font-semibold leading-6 text-gray-900 text-left"
@@ -42,7 +44,9 @@
             </div>
 
             <!-- Scrollable Content -->
-            <div class="flex-1 overflow-y-auto -webkit-overflow-scrolling-touch min-h-0">
+            <div
+              class="flex-1 overflow-y-auto -webkit-overflow-scrolling-touch min-h-0"
+            >
               <div class="bg-white px-4 py-4 sm:px-6 sm:py-4">
                 <div v-if="icon" class="sm:flex sm:items-start">
                   <div
@@ -95,7 +99,8 @@ const props = defineProps({
   iconType: {
     type: String,
     default: 'info',
-    validator: (value) => ['info', 'success', 'warning', 'error'].includes(value)
+    validator: (value) =>
+      ['info', 'success', 'warning', 'error'].includes(value)
   },
   closeOnBackdrop: {
     type: Boolean,

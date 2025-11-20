@@ -63,9 +63,10 @@ export const useUserStore = defineStore('user', () => {
 
       return data
     } catch (err) {
-      error.value = err.response?.data?.detail ||
-                   err.response?.data?.message ||
-                   'Login failed'
+      error.value =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        'Login failed'
       throw err
     } finally {
       loading.value = false
@@ -183,9 +184,10 @@ export const useUserStore = defineStore('user', () => {
 
       return data
     } catch (err) {
-      error.value = err.response?.data?.detail ||
-                   err.response?.data?.message ||
-                   'Registration failed'
+      error.value =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        'Registration failed'
       throw err
     } finally {
       loading.value = false

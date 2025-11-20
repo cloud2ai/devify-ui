@@ -33,7 +33,8 @@ previewRenderer.list = (tokensOrHtml, ordered) => {
       return val
         .map((t) => {
           if (typeof t === 'string') return t
-          if (typeof t === 'object' && t !== null) return t?.text || t?.raw || JSON.stringify(t)
+          if (typeof t === 'object' && t !== null)
+            return t?.text || t?.raw || JSON.stringify(t)
           return String(t)
         })
         .filter(Boolean)
@@ -69,28 +70,41 @@ const renderedContent = computed(() => {
     if (typeof props.content === 'string') {
       raw = props.content
     } else if (Array.isArray(props.content)) {
-      raw = props.content.map(v => (typeof v === 'string' ? v : JSON.stringify(v))).join(' ')
+      raw = props.content
+        .map((v) => (typeof v === 'string' ? v : JSON.stringify(v)))
+        .join(' ')
     } else if (typeof props.content === 'object') {
       // Handle object case - try to extract meaningful content
-      raw = props.content.content || props.content.text || props.content.summary || JSON.stringify(props.content)
+      raw =
+        props.content.content ||
+        props.content.text ||
+        props.content.summary ||
+        JSON.stringify(props.content)
     } else {
       raw = String(props.content)
     }
 
-    const truncatedContent = raw.length > props.maxLength
-      ? raw.substring(0, props.maxLength) + '...'
-      : raw
+    const truncatedContent =
+      raw.length > props.maxLength
+        ? raw.substring(0, props.maxLength) + '...'
+        : raw
 
     const result = marked.parse(truncatedContent, { renderer: previewRenderer })
     return result
   } catch (error) {
     // Fallback to plain text if markdown parsing fails
-    const fallback = typeof props.content === 'string'
-      ? props.content
-      : (typeof props.content === 'object'
-          ? (props.content?.content || props.content?.text || JSON.stringify(props.content))
-          : String(props.content))
-    return fallback.substring(0, props.maxLength) + (fallback.length > props.maxLength ? '...' : '')
+    const fallback =
+      typeof props.content === 'string'
+        ? props.content
+        : typeof props.content === 'object'
+          ? props.content?.content ||
+            props.content?.text ||
+            JSON.stringify(props.content)
+          : String(props.content)
+    return (
+      fallback.substring(0, props.maxLength) +
+      (fallback.length > props.maxLength ? '...' : '')
+    )
   }
 })
 </script>

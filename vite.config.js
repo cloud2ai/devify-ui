@@ -13,7 +13,7 @@ export default defineConfig({
     // vue-i18n feature flags for better tree-shaking
     __VUE_I18N_FULL_INSTALL__: true,
     __VUE_I18N_LEGACY_API__: false,
-    __INTLIFY_PROD_DEVTOOLS__: false,
+    __INTLIFY_PROD_DEVTOOLS__: false
   },
   server: {
     host: '0.0.0.0', // 允许外部访问
@@ -28,20 +28,24 @@ export default defineConfig({
         secure: false,
         configure: (proxy, options) => {
           proxy.on('error', (err, req, res) => {
-            console.log('proxy error', err);
-          });
+            console.log('proxy error', err)
+          })
           proxy.on('proxyReq', (proxyReq, req, res) => {
-            console.log('Sending Request to the Target:', req.method, req.url);
-          });
+            console.log('Sending Request to the Target:', req.method, req.url)
+          })
           proxy.on('proxyRes', (proxyRes, req, res) => {
-            console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
-          });
-        },
+            console.log(
+              'Received Response from the Target:',
+              proxyRes.statusCode,
+              req.url
+            )
+          })
+        }
       },
       '/accounts': {
         target: process.env.VITE_API_BASE_URL || 'http://localhost:8000',
         changeOrigin: true,
-        secure: false,
+        secure: false
       }
     }
   }

@@ -69,7 +69,7 @@ const languages = [
 ]
 
 const currentLanguageDisplay = computed(() => {
-  const lang = languages.find(l => l.value === locale.value)
+  const lang = languages.find((l) => l.value === locale.value)
   return lang ? lang.flag : '🌐'
 })
 

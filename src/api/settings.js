@@ -17,10 +17,7 @@ export const settingsApi = {
   },
 
   async updateSetting(id, data) {
-    const response = await apiClient.patch(
-      `/v1/settings/${id}`,
-      data
-    )
+    const response = await apiClient.patch(`/v1/settings/${id}`, data)
     return response.data
   },
 
@@ -33,7 +30,9 @@ export const settingsApi = {
     const settings = await this.getSettings()
     const preferencesData = settings.data?.list || settings.data || []
 
-    const promptConfigSetting = preferencesData.find((s) => s.key === 'prompt_config')
+    const promptConfigSetting = preferencesData.find(
+      (s) => s.key === 'prompt_config'
+    )
 
     const promises = []
 
@@ -83,7 +82,9 @@ export const settingsApi = {
     const settings = await this.getSettings()
     const settingsData = settings.data?.list || settings.data || []
 
-    const promptConfigSetting = settingsData.find((s) => s.key === 'prompt_config')
+    const promptConfigSetting = settingsData.find(
+      (s) => s.key === 'prompt_config'
+    )
 
     return {
       language: promptConfigSetting?.value?.language || null,
@@ -97,17 +98,14 @@ export const settingsApi = {
   },
 
   async createEmailAlias(alias) {
-    const response = await apiClient.post(
-      '/v1/settings/email-aliases',
-      { alias }
-    )
+    const response = await apiClient.post('/v1/settings/email-aliases', {
+      alias
+    })
     return response.data
   },
 
   async deleteEmailAlias(id) {
-    const response = await apiClient.delete(
-      `/v1/settings/email-aliases/${id}`
-    )
+    const response = await apiClient.delete(`/v1/settings/email-aliases/${id}`)
     return response.data
   },
 

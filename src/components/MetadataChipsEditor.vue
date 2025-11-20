@@ -1,33 +1,60 @@
 <template>
-  <div class="relative flex flex-wrap gap-2" :aria-busy="loading ? 'true' : 'false'">
+  <div
+    class="relative flex flex-wrap gap-2"
+    :aria-busy="loading ? 'true' : 'false'"
+  >
     <template v-if="isArray">
-      <div
-        v-for="(chip, index) in chips"
-        :key="index"
-        :class="chipClasses"
-      >
-        <template v-if="editingIndex === index">
+      <!-- Show chips if they exist -->
+      <template v-if="chips.length > 0">
+        <div
+          v-for="(chipIndex, loopIndex) in visibleIndexes"
+          :key="`${chipIndex}-${loopIndex}`"
+          :class="chipClasses"
+        >
+        <template v-if="editingIndex === chipIndex">
           <span class="flex items-center gap-1">
-            <svg v-if="loading" class="w-3.5 h-3.5 animate-spin text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke-width="4"></circle>
-              <path class="opacity-75" stroke-width="4" d="M4 12a8 8 0 018-8"/>
+            <svg
+              v-if="loading"
+              class="w-3.5 h-3.5 animate-spin text-gray-500"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke-width="4"
+              ></circle>
+              <path class="opacity-75" stroke-width="4" d="M4 12a8 8 0 018-8" />
             </svg>
             <input
               v-model="inputValue"
               type="text"
               :class="inputClasses"
-              @keydown.enter.prevent="commitEdit(index)"
-              @keydown.esc.prevent="cancelEdit"
+              @keydown.enter.prevent="handleEnterKey(chipIndex)"
+              @keydown.esc.prevent="handleEscKey"
               autofocus
             />
             <button
-              @mousedown.prevent="commitEdit(index)"
+              @mousedown.prevent="commitEdit(chipIndex)"
               class="text-green-600 hover:text-green-800"
               aria-label="Confirm"
               title="Confirm"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                ></path>
               </svg>
             </button>
             <button
@@ -36,43 +63,174 @@
               aria-label="Cancel"
               title="Cancel"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
               </svg>
             </button>
           </span>
         </template>
         <template v-else>
-          <span class="select-none inline-flex items-center" @click="startEdit(index)">{{ chip }}</span>
-          <button class="ml-1 hover:text-red-600 inline-flex items-center" @click="removeChip(index)" aria-label="Remove">×</button>
+          <span
+              class="select-none inline-flex items-center cursor-pointer"
+            @click="startEdit(chipIndex)"
+            >{{ chips[chipIndex] }}</span
+          >
+          <button
+              class="ml-1 hover:text-red-600 inline-flex items-center disabled:opacity-50"
+              @click.stop="removeChip(chipIndex)"
+              :disabled="loading"
+            aria-label="Remove"
+          >
+              <svg
+                v-if="loading"
+                class="w-3.5 h-3.5 animate-spin"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke-width="4"
+                ></circle>
+                <path class="opacity-75" stroke-width="4" d="M4 12a8 8 0 018-8" />
+              </svg>
+              <span v-else>×</span>
+          </button>
         </template>
+        </div>
+      </template>
+      <div class="flex items-center gap-1">
+        <button
+          v-if="shouldLimit && chips.length > 0"
+          class="inline-flex items-center justify-center h-6 px-2 rounded border text-xs text-gray-600 hover:text-gray-800 hover:border-gray-400"
+          @click="showAll = !showAll"
+        >
+          <template v-if="!showAll">+{{ remainingCount }}</template>
+          <template v-else>−</template>
+        </button>
+        <!-- Add button - show only when not editing any item -->
+        <button
+          v-if="editingIndex === -1"
+          :class="addBtnClasses"
+          @click="addChip"
+          :disabled="loading || props.disabled"
+          aria-label="Add"
+          title="Add"
+        >
+          <svg
+            v-if="loading"
+            class="w-3.5 h-3.5 animate-spin"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke-width="4"
+            ></circle>
+            <path class="opacity-75" stroke-width="4" d="M4 12a8 8 0 018-8" />
+          </svg>
+          <svg
+            v-else
+            class="w-3.5 h-3.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 4v16m8-8H4"
+            ></path>
+          </svg>
+        </button>
       </div>
-      <button
-        :class="addBtnClasses"
-        @click="addChip"
-        aria-label="Add"
-        title="Add"
-      >
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-        </svg>
-      </button>
     </template>
 
     <template v-else>
-      <div :class="chipClasses">
+      <!-- Show add button when empty (outside chipClasses div) -->
+      <template v-if="isSingleEmpty && editingIndex !== 0">
+        <button
+          :class="addBtnClasses"
+          @click="startEdit(0)"
+          :disabled="loading || props.disabled"
+          aria-label="Add"
+          title="Add"
+        >
+          <svg
+            v-if="loading"
+            class="w-3.5 h-3.5 animate-spin"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke-width="4"
+            ></circle>
+            <path class="opacity-75" stroke-width="4" d="M4 12a8 8 0 018-8" />
+          </svg>
+          <svg
+            v-else
+            class="w-3.5 h-3.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+        </button>
+      </template>
+      <div v-else :class="chipClasses">
         <template v-if="editingIndex === 0">
           <span class="flex items-center gap-1">
-            <svg v-if="loading" class="w-3.5 h-3.5 animate-spin text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke-width="4"></circle>
-              <path class="opacity-75" stroke-width="4" d="M4 12a8 8 0 018-8"/>
+            <svg
+              v-if="loading"
+              class="w-3.5 h-3.5 animate-spin text-gray-500"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke-width="4"
+              ></circle>
+              <path class="opacity-75" stroke-width="4" d="M4 12a8 8 0 018-8" />
             </svg>
             <input
               v-model="inputValue"
               type="text"
               :class="inputClasses"
-              @keydown.enter.prevent="commitEdit(0)"
-              @keydown.esc.prevent="cancelEdit"
+              @keydown.enter.prevent="handleEnterKey(0)"
+              @keydown.esc.prevent="handleEscKey"
               autofocus
             />
             <button
@@ -81,8 +239,18 @@
               aria-label="Confirm"
               title="Confirm"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                ></path>
               </svg>
             </button>
             <button
@@ -91,22 +259,54 @@
               aria-label="Cancel"
               title="Cancel"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
               </svg>
             </button>
           </span>
         </template>
         <template v-else>
-          <span class="select-none inline-flex items-center" @click="startEdit(0)">
-            <template v-if="isSingleEmpty">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-6 14h10M6 19l.293-.293a1 1 0 00.293-.707V15a1 1 0 01.293-.707l8-8a2 2 0 112.828 2.828l-8 8A1 1 0 0110 17H6.707a1 1 0 00-.707.293L6 18v1z" />
-              </svg>
-            </template>
-            <template v-else>{{ singleValueLabel }}</template>
+          <span
+            class="select-none inline-flex items-center cursor-pointer"
+            @click="startEdit(0)"
+          >
+            {{ singleValueLabel }}
           </span>
-          <button v-if="canClear && !isSingleEmpty" class="ml-1 hover:text-red-600 inline-flex items-center" @click="clearSingle" aria-label="Clear">×</button>
+          <button
+            v-if="canClear"
+            class="ml-1 hover:text-red-600 inline-flex items-center disabled:opacity-50"
+            @click="clearSingle"
+            :disabled="loading"
+            aria-label="Clear"
+          >
+            <svg
+              v-if="loading"
+              class="w-3.5 h-3.5 animate-spin"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke-width="4"
+              ></circle>
+              <path class="opacity-75" stroke-width="4" d="M4 12a8 8 0 018-8" />
+            </svg>
+            <span v-else>×</span>
+          </button>
         </template>
       </div>
     </template>
@@ -114,7 +314,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, nextTick } from 'vue'
 
 const props = defineProps({
   modelValue: { type: [Array, String, Number, Boolean, null], default: '' },
@@ -130,30 +330,114 @@ const props = defineProps({
   loading: {
     type: Boolean,
     default: false
+  },
+  maxDisplay: {
+    type: Number,
+    default: 0
   }
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])
 
 const isArray = computed(() => Array.isArray(props.modelValue))
-const chips = computed(() => (Array.isArray(props.modelValue) ? props.modelValue : []))
+const chips = computed(() =>
+  Array.isArray(props.modelValue) ? props.modelValue : []
+)
 const singleValueLabel = computed(() => {
   if (chips.value.length === 0 && !isArray.value) {
-    return props.modelValue === null || props.modelValue === undefined || props.modelValue === ''
+    return props.modelValue === null ||
+      props.modelValue === undefined ||
+      props.modelValue === ''
       ? props.emptyLabel
       : String(props.modelValue)
   }
   return String(props.modelValue ?? props.emptyLabel)
 })
-const canClear = computed(() => !isArray.value && (props.modelValue !== null && props.modelValue !== undefined && props.modelValue !== ''))
+const canClear = computed(
+  () =>
+    !isArray.value &&
+    props.modelValue !== null &&
+    props.modelValue !== undefined &&
+    props.modelValue !== ''
+)
 
 const editingIndex = ref(-1)
 const inputValue = ref('')
 const originalValue = ref('')
+const showAll = ref(false)
 
-watch(() => props.modelValue, () => {
-  editingIndex.value = -1
-}, { immediate: false })
+const shouldLimit = computed(
+  () =>
+    isArray.value &&
+    props.maxDisplay > 0 &&
+    chips.value.length > props.maxDisplay
+)
+
+const visibleIndexes = computed(() => {
+  if (!isArray.value) return []
+  const total = chips.value.length
+  if (!shouldLimit.value || showAll.value) {
+    return chips.value.map((_, index) => index)
+  }
+
+  const limit = Math.min(props.maxDisplay, total)
+  const indexes = Array.from({ length: limit }, (_, index) => index)
+
+  if (
+    editingIndex.value >= 0 &&
+    editingIndex.value < total &&
+    !indexes.includes(editingIndex.value)
+  ) {
+    indexes[indexes.length - 1] = editingIndex.value
+  }
+
+  return indexes
+})
+
+const remainingCount = computed(() => {
+  if (!shouldLimit.value) return 0
+  return chips.value.length - props.maxDisplay
+})
+
+watch(
+  () => props.modelValue,
+  () => {
+    // Only reset editingIndex if we're not currently editing
+    // This prevents resetting when we add a new chip and start editing it
+    if (editingIndex.value === -1) {
+      return
+    }
+    // If we're editing, check if the item we're editing still exists
+    if (isArray.value && editingIndex.value >= 0) {
+      const currentChips = Array.isArray(props.modelValue) ? props.modelValue : []
+      // If the array length changed or the item at our index is different, reset
+      if (editingIndex.value >= currentChips.length) {
+        editingIndex.value = -1
+      }
+      // Otherwise keep editing (the value might have been updated externally)
+    } else {
+    editingIndex.value = -1
+    }
+  },
+  { immediate: false }
+)
+
+watch(
+  () => chips.value.length,
+  (length) => {
+    if (props.maxDisplay > 0 && length <= props.maxDisplay) {
+      showAll.value = false
+    }
+  }
+)
+
+const handleEnterKey = (index) => {
+  commitEdit(index)
+}
+
+const handleEscKey = () => {
+  cancelEdit()
+}
 
 const startEdit = (index) => {
   if (props.disabled) return
@@ -211,18 +495,19 @@ const commitEdit = (index) => {
   editingIndex.value = -1
 }
 
-const addChip = () => {
+const addChip = async () => {
   if (!isArray.value) return
   if (props.disabled) return
 
   let next = [...chips.value, '']
+  const newIndex = next.length - 1
+  // Emit the update first
   emit('update:modelValue', next)
-  // Start editing the new empty tag immediately
-  requestAnimationFrame(() => {
-    editingIndex.value = next.length - 1
+  // Wait for the update to be processed, then set editingIndex
+  await nextTick()
+  editingIndex.value = newIndex
     inputValue.value = ''
     originalValue.value = ''
-  })
 }
 
 const removeChip = (index) => {
@@ -242,11 +527,16 @@ const clearSingle = () => {
 
 const isSingleEmpty = computed(() => {
   if (isArray.value) return false
-  return props.modelValue === null || props.modelValue === undefined || props.modelValue === ''
+  return (
+    props.modelValue === null ||
+    props.modelValue === undefined ||
+    props.modelValue === ''
+  )
 })
 
 const chipClasses = computed(() => {
-  const base = 'inline-flex items-center gap-1 px-2 h-6 rounded-md ' +
+  const base =
+    'inline-flex items-center gap-1 px-2 h-6 rounded-md ' +
     'text-xs font-medium select-none'
   const map = {
     blue: 'bg-blue-100 text-blue-800',
@@ -273,8 +563,9 @@ const inputClasses = computed(() => {
 })
 
 const addBtnClasses = computed(() => {
-  const base = 'inline-flex items-center justify-center h-6 w-6 rounded ' +
-    'border bg-white hover:bg-gray-50'
+  const base =
+    'inline-flex items-center justify-center h-6 w-6 rounded ' +
+    'border hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed'
   const map = {
     blue: 'text-blue-700 border-blue-200',
     green: 'text-green-700 border-green-200',
@@ -285,7 +576,7 @@ const addBtnClasses = computed(() => {
   }
   return `${base} ${map[props.variant] || map.gray}`
 })
+
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

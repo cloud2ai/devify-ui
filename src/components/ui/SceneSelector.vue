@@ -14,16 +14,15 @@
       <option value="" disabled>
         {{ loading ? t('common.loading') : t('auth.selectScene') }}
       </option>
-      <option
-        v-for="scene in scenes"
-        :key="scene.key"
-        :value="scene.key"
-      >
+      <option v-for="scene in scenes" :key="scene.key" :value="scene.key">
         {{ scene.name }}
       </option>
     </select>
 
-    <p v-if="selectedScene && currentSceneDescription" class="mt-2 text-sm text-gray-600">
+    <p
+      v-if="selectedScene && currentSceneDescription"
+      class="mt-2 text-sm text-gray-600"
+    >
       {{ currentSceneDescription }}
     </p>
 
@@ -66,7 +65,7 @@ const loading = ref(false)
 const selectedScene = ref(props.modelValue)
 
 const currentSceneDescription = computed(() => {
-  const scene = scenes.value.find(s => s.key === selectedScene.value)
+  const scene = scenes.value.find((s) => s.key === selectedScene.value)
   return scene ? scene.description : ''
 })
 
@@ -93,13 +92,19 @@ const handleChange = () => {
   emit('update:modelValue', selectedScene.value)
 }
 
-watch(() => props.modelValue, (newValue) => {
-  selectedScene.value = newValue
-})
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    selectedScene.value = newValue
+  }
+)
 
-watch(() => locale.value, () => {
-  loadScenes()
-})
+watch(
+  () => locale.value,
+  () => {
+    loadScenes()
+  }
+)
 
 onMounted(() => {
   loadScenes()
