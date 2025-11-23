@@ -127,7 +127,7 @@
       <TodoStatsChart :stats="stats" />
 
       <!-- Filters and Time Range -->
-      <BaseCard>
+        <BaseCard>
         <div class="p-4 space-y-4 relative">
           <!-- Loading Overlay -->
           <div
@@ -157,7 +157,7 @@
               </svg>
               <span>{{ t('common.loading') }}</span>
             </div>
-          </div>
+            </div>
 
           <!-- Time Range Filter (Separate Row) -->
           <!-- List View: Time Range Selector -->
@@ -182,8 +182,8 @@
               </select>
             </div>
             <!-- Date Range (Always visible, readonly when not custom) -->
-            <div class="flex-1 w-full sm:w-auto flex items-end gap-2">
-              <div class="flex-1">
+            <div class="flex-1 w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-end gap-3 sm:gap-2">
+              <div class="flex-1 w-full sm:w-auto">
                 <label class="block text-xs text-gray-500 mb-1">{{ t('todos.timeRange.startDate') }}</label>
                 <input
                   type="date"
@@ -195,11 +195,11 @@
                     timeRange !== 'custom' ? 'bg-gray-50 cursor-not-allowed' : ''
                   ]"
                 />
-              </div>
-              <div class="flex-shrink-0 pt-6">
+            </div>
+              <div class="flex-shrink-0 hidden sm:block sm:pt-6">
                 <span class="text-sm text-gray-500">-</span>
-              </div>
-              <div class="flex-1">
+          </div>
+              <div class="flex-1 w-full sm:w-auto">
                 <label class="block text-xs text-gray-500 mb-1">{{ t('todos.timeRange.endDate') }}</label>
                 <input
                   type="date"
@@ -211,7 +211,7 @@
                     timeRange !== 'custom' ? 'bg-gray-50 cursor-not-allowed' : ''
                   ]"
                 />
-              </div>
+            </div>
             </div>
           </div>
 
@@ -230,7 +230,7 @@
                 <option value="week">{{ t('todos.calendar.weekView') }}</option>
               </select>
             </div>
-          </div>
+      </div>
 
           <!-- Filter Inputs -->
           <div class="grid grid-cols-1 md:grid-cols-4 gap-4" :class="{ 'opacity-50': loading }">
@@ -416,20 +416,20 @@
               </div>
               <div class="space-y-1 max-h-[60px] overflow-hidden">
                 <template v-for="(todo, todoIndex) in getTodosForDate(date.date).slice(0, 3)" :key="todo.id">
-                  <div
-                    :class="[
-                      'text-xs px-1 py-0.5 rounded truncate',
-                      todo.is_completed
-                        ? 'bg-gray-200 text-gray-600 line-through'
-                        : todo.priority === 'high'
-                          ? 'bg-red-100 text-red-700'
-                          : todo.priority === 'medium'
-                            ? 'bg-yellow-100 text-yellow-700'
-                            : 'bg-blue-100 text-blue-700'
-                    ]"
+                <div
+                  :class="[
+                    'text-xs px-1 py-0.5 rounded truncate',
+                    todo.is_completed
+                      ? 'bg-gray-200 text-gray-600 line-through'
+                      : todo.priority === 'high'
+                        ? 'bg-red-100 text-red-700'
+                        : todo.priority === 'medium'
+                          ? 'bg-yellow-100 text-yellow-700'
+                          : 'bg-blue-100 text-blue-700'
+                  ]"
                     @click.stop="handleCalendarTodoClick(todo, date.date)"
-                  >
-                    {{ todo.content }}
+                >
+                  {{ todo.content }}
                   </div>
                 </template>
                 <div
@@ -496,14 +496,14 @@
                 <option value="category">{{ t('todos.groupBy.category') }}</option>
                 <option value="location">{{ t('todos.groupBy.location') }}</option>
               </select>
-              <BaseButton
+            <BaseButton
                 v-if="selectedDate"
-                @click="selectedDate = null"
-                variant="secondary"
-                size="sm"
-              >
-                {{ t('common.close') }}
-              </BaseButton>
+              @click="selectedDate = null"
+              variant="secondary"
+              size="sm"
+            >
+              {{ t('common.close') }}
+            </BaseButton>
             </div>
           </div>
         </template>
@@ -619,31 +619,31 @@
             </div>
 
             <!-- Timeline Container -->
-            <div class="relative pl-6 border-l-2 border-gray-200">
-              <TransitionGroup
-                name="todo-list"
-                tag="div"
-                class="space-y-3"
-              >
+            <div class="relative pl-4 sm:pl-6 border-l-2 border-gray-200">
+          <TransitionGroup
+            name="todo-list"
+            tag="div"
+                class="space-y-4 sm:space-y-3"
+          >
                 <div
                   v-for="(todo, index) in group"
-                  :key="todo.id"
+              :key="todo.id"
                   class="relative"
                 >
                   <!-- Timeline Content -->
-                  <div class="pb-3 last:pb-0">
+                  <div class="pb-4 sm:pb-3 last:pb-0">
                     <TodoItem
-                      :todo="todo"
-                      :loading="todoLoading[todo.id]"
-                      :is-new="todo.id === tempNewTodo?.id"
-                      @toggle="handleToggleTodo"
-                      @save="handleSaveTodoInline"
-                      @delete="handleDeleteTodo"
-                      @cancel-new="handleCancelNewTodo"
-                    />
+              :todo="todo"
+              :loading="todoLoading[todo.id]"
+              :is-new="todo.id === tempNewTodo?.id"
+              @toggle="handleToggleTodo"
+              @save="handleSaveTodoInline"
+              @delete="handleDeleteTodo"
+              @cancel-new="handleCancelNewTodo"
+            />
                   </div>
                 </div>
-              </TransitionGroup>
+          </TransitionGroup>
             </div>
           </div>
 
@@ -948,25 +948,25 @@ const calendarDays = computed(() => {
     }
   } else {
     // Month view: show full month (42 days, 6 weeks)
-    const year = currentMonth.value.getFullYear()
-    const month = currentMonth.value.getMonth()
-    const firstDay = new Date(year, month, 1)
-    const lastDay = new Date(year, month + 1, 0)
-    const startDate = new Date(firstDay)
-    startDate.setDate(startDate.getDate() - startDate.getDay())
+  const year = currentMonth.value.getFullYear()
+  const month = currentMonth.value.getMonth()
+  const firstDay = new Date(year, month, 1)
+  const lastDay = new Date(year, month + 1, 0)
+  const startDate = new Date(firstDay)
+  startDate.setDate(startDate.getDate() - startDate.getDay())
 
-    for (let i = 0; i < 42; i++) {
-      const date = new Date(startDate)
-      date.setDate(startDate.getDate() + i)
-      const dateCopy = new Date(date)
-      dateCopy.setHours(0, 0, 0, 0)
+  for (let i = 0; i < 42; i++) {
+    const date = new Date(startDate)
+    date.setDate(startDate.getDate() + i)
+    const dateCopy = new Date(date)
+    dateCopy.setHours(0, 0, 0, 0)
 
-      days.push({
-        date: dateCopy,
-        day: date.getDate(),
-        isCurrentMonth: date.getMonth() === month,
-        isToday: dateCopy.getTime() === today.getTime()
-      })
+    days.push({
+      date: dateCopy,
+      day: date.getDate(),
+      isCurrentMonth: date.getMonth() === month,
+      isToday: dateCopy.getTime() === today.getTime()
+    })
     }
   }
 
@@ -1522,8 +1522,8 @@ const handleEditTodo = (todo) => {
     }
   } else {
     // In list view, show editor modal
-    editingTodo.value = todo
-    showTodoEditor.value = true
+  editingTodo.value = todo
+  showTodoEditor.value = true
   }
 }
 

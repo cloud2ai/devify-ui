@@ -1,7 +1,7 @@
 <template>
   <div
     :class="[
-      'relative flex gap-3 p-3 rounded-lg border transition-colors',
+      'relative flex gap-3 sm:gap-3 p-4 sm:p-3 rounded-lg border transition-colors',
       shouldAlignTop ? 'items-start' : 'items-center',
       todo.is_completed
         ? 'bg-gray-50 border-gray-200'
@@ -22,7 +22,7 @@
 
     <div class="flex-1 min-w-0">
       <!-- Edit Mode -->
-      <div v-if="editing" class="space-y-3">
+      <div v-if="editing" class="space-y-4 sm:space-y-3">
         <!-- Validation Error -->
         <div
           v-if="validationError"
@@ -178,7 +178,7 @@
         <div
           v-else
           :class="[
-            'text-sm select-text transition-colors',
+            'text-sm leading-6 select-text transition-colors',
             todo.is_completed
               ? 'text-gray-500 line-through cursor-not-allowed'
               : 'text-gray-900 hover:opacity-80 cursor-pointer'
@@ -191,7 +191,7 @@
 
         <div
           v-if="showDetails"
-          class="mt-2 flex flex-wrap gap-2 text-xs text-gray-500"
+          class="mt-3 sm:mt-2 flex flex-wrap gap-3 sm:gap-2 text-xs text-gray-500"
         >
           <!-- Priority Inline Edit -->
           <div
