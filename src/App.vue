@@ -3,6 +3,7 @@
     <ErrorBoundary>
       <router-view />
     </ErrorBoundary>
+    <Toast />
   </div>
 </template>
 
@@ -10,6 +11,7 @@
 import { onMounted } from 'vue'
 import { useUserStore } from '@/store/user'
 import ErrorBoundary from '@/components/ui/ErrorBoundary.vue'
+import Toast from '@/components/ui/Toast.vue'
 
 const userStore = useUserStore()
 

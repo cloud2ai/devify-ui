@@ -50,7 +50,7 @@
           <!-- Priority -->
           <div>
             <label class="block text-xs font-medium text-gray-700 mb-1">
-              {{ t('todos.priority') }}
+              {{ t('todos.priority.label') }}
             </label>
             <select
               v-model="editForm.priority"
@@ -112,8 +112,8 @@
           </button>
           <button
             @click="handleSaveEdit"
-            :disabled="saving"
-            class="px-3 py-1.5 text-xs font-medium text-white bg-primary-600 border border-transparent rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
+            :disabled="saving || !editForm.content || !editForm.content.trim()"
+            class="px-3 py-1.5 text-xs font-medium text-white bg-primary-600 border border-transparent rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span v-if="saving">{{ t('common.saving') }}...</span>
             <span v-else>{{ t('common.save') }}</span>
@@ -650,12 +650,21 @@
     </div>
 
     <div
-      class="flex-shrink-0 flex gap-1"
+      class="flex-shrink-0 flex gap-1 items-center"
       :class="shouldAlignTop ? 'items-start pt-0.5' : 'items-center'"
     >
       <template v-if="!isAnyEditing">
+        <!-- Deadline Status Badge -->
+        <span
+          v-if="deadlineStatus && !todo.is_completed"
+          :class="deadlineStatusClass"
+          class="px-2 py-0.5 text-xs font-medium rounded"
+        >
+          {{ deadlineStatusText }}
+        </span>
+
         <button
-          v-if="!confirmingDelete"
+          v-if="!confirmingDelete && !isNew"
           @click="handleDeleteClick"
           :disabled="loading"
           class="p-1 text-gray-400 hover:text-red-600"
@@ -730,7 +739,7 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import BaseDateTimePicker from '@/components/ui/BaseDateTimePicker.vue'
 import { usePreferencesStore } from '@/store/preferences'
@@ -752,10 +761,18 @@ const props = defineProps({
   emailMessageId: {
     type: Number,
     default: null
+  },
+  isNew: {
+    type: Boolean,
+    default: false
+  },
+  autoEdit: {
+    type: Boolean,
+    default: false
   }
 })
 
-const emit = defineEmits(['toggle', 'save', 'delete'])
+const emit = defineEmits(['toggle', 'save', 'delete', 'cancel-new', 'editing-change'])
 
 const { t, locale } = useI18n()
 const preferencesStore = usePreferencesStore()
@@ -781,6 +798,26 @@ const editForm = ref({
   deadline: null,
   location: ''
 })
+
+// Watch for isNew prop to enter inline content edit mode automatically
+watch(() => props.isNew, (isNew) => {
+  if (isNew) {
+    // Don't enter full edit mode, but inline content edit mode
+    editing.value = false
+    editingContent.value = true
+    contentInput.value = props.todo.content || ''
+  }
+}, { immediate: true })
+
+// Watch for autoEdit prop to enter edit mode automatically
+watch(() => props.autoEdit, (autoEdit) => {
+  if (autoEdit) {
+    editing.value = true
+    nextTick(() => {
+      resetEditForm()
+    })
+  }
+}, { immediate: true })
 
 const isInlineEditing = computed(
   () =>
@@ -840,6 +877,49 @@ const formatDeadline = (dateString) => {
   )
 }
 
+// Deadline status computation
+const deadlineStatus = computed(() => {
+  if (!props.todo.deadline || props.todo.is_completed) return null
+
+  const deadline = new Date(props.todo.deadline)
+  const now = new Date()
+  const diffMs = deadline - now
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24))
+
+  if (diffDays < 0) {
+    // Past due
+    return 'overdue'
+  } else if (diffDays === 0) {
+    // Due today
+    return 'due-today'
+  } else if (diffDays <= 3) {
+    // Due soon (within 3 days)
+    return 'due-soon'
+  }
+
+  return null
+})
+
+const deadlineStatusClass = computed(() => {
+  const classes = {
+    'overdue': 'bg-red-100 text-red-700',
+    'due-today': 'bg-orange-100 text-orange-700',
+    'due-soon': 'bg-yellow-100 text-yellow-700'
+  }
+  return classes[deadlineStatus.value] || ''
+})
+
+const deadlineStatusText = computed(() => {
+  if (deadlineStatus.value === 'overdue') {
+    return t('todos.overdue') || '已到期'
+  } else if (deadlineStatus.value === 'due-today') {
+    return t('todos.dueToday') || '今天到期'
+  } else if (deadlineStatus.value === 'due-soon') {
+    return t('todos.dueSoon') || '即将到期'
+  }
+  return ''
+})
+
 const handleToggle = () => {
   if (!editing.value) {
     emit('toggle', props.todo.id)
@@ -854,6 +934,11 @@ const handleStartEdit = () => {
 }
 
 const handleCancelEdit = () => {
+  if (props.isNew) {
+    // If this is a new todo, emit cancel-new event
+    emit('cancel-new')
+    return
+  }
   editing.value = false
   validationError.value = ''
   resetEditForm()
@@ -866,7 +951,18 @@ const handleStartContentEdit = () => {
   editingContent.value = true
 }
 
+// Auto-start content edit for new todos
+if (props.isNew) {
+  editingContent.value = true
+  contentInput.value = props.todo.content || ''
+}
+
 const handleCancelContentEdit = () => {
+  if (props.isNew) {
+    // If this is a new todo, emit cancel-new event
+    emit('cancel-new')
+    return
+  }
   editingContent.value = false
   contentInput.value = ''
 }
@@ -899,7 +995,12 @@ const handleSaveContent = async () => {
     if (savePromise && typeof savePromise.then === 'function') {
       await savePromise
     }
+
+    // Exit content edit mode after saving
     editingContent.value = false
+
+    // For new todos, the parent component will handle the creation
+    // and update the todo object, so the content will be displayed
   } catch (err) {
     validationError.value = err.message || t('common.error')
   } finally {
@@ -1110,8 +1211,8 @@ const cancelDelete = () => {
 const handleSaveEdit = async () => {
   validationError.value = ''
 
-  // Validate
-  if (!editForm.value.content.trim()) {
+  // Validate - content is required
+  if (!editForm.value.content || !editForm.value.content.trim()) {
     validationError.value =
       t('todos.content') + ' ' + (t('common.required') || '必填')
     return
@@ -1145,9 +1246,39 @@ const handleSaveEdit = async () => {
   }
 }
 
-watch(isAnyEditing, (val) => {
+// Track previous editing state to avoid unnecessary emits
+const previousEditingState = ref(false)
+const isMounted = ref(false)
+
+watch(isAnyEditing, (val, oldVal) => {
   if (val) {
     confirmingDelete.value = false
   }
+  // Only emit if component is mounted and state actually changed
+  if (isMounted.value && val !== previousEditingState.value) {
+    previousEditingState.value = val
+    emit('editing-change', val)
+  }
+}, { immediate: false })
+
+// Initialize when component is created
+onMounted(() => {
+  if (props.isNew) {
+    // Enter inline content edit mode for new todos
+    editing.value = false
+    editingContent.value = true
+    contentInput.value = props.todo.content || ''
+  } else if (props.autoEdit) {
+    editing.value = true
+    resetEditForm()
+  }
+
+  // Mark as mounted and emit initial editing state
+  nextTick(() => {
+    isMounted.value = true
+    previousEditingState.value = isAnyEditing.value
+    emit('editing-change', isAnyEditing.value)
+  })
 })
+
 </script>

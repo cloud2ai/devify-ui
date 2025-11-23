@@ -35,6 +35,7 @@
     "yes": "是",
     "no": "否",
     "markdownSupported": "支持 Markdown 格式",
+    "moreActions": "更多操作",
     "status": {
       "success": "成功",
       "failed": "失败",
@@ -356,6 +357,14 @@
     "validationError": "请检查您的输入",
     "unknownError": "发生未知错误"
   },
+  "notFound": {
+    "title": "404",
+    "quote": "我们所寻找的，往往不在我们期望的地方。",
+    "description": "页面已迷失，但真理依然存在。每一次迷路，都是一次重新发现自我的机会。",
+    "philosophy": "正如庄子所言：\"道不可闻，闻而非也；道不可见，见而非也。\"",
+    "returnHome": "返回首页",
+    "goBack": "返回上页"
+  },
   "time": {
     "justNow": "刚刚",
     "minutesAgo": "{count} 分钟前",
@@ -502,7 +511,7 @@
     "title": "待办事项",
     "calendar": "日历视图",
     "list": "列表视图",
-    "add": "添加待办",
+    "add": "添加",
     "edit": "编辑",
     "delete": "删除",
     "completed": "已完成",
@@ -535,7 +544,15 @@
     "cancel": "取消",
     "noTodos": "暂无待办事项",
     "noTodosForDate": "该日期没有待办事项",
+    "allTodos": "所有待办事项",
+    "overdue": "已到期",
+    "dueToday": "今天到期",
+    "dueSoon": "即将到期",
+    "createSuccess": "待办事项创建成功",
+    "updateSuccess": "待办事项更新成功",
+    "deleteSuccess": "待办事项删除成功",
     "stats": {
+      "title": "待办统计",
       "total": "总数",
       "completed": "已完成",
       "incomplete": "未完成",
@@ -544,11 +561,47 @@
     },
     "filters": {
       "all": "全部",
+      "status": "状态",
       "completed": "已完成",
       "incomplete": "未完成",
       "priority": "优先级",
       "owner": "负责人",
-      "search": "搜索待办事项..."
+      "search": "搜索待办事项...",
+      "activeFilters": "当前条件",
+      "clear": "清除",
+      "clearAll": "清除全部"
+    },
+    "view": {
+      "list": "列表",
+      "calendar": "日历"
+    },
+    "timeRange": {
+      "title": "时间范围",
+      "week": "本周",
+      "month": "本月",
+      "quarter": "本季度",
+      "year": "本年",
+      "custom": "自定义",
+      "current": "当前范围",
+      "startDate": "开始日期",
+      "endDate": "结束日期"
+    },
+    "calendar": {
+      "viewMode": "视图模式",
+      "monthView": "月视图",
+      "weekView": "周视图",
+      "moreTodos": "还有 {count} 个"
+    },
+    "groupBy": {
+      "date": "按日期",
+      "owner": "按负责人",
+      "priority": "按优先级",
+      "category": "按分类",
+      "location": "按地点",
+      "subject": "按主题",
+      "noSubject": "无主题",
+      "noTitle": "无标题",
+      "noDeadline": "无截止日期"
     },
     "newFormat": {
       "details": "核心主题",

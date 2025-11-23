@@ -330,6 +330,14 @@
     "validationError": "Por favor verifica tu entrada",
     "unknownError": "Ocurrió un error desconocido"
   },
+  "notFound": {
+    "title": "404",
+    "quote": "Lo que buscamos a menudo no está donde esperamos que esté.",
+    "description": "La página se perdió, pero la verdad permanece. Cada desvío es una oportunidad para redescubrirte a ti mismo.",
+    "philosophy": "Como dijo Lao Tzu: \"El camino que puede ser hablado no es el camino eterno.\"",
+    "returnHome": "Volver al Inicio",
+    "goBack": "Volver Atrás"
+  },
   "time": {
     "justNow": "Ahora mismo",
     "minutesAgo": "hace {count} minutos",

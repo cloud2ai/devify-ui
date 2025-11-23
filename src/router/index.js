@@ -96,8 +96,13 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/:pathMatch(.*)*',
+    path: '/404',
     name: 'NotFound',
+    component: () => import('@/pages/NotFound.vue')
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'CatchAll',
     component: () => import('@/pages/NotFound.vue')
   }
 ]

@@ -35,6 +35,7 @@
     "yes": "Yes",
     "no": "No",
     "markdownSupported": "Markdown format supported",
+    "moreActions": "More Actions",
     "status": {
       "success": "Success",
       "failed": "Failed",
@@ -346,6 +347,14 @@
     "validationError": "Please check your input",
     "unknownError": "An unknown error occurred"
   },
+  "notFound": {
+    "title": "404",
+    "quote": "What we seek is often not where we expect it to be.",
+    "description": "The page is lost, but truth remains. Every detour is an opportunity to rediscover yourself.",
+    "philosophy": "As Lao Tzu said: \"The way that can be spoken is not the eternal way.\"",
+    "returnHome": "Return Home",
+    "goBack": "Go Back"
+  },
   "time": {
     "justNow": "Just now",
     "minutesAgo": "{count} minutes ago",
@@ -492,7 +501,7 @@
     "title": "Todos",
     "calendar": "Calendar View",
     "list": "List View",
-    "add": "Add Todo",
+    "add": "Add",
     "edit": "Edit",
     "delete": "Delete",
     "completed": "Completed",
@@ -525,7 +534,15 @@
     "cancel": "Cancel",
     "noTodos": "No todos available",
     "noTodosForDate": "No todos for this date",
+    "allTodos": "All Todos",
+    "overdue": "Overdue",
+    "dueToday": "Due Today",
+    "dueSoon": "Due Soon",
+    "createSuccess": "Todo created successfully",
+    "updateSuccess": "Todo updated successfully",
+    "deleteSuccess": "Todo deleted successfully",
     "stats": {
+      "title": "Todo Statistics",
       "total": "Total",
       "completed": "Completed",
       "incomplete": "Incomplete",
@@ -534,11 +551,47 @@
     },
     "filters": {
       "all": "All",
+      "status": "Status",
       "completed": "Completed",
       "incomplete": "Incomplete",
       "priority": "Priority",
       "owner": "Owner",
-      "search": "Search todos..."
+      "search": "Search todos...",
+      "activeFilters": "Active Filters",
+      "clear": "Clear",
+      "clearAll": "Clear All"
+    },
+    "view": {
+      "list": "List",
+      "calendar": "Calendar"
+    },
+    "timeRange": {
+      "title": "Time Range",
+      "week": "This Week",
+      "month": "This Month",
+      "quarter": "This Quarter",
+      "year": "This Year",
+      "custom": "Custom",
+      "current": "Current Range",
+      "startDate": "Start Date",
+      "endDate": "End Date"
+    },
+    "calendar": {
+      "viewMode": "View Mode",
+      "monthView": "Month View",
+      "weekView": "Week View",
+      "moreTodos": "{count} more"
+    },
+    "groupBy": {
+      "date": "By Date",
+      "owner": "By Owner",
+      "priority": "By Priority",
+      "category": "By Category",
+      "location": "By Location",
+      "subject": "By Subject",
+      "noSubject": "No Subject",
+      "noTitle": "No Title",
+      "noDeadline": "No Deadline"
     },
     "newFormat": {
       "details": "Details",

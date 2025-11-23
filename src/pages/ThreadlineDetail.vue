@@ -129,48 +129,194 @@
         </div>
       </div>
 
-      <!-- Header -->
-      <div class="md:flex md:items-start md:justify-between">
-        <div class="flex-1 min-w-0">
-          <div class="relative">
-            <!-- Display Mode -->
-            <button
-              v-if="!editingTitle"
-              type="button"
-              class="group relative inline-flex items-start gap-2 w-full text-left rounded transition-colors"
-              @click="startEditingTitle"
-              :disabled="isProcessing"
+      <!-- Top Actions Bar -->
+      <div class="mb-1">
+        <div class="flex items-center justify-between gap-3">
+          <!-- Back Button -->
+          <button
+            @click="goBack"
+            class="flex-shrink-0 w-8 h-8 rounded-full bg-white border border-gray-300 hover:bg-gray-50 flex items-center justify-center transition-colors"
+            :title="t('common.back')"
+          >
+            <svg
+              class="w-4 h-4 text-gray-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              <h2
-                class="text-xl font-bold leading-7 text-gray-900 sm:text-2xl flex-1 pr-6"
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+          </button>
+
+          <!-- Right Actions: Retry Button + More Menu -->
+          <div class="flex items-center gap-2 flex-shrink-0 ml-auto">
+            <!-- Retry Button - Hide text on mobile, show icon only -->
+            <BaseButton
+              @click="handleRetryClick"
+              variant="primary"
+              size="sm"
+              :loading="retrying || isProcessing"
+              :disabled="deleting || retrying || isProcessing"
+              class="px-2 sm:px-3"
+            >
+              <svg
+                v-if="!retrying && !isProcessing"
+                class="w-4 h-4 sm:mr-1 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              <span class="hidden sm:inline">
                 {{
-                  threadline.summary_title ||
-                  threadline.subject ||
-                  t('common.noSubject')
+                  retrying || isProcessing
+                    ? t('common.status.processing')
+                    : t('retry.retryButton')
                 }}
+              </span>
+            </BaseButton>
+
+            <!-- More Menu Button -->
+            <div class="relative" ref="actionMenuRef">
+              <button
+                @click="showActionMenu = !showActionMenu"
+                class="w-8 h-8 rounded-full bg-white border border-gray-300 hover:bg-gray-50 flex items-center justify-center transition-colors"
+                :title="t('common.moreActions')"
+              >
                 <svg
-                  class="inline-block w-3.5 h-3.5 ml-1.5 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity align-text-bottom"
+                  class="w-4 h-4 text-gray-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
-                  style="margin-top: -0.1em;"
                 >
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                    d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
                   />
                 </svg>
-              </h2>
-            </button>
-            <!-- Edit Mode -->
-            <div v-else class="space-y-1">
-              <div
-                class="relative bg-blue-50 border-2 border-blue-200 rounded-md"
-                style="padding: 0.75rem 1rem;"
+              </button>
+
+              <!-- Dropdown Menu (Only Delete) -->
+              <Transition
+                enter-active-class="transition ease-out duration-100"
+                enter-from-class="transform opacity-0 scale-95"
+                enter-to-class="transform opacity-100 scale-100"
+                leave-active-class="transition ease-in duration-75"
+                leave-from-class="transform opacity-100 scale-100"
+                leave-to-class="transform opacity-0 scale-95"
               >
+                <div
+                  v-if="showActionMenu"
+                  class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+                >
+                  <div class="py-1">
+                    <button
+                      @click="() => { deleteThreadline(); showActionMenu = false }"
+                      class="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      :disabled="retrying || isProcessing || deleting"
+                    >
+                      <svg
+                        v-if="!deleting"
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                      <svg
+                        v-else
+                        class="w-4 h-4 animate-spin"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          class="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          stroke-width="4"
+                        ></circle>
+                        <path
+                          class="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      <span>
+                        {{ deleting ? t('common.deleting') : t('common.delete') }}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </Transition>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Title and Metadata Card -->
+      <BaseCard class="mb-4 sm:mb-6">
+        <div class="space-y-3 sm:space-y-4">
+          <!-- Title -->
+          <div class="relative">
+              <!-- Display Mode -->
+              <button
+                v-if="!editingTitle"
+                type="button"
+                class="group relative inline-flex items-start gap-2 w-full text-left rounded transition-colors"
+                @click="startEditingTitle"
+                :disabled="isProcessing"
+              >
+                <h2
+                  class="text-xl font-bold leading-7 text-gray-900 sm:text-2xl flex-1 pr-6"
+                >
+                  {{
+                    threadline.summary_title ||
+                    threadline.subject ||
+                    t('common.noSubject')
+                  }}
+                  <svg
+                    class="inline-block w-3.5 h-3.5 ml-1.5 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity align-text-bottom"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    style="margin-top: -0.1em;"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                    />
+                  </svg>
+                </h2>
+              </button>
+              <!-- Edit Mode -->
+              <div v-else class="space-y-1">
+                <div
+                  class="relative bg-blue-50 border-2 border-blue-200 rounded-md"
+                  style="padding: 0.75rem 1rem;"
+                >
                 <textarea
                   ref="titleInputRef"
                   v-model="editingTitleValue"
@@ -183,9 +329,9 @@
                 <p v-if="titleError" class="mt-2 text-xs text-red-600">
                   {{ titleError }}
                 </p>
-              </div>
-              <!-- Save/Cancel Icons - Right bottom below input -->
-              <div class="flex items-center justify-end gap-1">
+                </div>
+                <!-- Save/Cancel Icons - Right bottom below input -->
+                <div class="flex items-center justify-end gap-1">
                 <div
                   class="flex items-center bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden"
                 >
@@ -254,14 +400,20 @@
                     </svg>
                   </button>
                 </div>
+                </div>
               </div>
-            </div>
-          </div>
+              </div>
+
+          <!-- Divider -->
+          <div class="border-t border-gray-200"></div>
+
           <!-- Date/Time and Metadata -->
-          <div class="mt-2 space-y-2">
-            <div class="flex items-center gap-4 flex-wrap">
-              <!-- Created Time -->
-              <div class="flex items-center gap-1.5">
+          <div class="pt-2 sm:pt-3">
+            <div class="space-y-2 sm:space-y-3">
+              <!-- Created Time and Category -->
+              <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
+                <!-- Created Time -->
+                <div class="flex items-center gap-1.5 text-xs sm:text-sm text-gray-500">
                 <svg
                   class="w-4 h-4 text-gray-400 flex-shrink-0"
                   fill="none"
@@ -275,14 +427,42 @@
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <p class="text-sm text-gray-500">
-                  {{ formatDate(threadline.received_at || threadline.created_at) }}
-                </p>
+                <span>{{ formatDate(threadline.received_at || threadline.created_at) }}</span>
               </div>
-              <!-- Category -->
-              <div class="flex items-center gap-2">
+
+                <!-- Category -->
+                <div v-if="threadline.metadata" class="flex items-center gap-2 min-w-0">
+                  <svg
+                    class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                    />
+                  </svg>
+                  <div class="flex items-center gap-2 min-w-0">
+                    <span class="text-xs sm:text-sm text-gray-500 flex-shrink-0">{{ t('metadata.category.title') }}</span>
+                  <MetadataChipsEditor
+                    :model-value="threadline.metadata.category || ''"
+                    variant="blue"
+                    :disabled="isSaving('category')"
+                    :loading="isSaving('category')"
+                    @update:modelValue="(v) => onChipsChange('category', v)"
+                    @change="(v) => onChipsSave('category', v)"
+                  />
+                </div>
+              </div>
+            </div>
+
+              <!-- Participants -->
+              <div v-if="threadline.metadata" class="flex items-center gap-2 min-w-0">
                 <svg
-                  class="w-4 h-4 text-gray-400 flex-shrink-0"
+                  class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -291,151 +471,63 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
                   />
                 </svg>
-                <span class="text-xs text-gray-400">{{ t('metadata.category.title') }}:</span>
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="text-xs sm:text-sm text-gray-500 flex-shrink-0">{{ t('metadata.participants.title') }}</span>
                 <MetadataChipsEditor
-                  v-if="threadline.metadata"
-                  :model-value="threadline.metadata.category || ''"
-                  variant="blue"
-                  :disabled="isSaving('category')"
-                  :loading="isSaving('category')"
-                  @update:modelValue="(v) => onChipsChange('category', v)"
-                  @change="(v) => onChipsSave('category', v)"
+                  :model-value="threadline.metadata.participants || []"
+                  variant="green"
+                  :disabled="isSaving('participants')"
+                  :loading="isSaving('participants')"
+                  :max-display="6"
+                  @update:modelValue="(v) => onChipsChange('participants', v)"
+                  @change="(v) => onChipsSave('participants', v)"
                 />
               </div>
             </div>
-            <!-- Participants -->
-            <div class="flex items-center gap-2 flex-wrap">
-              <svg
-                class="w-4 h-4 text-gray-400 flex-shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+
+              <!-- Tags -->
+              <div v-if="threadline.metadata" class="flex items-center gap-2 min-w-0">
+                <svg
+                  class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M7 7h.01M3 7a4 4 0 014-4h5l7 7a2 2 0 010 2.828l-5.172 5.172a2 2 0 01-2.828 0L3 12V7z"
+                  />
+                </svg>
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="text-xs sm:text-sm text-gray-500 flex-shrink-0">{{ t('metadata.keywords.title') }}</span>
+                <MetadataChipsEditor
+                  :model-value="threadline.metadata.keywords || []"
+                  variant="rose"
+                  :disabled="isSaving('keywords')"
+                  :loading="isSaving('keywords')"
+                  :max-display="6"
+                  @update:modelValue="(v) => onChipsChange('keywords', v)"
+                  @change="(v) => onChipsSave('keywords', v)"
                 />
-              </svg>
-              <span class="text-xs text-gray-400">{{ t('metadata.participants.title') }}:</span>
-              <MetadataChipsEditor
-                v-if="threadline.metadata"
-                :model-value="threadline.metadata.participants || []"
-                variant="green"
-                :disabled="isSaving('participants')"
-                :loading="isSaving('participants')"
-                :max-display="6"
-                @update:modelValue="(v) => onChipsChange('participants', v)"
-                @change="(v) => onChipsSave('participants', v)"
-              />
+              </div>
             </div>
-            <!-- Tags -->
-            <div class="flex items-center gap-2 flex-wrap">
-              <svg
-                class="w-4 h-4 text-gray-400 flex-shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+
+              <!-- Error Message -->
+              <p
+                v-if="fieldError('keywords') || fieldError('category') || fieldError('participants')"
+                class="text-xs sm:text-sm text-red-600"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M7 7h.01M3 7a4 4 0 014-4h5l7 7a2 2 0 010 2.828l-5.172 5.172a2 2 0 01-2.828 0L3 12V7z"
-                />
-              </svg>
-              <span class="text-xs text-gray-400">{{ t('metadata.keywords.title') }}:</span>
-              <MetadataChipsEditor
-                v-if="threadline.metadata"
-                :model-value="threadline.metadata.keywords || []"
-                variant="rose"
-                :disabled="isSaving('keywords')"
-                :loading="isSaving('keywords')"
-                :max-display="6"
-                @update:modelValue="(v) => onChipsChange('keywords', v)"
-                @change="(v) => onChipsSave('keywords', v)"
-              />
+                {{ fieldError('keywords') || fieldError('category') || fieldError('participants') }}
+              </p>
             </div>
-            <p
-              v-if="fieldError('keywords')"
-              class="pl-6 text-xs text-red-600"
-            >
-              {{ fieldError('keywords') }}
-            </p>
           </div>
         </div>
-        <div class="mt-4 flex md:mt-0 md:ml-4 space-x-2">
-        </div>
-        <div class="mt-4 flex md:mt-0 md:ml-4 space-x-2">
-          <BaseButton @click="goBack" variant="secondary">
-            <svg
-              class="w-4 h-4 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
-            {{ t('common.back') }}
-          </BaseButton>
-          <BaseButton
-            @click="handleRetryClick"
-            variant="primary"
-            :loading="retrying || isProcessing"
-            :disabled="deleting || retrying || isProcessing"
-          >
-            <svg
-              v-if="!retrying && !isProcessing"
-              class="w-4 h-4 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              />
-            </svg>
-            {{
-              retrying || isProcessing
-                ? t('common.status.processing')
-                : t('retry.retryButton')
-            }}
-          </BaseButton>
-          <BaseButton
-            @click="deleteThreadline"
-            variant="danger"
-            :loading="deleting"
-            :disabled="retrying || isProcessing"
-          >
-            <svg
-              class="w-4 h-4 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-              />
-            </svg>
-            {{ t('common.delete') }}
-          </BaseButton>
-        </div>
-      </div>
+      </BaseCard>
 
       <!-- Summary Content - New Format or Old Format -->
       <div v-if="hasNewFormat" class="space-y-6">
@@ -466,7 +558,7 @@
                   size="sm"
                   variant="primary"
                   @click="openDetailsEditor"
-                  :disabled="isProcessing"
+                  :disabled="isProcessing || editingDetails"
                 >
                   <svg
                     class="w-4 h-4 mr-1"
@@ -569,7 +661,12 @@
                   {{ t('todos.newFormat.todos') }}
                 </h3>
               </div>
-              <BaseButton @click="handleAddTodo" variant="primary" size="sm">
+              <BaseButton
+                @click="handleAddTodo"
+                variant="primary"
+                size="sm"
+                :disabled="!!tempNewTodo || savingNewTodo || editingTodoIds.size > 0"
+              >
                 <svg
                   class="w-4 h-4 mr-1"
                   fill="none"
@@ -587,10 +684,27 @@
               </BaseButton>
             </div>
           </template>
-          <div
-            v-if="threadlineTodos && threadlineTodos.length > 0"
+          <TransitionGroup
+            name="todo-list"
+            tag="div"
             class="space-y-2"
           >
+            <!-- New Todo Item (in edit mode) -->
+            <TodoItem
+              v-if="tempNewTodo"
+              :key="tempNewTodo.id"
+              :todo="tempNewTodo"
+              :loading="savingNewTodo"
+              :email-message-id="threadline?.id"
+              :is-new="true"
+              @toggle="() => {}"
+              @save="saveNewTodo"
+              @delete="() => {}"
+              @cancel-new="cancelNewTodo"
+              @editing-change="(editing) => handleTodoEditingChange(tempNewTodo.id, editing)"
+            />
+
+            <!-- Existing Todo Items -->
             <TodoItem
               v-for="todo in threadlineTodos"
               :key="todo.id"
@@ -600,21 +714,11 @@
               @toggle="handleToggleTodo"
               @save="handleSaveTodoInline"
               @delete="handleDeleteTodo"
+              @editing-change="(editing) => handleTodoEditingChange(todo.id, editing)"
             />
-          </div>
-          <div v-else class="text-gray-500 italic text-center py-8">
+          </TransitionGroup>
+          <div v-if="threadlineTodos.length === 0 && !tempNewTodo" class="text-gray-500 italic text-center py-8">
             <p>{{ t('todos.noTodos') }}</p>
-          </div>
-
-          <!-- Todo Editor Modal -->
-          <div v-if="showTodoEditor" class="mt-4 border-t border-gray-200 pt-4">
-            <TodoEditor
-              :todo="editingTodo"
-              :email-message-id="threadline?.id"
-              :loading="savingTodo"
-              @save="handleSaveTodo"
-              @cancel="showTodoEditor = false"
-            />
           </div>
         </BaseCard>
 
@@ -645,7 +749,7 @@
                   size="sm"
                   variant="primary"
                   @click="openKeyProcessEditor"
-                  :disabled="isProcessing"
+                  :disabled="isProcessing || editingKeyProcess"
                 >
                   <svg
                     class="w-4 h-4 mr-1"
@@ -926,6 +1030,7 @@ import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { usePreferencesStore } from '@/store/preferences'
+import { useToast } from '@/composables/useToast'
 import { formatDate as formatDateUtil } from '@/utils/timezone'
 import { extractErrorMessage } from '@/utils/api'
 import { chatApi } from '@/api/chat'
@@ -947,6 +1052,7 @@ const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
 const preferencesStore = usePreferencesStore()
+const toast = useToast()
 
 const threadline = ref(null)
 const loading = ref(false)
@@ -954,6 +1060,8 @@ const error = ref('')
 const deleting = ref(false)
 const retrying = ref(false)
 const showRetryDialog = ref(false)
+const showActionMenu = ref(false)
+const actionMenuRef = ref(null)
 let retryPollInterval = null
 let retryPollStartTime = null
 const MAX_POLL_DURATION = 5 * 60 * 1000 // 5 minutes max polling
@@ -1075,6 +1183,13 @@ const loadThreadline = async () => {
     }
   } catch (err) {
     console.error('Failed to load threadline:', err)
+
+    // If resource not found (404), redirect to 404 page
+    if (err.response?.status === 404) {
+      router.push({ name: 'NotFound' })
+      return
+    }
+
     error.value = err.response?.data?.message || 'Failed to load threadline'
   } finally {
     loading.value = false
@@ -1091,6 +1206,9 @@ const deleteThreadline = async () => {
     router.push('/dashboard')
   } catch (err) {
     console.error('Delete failed:', err)
+    toast.showError(
+      extractErrorMessage(err, t('common.error') + ': ' + t('common.delete'))
+    )
   } finally {
     deleting.value = false
   }
@@ -1184,7 +1302,7 @@ const handleRetry = async (options) => {
     stopRetryPolling()
     retrying.value = false
     retryPollStartTime = null
-    alert(err.response?.data?.message || t('retry.retryError'))
+    toast.showError(err.response?.data?.message || t('retry.retryError'))
   }
 }
 
@@ -1215,12 +1333,20 @@ const getStatusClass = (status) => {
   return classes[status] || 'bg-gray-100 text-gray-800'
 }
 
+const handleClickOutside = (event) => {
+  if (actionMenuRef.value && !actionMenuRef.value.contains(event.target)) {
+    showActionMenu.value = false
+  }
+}
+
 onMounted(() => {
   loadThreadline()
+  document.addEventListener('click', handleClickOutside)
 })
 
 onUnmounted(() => {
   stopRetryPolling()
+  document.removeEventListener('click', handleClickOutside)
 })
 
 const isSaving = (key) => savingKeys.value.has(key)
@@ -1296,7 +1422,19 @@ const summaryData = computed(() => {
 })
 
 const threadlineTodos = computed(() => {
-  return threadline.value?.todos || []
+  if (!threadline.value || !threadline.value.todos) {
+    return []
+  }
+
+  const todos = [...threadline.value.todos]
+
+  // Sort by deadline from earliest to latest
+  return todos.sort((a, b) => {
+    if (!a.deadline && !b.deadline) return 0
+    if (!a.deadline) return 1 // No deadline goes to end
+    if (!b.deadline) return -1
+    return new Date(a.deadline) - new Date(b.deadline)
+  })
 })
 
 // TODO management
@@ -1306,6 +1444,9 @@ const savingTodo = ref(false)
 const todoLoading = ref({})
 const todoErrorMessage = ref('')
 const todoSuccessMessage = ref('')
+const tempNewTodo = ref(null)
+const savingNewTodo = ref(false)
+const editingTodoIds = ref(new Set())
 
 const handleAddTodo = () => {
   if (!threadline.value || !threadline.value.id) {
@@ -1314,8 +1455,107 @@ const handleAddTodo = () => {
       'Cannot create TODO: Email message not loaded'
     return
   }
-  editingTodo.value = null
-  showTodoEditor.value = true
+
+  // Create temporary todo with default values
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+
+  tempNewTodo.value = {
+    id: `temp-${Date.now()}`,
+    content: '',
+    priority: null, // Empty by default
+    owner: '',
+    deadline: `${year}-${month}-${day}T${hours}:${minutes}`, // Current time
+    location: '',
+    is_completed: false,
+    isNew: true
+  }
+}
+
+const saveNewTodo = async (todoId, todoData) => {
+  // Validate - content is required
+  if (!todoData.content || !todoData.content.trim()) {
+    // This validation should be handled by TodoItem component
+    // but we also check here as a safeguard
+    throw new Error(t('todos.content') + ' ' + (t('common.required') || '必填'))
+  }
+
+  savingNewTodo.value = true
+  todoErrorMessage.value = ''
+  todoSuccessMessage.value = ''
+  const tempId = tempNewTodo.value?.id
+
+  try {
+    const response = await todosApi.createTodo({
+      ...todoData,
+      email_message_id: threadline.value?.id
+    })
+    const newTodo = response.data.data || response.data
+
+    // Add new todo to actual todos list
+    if (threadline.value) {
+      if (!threadline.value.todos) {
+        threadline.value.todos = []
+      }
+      threadline.value.todos.push(newTodo)
+    }
+
+    // Wait for next tick to ensure TodoItem has processed the save
+    // and emitted editing-change event, then clear states
+    await nextTick()
+
+    // Clear editing state for the temp todo
+    if (tempId) {
+      editingTodoIds.value.delete(tempId)
+    }
+
+    // Clear tempNewTodo to re-enable the add button
+    tempNewTodo.value = null
+
+    todoSuccessMessage.value =
+      t('todos.createSuccess') || 'TODO created successfully'
+
+    setTimeout(() => {
+      todoSuccessMessage.value = ''
+    }, 3000)
+  } catch (err) {
+    console.error('Failed to create todo:', err)
+    // Clear editing state even on error
+    if (tempId) {
+      editingTodoIds.value.delete(tempId)
+    }
+    todoErrorMessage.value = extractErrorMessage(
+      err,
+      t('common.error') + ': ' + t('todos.save')
+    )
+    throw err // Re-throw to let TodoItem handle the error
+  } finally {
+    savingNewTodo.value = false
+  }
+}
+
+const cancelNewTodo = () => {
+  if (tempNewTodo.value) {
+    editingTodoIds.value.delete(tempNewTodo.value.id)
+  }
+  tempNewTodo.value = null
+}
+
+const handleTodoEditingChange = (todoId, isEditing) => {
+  if (!todoId) {
+    console.warn('handleTodoEditingChange called without todoId')
+    return
+  }
+
+  if (isEditing) {
+    editingTodoIds.value.add(todoId)
+  } else {
+    editingTodoIds.value.delete(todoId)
+  }
 }
 
 const handleEditTodo = (todo) => {
@@ -1535,9 +1775,12 @@ const detailsValue = computed({
 })
 const savingDetails = ref(false)
 const detailsError = ref('')
+const editingDetails = ref(false)
+const editingKeyProcess = ref(false)
 
 const cancelEditingDetails = () => {
   detailsError.value = ''
+  editingDetails.value = false
 }
 
 const saveDetails = async (value) => {
@@ -1559,6 +1802,7 @@ const saveDetails = async (value) => {
     })
     const updatedData = response.data.data || response.data
     threadline.value = { ...threadline.value, ...updatedData }
+    editingDetails.value = false
   } catch (err) {
     console.error('Failed to save details:', err)
     detailsError.value = extractErrorMessage(
@@ -1592,6 +1836,7 @@ const keyProcessError = ref('')
 
 const cancelEditingKeyProcess = () => {
   keyProcessError.value = ''
+  editingKeyProcess.value = false
 }
 
 const saveKeyProcess = async (value) => {
@@ -1613,6 +1858,7 @@ const saveKeyProcess = async (value) => {
     })
     const updatedData = response.data.data || response.data
     threadline.value = { ...threadline.value, ...updatedData }
+    editingKeyProcess.value = false
   } catch (err) {
     console.error('Failed to save key process:', err)
     keyProcessError.value = extractErrorMessage(
@@ -1665,13 +1911,15 @@ const copyContent = async (content, section) => {
 }
 
 const openDetailsEditor = () => {
-  if (isProcessing.value) return
+  if (isProcessing.value || editingDetails.value) return
   detailsEditorRef.value?.startEditing()
+  editingDetails.value = true
 }
 
 const openKeyProcessEditor = () => {
-  if (isProcessing.value) return
+  if (isProcessing.value || editingKeyProcess.value) return
   keyProcessEditorRef.value?.startEditing()
+  editingKeyProcess.value = true
 }
 
 // Copy key process function
@@ -1695,3 +1943,25 @@ const copyKeyProcess = async () => {
   }
 }
 </script>
+
+<style scoped>
+/* Todo list animation */
+.todo-list-enter-active,
+.todo-list-leave-active {
+  transition: all 0.3s ease;
+}
+
+.todo-list-enter-from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.todo-list-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.todo-list-move {
+  transition: transform 0.3s ease;
+}
+</style>

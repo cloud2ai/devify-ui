@@ -425,11 +425,13 @@
 // Updated with date display in dialogs
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useToast } from '@/composables/useToast'
 import { format } from 'date-fns'
 import { zhCN, enUS } from 'date-fns/locale'
 import billingApi from '@/api/billing'
 
 const { t, locale } = useI18n()
+const toast = useToast()
 
 const props = defineProps({
   currentSubscription: {
@@ -577,7 +579,7 @@ async function handleUpgrade(plan) {
     return
   }
   if (!plan.stripe_price_id) {
-    alert(t('billing.plans.stripeNotConfigured'))
+    toast.showWarning(t('billing.plans.stripeNotConfigured'))
     return
   }
 

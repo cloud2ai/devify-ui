@@ -39,7 +39,7 @@
           <router-link
             to="/chats"
             class="nav-link"
-            :class="{ 'nav-link-active': $route.name === 'Chats' }"
+            :class="{ 'nav-link-active': $route.name === 'Chats' || $route.path.startsWith('/chats') }"
           >
             {{ t('chats.title') }}
           </router-link>
@@ -296,7 +296,7 @@
             to="/chats"
             class="flex items-center gap-3 px-3 py-2.5 rounded-md text-base font-medium transition-colors"
             :class="
-              $route.name === 'Chats'
+              $route.name === 'Chats' || $route.path.startsWith('/chats')
                 ? 'bg-primary-50 text-primary-600'
                 : 'text-gray-700 hover:bg-gray-50'
             "

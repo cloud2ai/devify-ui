@@ -119,7 +119,21 @@
           @click="showAll = !showAll"
         >
           <template v-if="!showAll">+{{ remainingCount }}</template>
-          <template v-else>−</template>
+          <template v-else>
+            <svg
+              class="w-3.5 h-3.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+          </template>
         </button>
         <!-- Add button - show only when not editing any item -->
         <button
