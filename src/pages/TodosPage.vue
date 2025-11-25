@@ -182,8 +182,8 @@
               </select>
             </div>
             <!-- Date Range (Always visible, readonly when not custom) -->
-            <div class="flex-1 w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-end gap-3 sm:gap-2">
-              <div class="flex-1 w-full sm:w-auto">
+            <div class="flex-1 w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-end gap-3 sm:gap-2 min-w-0">
+              <div class="flex-1 w-full sm:w-auto min-w-0">
                 <label class="block text-xs text-gray-500 mb-1">{{ t('todos.timeRange.startDate') }}</label>
                 <input
                   type="date"
@@ -195,11 +195,11 @@
                     timeRange !== 'custom' ? 'bg-gray-50 cursor-not-allowed' : ''
                   ]"
                 />
-            </div>
+              </div>
               <div class="flex-shrink-0 hidden sm:block sm:pt-6">
                 <span class="text-sm text-gray-500">-</span>
-          </div>
-              <div class="flex-1 w-full sm:w-auto">
+              </div>
+              <div class="flex-1 w-full sm:w-auto min-w-0">
                 <label class="block text-xs text-gray-500 mb-1">{{ t('todos.timeRange.endDate') }}</label>
                 <input
                   type="date"
@@ -211,7 +211,7 @@
                     timeRange !== 'custom' ? 'bg-gray-50 cursor-not-allowed' : ''
                   ]"
                 />
-            </div>
+              </div>
             </div>
           </div>
 

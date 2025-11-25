@@ -129,7 +129,8 @@
     "continueWithGoogle": "Continue with Google",
     "emailSent": {
       "title": "Registration Email Sent",
-      "message": "We've sent a registration link to {email}. Please check your email and click the link to complete registration."
+      "message": "We've sent a registration link to {email}. Please check your email and click the link to complete registration.",
+      "backToLogin": "Back to login"
     },
     "complete": {
       "title": "Complete Registration",

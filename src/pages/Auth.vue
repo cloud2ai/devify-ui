@@ -80,6 +80,15 @@
             </div>
           </div>
         </div>
+        <div class="mt-4">
+          <BaseButton
+            block
+            variant="primary"
+            @click="handleReturnToLogin"
+          >
+            {{ t('register.emailSent.backToLogin') }}
+          </BaseButton>
+        </div>
       </div>
 
       <!-- Google OAuth Button (Priority) -->
@@ -596,6 +605,11 @@ const handleForgotPassword = async () => {
   } finally {
     resetLoading.value = false
   }
+}
+
+const handleReturnToLogin = () => {
+  emailSent.value = false
+  activeTab.value = 'login'
 }
 
 const closeForgotPassword = () => {

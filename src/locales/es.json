@@ -112,7 +112,8 @@
     "continueWithGoogle": "Continuar con Google",
     "emailSent": {
       "title": "Correo de Registro Enviado",
-      "message": "Hemos enviado un enlace de registro a {email}. Por favor revisa tu correo y haz clic en el enlace para completar el registro."
+      "message": "Hemos enviado un enlace de registro a {email}. Por favor revisa tu correo y haz clic en el enlace para completar el registro.",
+      "backToLogin": "Volver al inicio de sesión"
     },
     "complete": {
       "title": "Completar Registro",

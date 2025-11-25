@@ -129,7 +129,8 @@
     "continueWithGoogle": "使用 Google 账号继续",
     "emailSent": {
       "title": "注册邮件已发送",
-      "message": "我们已向 {email} 发送了注册链接，请查收邮件并点击链接完成注册。"
+      "message": "我们已向 {email} 发送了注册链接，请查收邮件并点击链接完成注册。",
+      "backToLogin": "返回登录"
     },
     "complete": {
       "title": "完成注册",
