@@ -185,7 +185,7 @@
                 ? 'text-gray-900 cursor-default'
                 : 'text-gray-900 hover:opacity-80 cursor-pointer'
           ]"
-          @click.stop="readOnly ? null : handleStartContentEdit"
+          @click.stop="readOnly ? null : handleStartContentEdit()"
           :title="readOnly || todo.is_completed ? '' : t('todos.edit')"
         >
           {{ todo.content }}
@@ -262,7 +262,7 @@
                   ? 'cursor-default'
                   : 'cursor-pointer hover:opacity-80'
             ]"
-            @click.stop="readOnly ? null : handleStartPriorityEdit"
+            @click.stop="readOnly ? null : handleStartPriorityEdit()"
             :title="readOnly || todo.is_completed ? '' : t('todos.edit')"
           >
             {{ t(`todos.priority.${todo.priority}`) }}
@@ -277,7 +277,7 @@
                   ? 'cursor-default'
                   : 'cursor-pointer hover:opacity-80'
             ]"
-            @click.stop="readOnly ? null : handleStartPriorityEdit"
+            @click.stop="readOnly ? null : handleStartPriorityEdit()"
             :title="readOnly || todo.is_completed ? '' : t('todos.addPriority')"
           >
             + {{ t('todos.priority.label') }}
@@ -355,7 +355,7 @@
                   ? 'cursor-default'
                   : 'cursor-pointer hover:opacity-80'
             ]"
-            @click.stop="readOnly ? null : handleStartOwnerEdit"
+            @click.stop="readOnly ? null : handleStartOwnerEdit()"
             :title="readOnly || todo.is_completed ? '' : t('todos.edit')"
           >
             <svg
@@ -475,7 +475,7 @@
                   ? 'cursor-default'
                   : 'cursor-pointer hover:opacity-80'
             ]"
-            @click.stop="readOnly ? null : handleStartDeadlineEdit"
+            @click.stop="readOnly ? null : handleStartDeadlineEdit()"
             :title="readOnly || todo.is_completed ? '' : t('todos.edit')"
           >
             <svg
@@ -503,7 +503,7 @@
                   ? 'cursor-default'
                   : 'cursor-pointer hover:opacity-80'
             ]"
-            @click.stop="readOnly ? null : handleStartDeadlineEdit"
+            @click.stop="readOnly ? null : handleStartDeadlineEdit()"
             :title="readOnly || todo.is_completed ? '' : t('todos.addDeadline')"
           >
             <svg
@@ -603,7 +603,7 @@
                   ? 'cursor-default'
                   : 'cursor-pointer hover:opacity-80'
             ]"
-            @click.stop="readOnly ? null : handleStartLocationEdit"
+            @click.stop="readOnly ? null : handleStartLocationEdit()"
             :title="readOnly || todo.is_completed ? '' : t('todos.edit')"
           >
             <svg
@@ -637,7 +637,7 @@
                   ? 'cursor-default'
                   : 'cursor-pointer hover:opacity-80'
             ]"
-            @click.stop="readOnly ? null : handleStartLocationEdit"
+            @click.stop="readOnly ? null : handleStartLocationEdit()"
             :title="readOnly || todo.is_completed ? '' : t('todos.addLocation')"
           >
             <svg
