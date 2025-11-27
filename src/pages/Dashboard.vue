@@ -263,13 +263,13 @@
               class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3"
             >
               <div class="flex-1 min-w-0 space-y-2">
-                <h4 class="text-sm font-medium text-gray-900 truncate">
-                  {{
-                    result.summary_title ||
-                    result.subject ||
-                    `Email #${result.id}`
-                  }}
-                </h4>
+                  <h4 class="text-sm font-medium text-gray-900 truncate">
+                    {{
+                      result.summary_title ||
+                      result.subject ||
+                      `Email #${result.id}`
+                    }}
+                  </h4>
                 <div class="text-sm text-gray-500 line-clamp-2 break-words">
                   {{ getPreviewText(result) }}
                 </div>
@@ -318,7 +318,33 @@
               <div
                 class="flex items-center justify-between sm:justify-end sm:flex-col sm:items-end space-x-2 sm:space-x-0 sm:space-y-2 flex-shrink-0"
               >
+                <div class="flex items-center gap-2">
                 <StatusBadge :status="result.status" />
+                  <span
+                    v-if="result.share_status?.is_active"
+                    class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium"
+                    :class="
+                      result.share_status.is_expired
+                        ? 'border-red-200 bg-red-50 text-red-600'
+                        : 'border-green-200 bg-green-50 text-green-700'
+                    "
+                  >
+                    <svg
+                      class="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 8a3 3 0 11-6 0 3 3 0 016 0zM5.5 20a6.5 6.5 0 0113 0M4 4l16 16"
+                      />
+                    </svg>
+                    {{ t('share.statusShared') }}
+                  </span>
+                </div>
                 <svg
                   class="w-5 h-5 text-gray-400 flex-shrink-0"
                   fill="none"

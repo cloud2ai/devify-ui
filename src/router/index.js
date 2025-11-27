@@ -96,6 +96,15 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/chats/share/:token',
+    name: 'ThreadlineShare',
+    component: () => import('@/pages/ThreadlineShareView.vue')
+  },
+  {
+    path: '/share/:token',
+    redirect: (to) => `/chats/share/${to.params.token}`
+  },
+  {
     path: '/404',
     name: 'NotFound',
     component: () => import('@/pages/NotFound.vue')

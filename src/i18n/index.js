@@ -4,16 +4,42 @@ import en from '../locales/en.json'
 import zhCN from '../locales/zh-CN.json'
 import es from '../locales/es.json'
 
-// Get language from localStorage or default to 'en'
-const getStoredLanguage = () => {
+const supportedLanguages = ['en', 'zh-CN', 'es']
+
+const normalizeLanguage = (lang) => {
+  if (!lang || typeof lang !== 'string') {
+    return 'en'
+  }
+  const value = lang.toLowerCase()
+  if (value.includes('zh')) {
+    return 'zh-CN'
+  }
+  if (value.includes('es')) {
+    return 'es'
+  }
+  return 'en'
+}
+
+const detectBrowserLanguage = () => {
+  if (typeof navigator === 'undefined') {
+    return 'en'
+  }
+  const browserLang = navigator.language || navigator.userLanguage
+  return normalizeLanguage(browserLang)
+}
+
+const getInitialLanguage = () => {
   const stored = localStorage.getItem('userLanguage')
-  return stored || 'en'
+  if (stored && supportedLanguages.includes(stored)) {
+    return stored
+  }
+  return detectBrowserLanguage()
 }
 
 // Create Vue i18n instance
 const i18n = createI18n({
   legacy: false,
-  locale: getStoredLanguage(),
+  locale: getInitialLanguage(),
   fallbackLocale: 'en',
   messages: {
     en: en,

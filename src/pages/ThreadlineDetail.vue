@@ -130,12 +130,12 @@
       </div>
 
       <!-- Top Actions Bar -->
-      <div class="mb-1">
+      <div class="mb-4">
         <div class="flex items-center justify-between gap-3">
           <!-- Back Button -->
           <button
             @click="goBack"
-            class="flex-shrink-0 w-8 h-8 rounded-full bg-white border border-gray-300 hover:bg-gray-50 flex items-center justify-center transition-colors"
+            class="flex-shrink-0 w-9 h-9 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 hover:border-gray-300 flex items-center justify-center transition-all shadow-sm"
             :title="t('common.back')"
           >
             <svg
@@ -153,8 +153,50 @@
             </svg>
           </button>
 
-          <!-- Right Actions: Retry Button + More Menu -->
+          <!-- Right Actions: Refresh Button + Retry Button + Share Button + More Menu -->
           <div class="flex items-center gap-2 flex-shrink-0 ml-auto">
+            <!-- Refresh Button -->
+            <button
+              @click="loadThreadline"
+              class="flex-shrink-0 w-9 h-9 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 hover:border-gray-300 flex items-center justify-center transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
+              :disabled="loading || deleting || retrying || isProcessing"
+              :title="t('common.refresh')"
+            >
+              <svg
+                v-if="!loading"
+                class="w-4 h-4 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              <svg
+                v-else
+                class="w-4 h-4 text-gray-600 animate-spin"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            </button>
             <!-- Retry Button - Hide text on mobile, show icon only -->
             <BaseButton
               @click="handleRetryClick"
@@ -186,12 +228,60 @@
                 }}
               </span>
             </BaseButton>
+            <BaseButton
+              :variant="
+                shareStatus?.is_active && !shareStatus?.is_expired
+                  ? 'danger'
+                  : 'outline'
+              "
+              size="sm"
+              class="px-2 sm:px-3"
+              :loading="shareSaving || shareRevoking"
+              :disabled="deleting || retrying || isProcessing"
+              @click.stop="handleShareButtonClick"
+            >
+              <svg
+                v-if="!(shareStatus?.is_active && !shareStatus?.is_expired)"
+                class="w-4 h-4 sm:mr-1 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 12v.01M12 4h.01M20 12v.01M12 20h.01M7.5 7.5l9 9"
+                />
+              </svg>
+              <svg
+                v-else
+                class="w-4 h-4 sm:mr-1 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+              <span class="hidden sm:inline">
+                {{
+                  shareStatus?.is_active && !shareStatus?.is_expired
+                    ? t('share.stopSharing')
+                    : t('share.title')
+                }}
+              </span>
+            </BaseButton>
 
             <!-- More Menu Button -->
             <div class="relative" ref="actionMenuRef">
               <button
                 @click="showActionMenu = !showActionMenu"
-                class="w-8 h-8 rounded-full bg-white border border-gray-300 hover:bg-gray-50 flex items-center justify-center transition-colors"
+                class="w-9 h-9 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 hover:border-gray-300 flex items-center justify-center transition-all shadow-sm"
                 :title="t('common.moreActions')"
               >
                 <svg
@@ -275,42 +365,416 @@
       </div>
 
       <!-- Title and Metadata Card -->
-      <BaseCard class="mb-4 sm:mb-6">
-        <div class="space-y-3 sm:space-y-4">
+      <BaseCard>
+        <div class="space-y-4">
           <!-- Title -->
           <div class="relative">
               <!-- Display Mode -->
-              <button
-                v-if="!editingTitle"
-                type="button"
-                class="group relative inline-flex items-start gap-2 w-full text-left rounded transition-colors"
-                @click="startEditingTitle"
-                :disabled="isProcessing"
-              >
-                <h2
-                  class="text-xl font-bold leading-7 text-gray-900 sm:text-2xl flex-1 pr-6"
+              <div v-if="!editingTitle">
+                <button
+                  type="button"
+                  class="group relative inline-flex items-start gap-2 w-full text-left rounded transition-colors"
+                  @click="startEditingTitle"
+                  :disabled="isProcessing"
                 >
-                  {{
-                    threadline.summary_title ||
-                    threadline.subject ||
-                    t('common.noSubject')
-                  }}
-                  <svg
-                    class="inline-block w-3.5 h-3.5 ml-1.5 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity align-text-bottom"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    style="margin-top: -0.1em;"
+                  <h2
+                    class="text-lg font-bold leading-7 text-gray-900 sm:text-xl flex-1 pr-6 line-clamp-5"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                    />
-                  </svg>
-                </h2>
-              </button>
+                    <span
+                      v-if="shareStatus?.is_active"
+                      class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium mr-2 align-middle"
+                      :class="
+                        shareStatus.is_expired
+                          ? 'border-red-200 bg-red-50 text-red-600'
+                          : 'border-green-200 bg-green-50 text-green-700'
+                      "
+                    >
+                      <svg
+                        class="w-3.5 h-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M15 8a3 3 0 11-6 0 3 3 0 016 0zM5.5 20a6.5 6.5 0 0113 0M4 4l16 16"
+                        />
+                      </svg>
+                      {{
+                        shareStatus.is_expired
+                          ? t('share.statusExpired')
+                          : t('share.statusShared')
+                      }}
+                    </span>
+                    {{
+                      threadline.summary_title ||
+                      threadline.subject ||
+                      t('common.noSubject')
+                    }}
+                    <svg
+                      class="hidden sm:inline-block w-3.5 h-3.5 ml-1.5 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity align-text-bottom"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      style="margin-top: -0.1em;"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
+                    </svg>
+                  </h2>
+                </button>
+                <!-- Share Info Area -->
+                <div
+                  v-if="shareStatus?.is_active"
+                  class="mt-4"
+                >
+                  <!-- Divider -->
+                  <div class="border-t border-gray-200"></div>
+                  <div class="pt-4">
+                    <div class="space-y-3">
+                    <!-- Expiration Row -->
+                    <div class="grid grid-cols-[theme(spacing.28),1fr] gap-y-1 gap-x-2 text-xs sm:text-sm">
+                      <div class="flex items-center gap-1 text-gray-500">
+                        <svg
+                          class="w-3.5 h-3.5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{{ t('share.expirationTime') }}</span>
+                      </div>
+                      <div class="flex items-center gap-2 min-w-0">
+                        <template v-if="!editingExpiration">
+                          <div
+                            class="flex items-center gap-2 group cursor-pointer"
+                            @click="startEditingExpiration"
+                          >
+                            <span class="text-gray-700 truncate">
+                              {{ shareExpirationDisplay }}
+                            </span>
+                            <svg class="w-3.5 h-3.5 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                          </div>
+                        </template>
+                        <template v-else>
+                          <div class="flex items-center gap-2 flex-wrap">
+                          <div class="flex flex-wrap gap-1">
+                            <button
+                              v-for="option in shareExpirationOptions"
+                              :key="option.value"
+                              type="button"
+                              class="rounded-md border px-2 py-0.5 text-xs font-medium transition-colors"
+                              :class="
+                                tempExpiration === option.value
+                                  ? 'border-primary-500 bg-primary-50 text-primary-700'
+                                  : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+                              "
+                              :disabled="expirationSaving"
+                              @click="tempExpiration = option.value"
+                            >
+                              {{ option.label }}
+                            </button>
+                          </div>
+                          <div class="flex items-center gap-1">
+                            <button
+                              type="button"
+                              class="p-1 text-green-600 hover:bg-green-50 rounded transition-colors disabled:opacity-50"
+                              :disabled="expirationSaving"
+                              @click="saveExpiration"
+                            >
+                              <svg v-if="!expirationSaving" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                              </svg>
+                              <svg v-else class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                            </button>
+                            <button
+                              type="button"
+                              class="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
+                              :disabled="expirationSaving"
+                              @click="cancelEditingExpiration"
+                            >
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                        </template>
+                      </div>
+                    </div>
+
+                    <!-- Link Row -->
+                    <div class="grid grid-cols-[theme(spacing.28),1fr] gap-y-1 gap-x-2 text-xs sm:text-sm">
+                    <div class="flex items-center gap-1 text-gray-500">
+                      <svg
+                        class="w-3.5 h-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                      </svg>
+                      <span>{{ t('share.shareLink') }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 min-w-0">
+                      <a
+                        v-if="!showShareLink.main"
+                        :href="shareStatus.share_url"
+                        target="_blank"
+                        class="text-gray-700 hover:text-primary-600 transition-colors"
+                      >
+                        <span>{{ t('share.openLink') }}</span>
+                      </a>
+                      <a
+                        v-else
+                        :href="shareStatus.share_url"
+                        target="_blank"
+                        class="text-gray-700 truncate font-mono hover:text-primary-600 hover:underline flex-1 min-w-0"
+                      >
+                        {{ shareStatus.share_url }}
+                      </a>
+                      <button
+                        type="button"
+                        class="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100 transition-colors flex-shrink-0"
+                        :title="showShareLink.main ? t('share.hideLink') : t('share.openLink')"
+                        @click="showShareLink.main = !showShareLink.main"
+                      >
+                        <svg
+                          v-if="!showShareLink.main"
+                          class="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                        <svg
+                          v-else
+                          class="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        class="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100 transition-colors flex-shrink-0"
+                        :title="shareCopyState.link ? t('share.copied') : t('share.copyLink')"
+                        :disabled="!shareStatus.share_url"
+                        @click="copyLinkOnly"
+                      >
+                        <svg
+                          v-if="!shareCopyState.link"
+                          class="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                          />
+                        </svg>
+                        <svg
+                          v-else
+                          class="w-4 h-4 text-green-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                    <!-- Password Row -->
+                    <div class="grid grid-cols-[theme(spacing.28),1fr] gap-y-1 gap-x-2 text-xs sm:text-sm">
+                    <div class="flex items-center gap-1 text-gray-500">
+                      <svg
+                        class="w-3.5 h-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                      <span>{{ t('share.passwordLabel') }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 min-w-0">
+                      <template v-if="shareStatus.has_password">
+                        <!-- Edit Mode -->
+                        <template v-if="editingPassword">
+                          <div class="flex items-center gap-2 flex-1 min-w-0">
+                            <input
+                              v-model="tempPassword"
+                              type="text"
+                              inputmode="numeric"
+                              maxlength="6"
+                              minlength="6"
+                              pattern="[0-9]*"
+                              class="flex-1 min-w-0 font-mono text-sm rounded-md border border-gray-300 px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                              :placeholder="t('share.passwordPlaceholder')"
+                              @keyup.enter="savePassword"
+                              @keyup.esc="cancelEditingPassword"
+                            />
+                            <button
+                              type="button"
+                              class="p-1 text-green-600 hover:text-green-700 rounded hover:bg-green-50 transition-colors flex-shrink-0"
+                              :title="t('common.save')"
+                              :disabled="passwordSaving || !tempPassword.trim() || tempPassword.trim().length !== 6"
+                              @click="savePassword"
+                            >
+                              <svg v-if="!passwordSaving" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                              </svg>
+                              <svg v-else class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                            </button>
+                            <button
+                              type="button"
+                              class="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100 transition-colors flex-shrink-0"
+                              :title="t('common.cancel')"
+                              :disabled="passwordSaving"
+                              @click="cancelEditingPassword"
+                            >
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                        </template>
+                        <!-- Display Mode -->
+                        <template v-else>
+                          <span v-if="!showPassword" class="font-mono text-gray-900">
+                            ••••••
+                          </span>
+                          <span v-else class="font-mono text-gray-900">
+                            {{ inlinePassword || shareStatus.password }}
+                          </span>
+
+                          <div class="flex items-center gap-1">
+                            <button
+                              type="button"
+                              class="p-1 text-gray-400 hover:text-primary-600 rounded hover:bg-gray-100 transition-colors"
+                              :title="t('share.editPassword')"
+                              :disabled="passwordSaving || isProcessing"
+                              @click="startEditingPassword"
+                            >
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                            </button>
+                            <button
+                              type="button"
+                              class="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100 transition-colors"
+                              :title="showPassword ? t('share.hidePassword') : t('share.showPassword')"
+                              @click="showPassword = !showPassword"
+                            >
+                              <svg v-if="!showPassword" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                              </svg>
+                              <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                              </svg>
+                            </button>
+                            <button
+                              type="button"
+                              class="p-1 text-gray-400 hover:text-red-600 rounded hover:bg-gray-100 transition-colors"
+                              :title="t('common.delete')"
+                              :disabled="passwordSaving"
+                              @click="removePassword"
+                            >
+                              <svg v-if="!passwordSaving" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                              <svg v-else class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                            </button>
+                          </div>
+                          <button
+                            type="button"
+                            class="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100 transition-colors flex-shrink-0"
+                            :title="shareCopyState.password ? t('share.copied') : t('share.copyAll')"
+                            @click="copyFullInvite"
+                          >
+                            <svg v-if="!shareCopyState.password" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            <svg v-else class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                          </button>
+                        </template>
+                      </template>
+                      <template v-else>
+                         <span class="text-gray-500">
+                          {{ t('share.noPassword') }}
+                        </span>
+                        <button
+                          type="button"
+                          class="p-1 text-gray-400 hover:text-primary-600 rounded hover:bg-gray-100 transition-colors flex-shrink-0"
+                          :title="t('share.addPassword')"
+                          :disabled="passwordSaving"
+                          @click="createRandomPassword"
+                        >
+                           <svg v-if="!passwordSaving" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                           </svg>
+                           <svg v-else class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                        </button>
+                      </template>
+                    </div>
+                  </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <!-- Edit Mode -->
               <div v-else class="space-y-1">
                 <div
@@ -321,7 +785,7 @@
                   ref="titleInputRef"
                   v-model="editingTitleValue"
                   rows="2"
-                  class="w-full px-0 py-0 text-xl font-bold leading-7 text-gray-900 sm:text-2xl border-0 focus:outline-none bg-transparent resize-none overflow-hidden"
+                  class="w-full px-0 py-0 text-lg font-bold leading-7 text-gray-900 sm:text-xl border-0 focus:outline-none bg-transparent resize-none overflow-hidden"
                   :class="{ 'border-red-300': titleError }"
                   :disabled="savingTitle"
                   style="line-height: 1.75rem; min-height: 3.5rem; height: 3.5rem;"
@@ -402,38 +866,42 @@
                 </div>
                 </div>
               </div>
-              </div>
-
-          <!-- Divider -->
-          <div class="border-t border-gray-200"></div>
+          </div>
 
           <!-- Date/Time and Metadata -->
-          <div class="pt-2 sm:pt-3">
-            <div class="space-y-2 sm:space-y-3">
-              <!-- Created Time and Category -->
-              <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
-                <!-- Created Time -->
-                <div class="flex items-center gap-1.5 text-xs sm:text-sm text-gray-500">
-                <svg
-                  class="w-4 h-4 text-gray-400 flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <span>{{ formatDate(threadline.received_at || threadline.created_at) }}</span>
+          <div class="mt-4">
+            <!-- Divider -->
+            <div class="border-t border-gray-200"></div>
+            <div class="pt-4">
+            <div class="space-y-3">
+              <!-- Created Time -->
+              <div class="grid grid-cols-[theme(spacing.28),1fr] gap-y-1 gap-x-1.5 text-xs sm:text-sm">
+                <div class="flex items-center gap-1 text-gray-500">
+                  <svg
+                    class="w-3.5 h-3.5 text-gray-400 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <span>{{ t('metadata.createdAt.title') }}</span>
+                </div>
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="text-gray-700">{{ formatDate(threadline.received_at || threadline.created_at) }}</span>
+                </div>
               </div>
 
-                <!-- Category -->
-                <div v-if="threadline.metadata" class="flex items-center gap-2 min-w-0">
+              <!-- Category -->
+              <div v-if="threadline.metadata" class="grid grid-cols-[theme(spacing.28),1fr] gap-y-1 gap-x-1.5 text-xs sm:text-sm">
+                <div class="flex items-center gap-1 text-gray-500">
                   <svg
-                    class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0"
+                    class="w-3.5 h-3.5 text-gray-400 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -445,8 +913,9 @@
                       d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
                     />
                   </svg>
-                  <div class="flex items-center gap-2 min-w-0">
-                    <span class="text-xs sm:text-sm text-gray-500 flex-shrink-0">{{ t('metadata.category.title') }}</span>
+                  <span>{{ t('metadata.category.title') }}</span>
+                </div>
+                <div class="flex items-center gap-2 min-w-0">
                   <MetadataChipsEditor
                     :model-value="threadline.metadata.category || ''"
                     variant="blue"
@@ -457,73 +926,84 @@
                   />
                 </div>
               </div>
-            </div>
 
               <!-- Participants -->
-              <div v-if="threadline.metadata" class="flex items-center gap-2 min-w-0">
-                <svg
-                  class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
-                </svg>
+              <div v-if="threadline.metadata" class="grid grid-cols-[theme(spacing.28),1fr] gap-y-1 gap-x-1.5 text-xs sm:text-sm">
+                <div class="flex items-center gap-1 text-gray-500">
+                  <svg
+                    class="w-3.5 h-3.5 text-gray-400 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                    />
+                  </svg>
+                  <span>{{ t('metadata.participants.title') }}</span>
+                </div>
                 <div class="flex items-center gap-2 min-w-0">
-                  <span class="text-xs sm:text-sm text-gray-500 flex-shrink-0">{{ t('metadata.participants.title') }}</span>
-                <MetadataChipsEditor
-                  :model-value="threadline.metadata.participants || []"
-                  variant="green"
-                  :disabled="isSaving('participants')"
-                  :loading="isSaving('participants')"
-                  :max-display="6"
-                  @update:modelValue="(v) => onChipsChange('participants', v)"
-                  @change="(v) => onChipsSave('participants', v)"
-                />
+                  <MetadataChipsEditor
+                    :model-value="threadline.metadata.participants || []"
+                    variant="green"
+                    :disabled="isSaving('participants')"
+                    :loading="isSaving('participants')"
+                    :max-display="6"
+                    @update:modelValue="(v) => onChipsChange('participants', v)"
+                    @change="(v) => onChipsSave('participants', v)"
+                  />
+                </div>
               </div>
-            </div>
 
               <!-- Tags -->
-              <div v-if="threadline.metadata" class="flex items-center gap-2 min-w-0">
-                <svg
-                  class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M7 7h.01M3 7a4 4 0 014-4h5l7 7a2 2 0 010 2.828l-5.172 5.172a2 2 0 01-2.828 0L3 12V7z"
-                  />
-                </svg>
+              <div v-if="threadline.metadata" class="grid grid-cols-[theme(spacing.28),1fr] gap-y-1 gap-x-1.5 text-xs sm:text-sm">
+                <div class="flex items-center gap-1 text-gray-500">
+                  <svg
+                    class="w-3.5 h-3.5 text-gray-400 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M7 7h.01M3 7a4 4 0 014-4h5l7 7a2 2 0 010 2.828l-5.172 5.172a2 2 0 01-2.828 0L3 12V7z"
+                    />
+                  </svg>
+                  <span>{{ t('metadata.keywords.title') }}</span>
+                </div>
                 <div class="flex items-center gap-2 min-w-0">
-                  <span class="text-xs sm:text-sm text-gray-500 flex-shrink-0">{{ t('metadata.keywords.title') }}</span>
-                <MetadataChipsEditor
-                  :model-value="threadline.metadata.keywords || []"
-                  variant="rose"
-                  :disabled="isSaving('keywords')"
-                  :loading="isSaving('keywords')"
-                  :max-display="6"
-                  @update:modelValue="(v) => onChipsChange('keywords', v)"
-                  @change="(v) => onChipsSave('keywords', v)"
-                />
+                  <MetadataChipsEditor
+                    :model-value="threadline.metadata.keywords || []"
+                    variant="rose"
+                    :disabled="isSaving('keywords')"
+                    :loading="isSaving('keywords')"
+                    :max-display="6"
+                    @update:modelValue="(v) => onChipsChange('keywords', v)"
+                    @change="(v) => onChipsSave('keywords', v)"
+                  />
+                </div>
               </div>
-            </div>
 
-              <!-- Error Message -->
               <p
-                v-if="fieldError('keywords') || fieldError('category') || fieldError('participants')"
+                v-if="
+                  fieldError('keywords') ||
+                  fieldError('category') ||
+                  fieldError('participants')
+                "
                 class="text-xs sm:text-sm text-red-600"
               >
-                {{ fieldError('keywords') || fieldError('category') || fieldError('participants') }}
+                {{
+                  fieldError('keywords') ||
+                  fieldError('category') ||
+                  fieldError('participants')
+                }}
               </p>
+            </div>
             </div>
           </div>
         </div>
@@ -578,7 +1058,7 @@
                 <button
                   v-if="summaryData.details"
                   @click="copyContent(summaryData.details, 'details')"
-                  class="flex-shrink-0 inline-flex items-center gap-1 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded transition-colors"
+                  class="flex-shrink-0 inline-flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 px-2.5 py-1.5 rounded-lg transition-all shadow-sm"
                   :title="t('common.copy')"
                 >
                   <svg
@@ -769,7 +1249,7 @@
                 <button
                   v-if="summaryData.key_process && summaryData.key_process.length > 0"
                   @click="copyKeyProcess"
-                  class="flex-shrink-0 inline-flex items-center gap-1 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded transition-colors"
+                  class="flex-shrink-0 inline-flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 px-2.5 py-1.5 rounded-lg transition-all shadow-sm"
                   :title="t('common.copy')"
                 >
                   <svg
@@ -1022,23 +1502,291 @@
       @close="showRetryDialog = false"
       @confirm="handleRetry"
     />
+    <ConfirmDialog
+      :show="showDeleteConfirm"
+      :title="t('common.delete')"
+      message="Are you sure you want to delete this threadline?"
+      variant="danger"
+      :confirm-text="t('common.delete')"
+      :loading="deleting"
+      @close="showDeleteConfirm = false"
+      @confirm="confirmDelete"
+    />
+
+    <BaseModal
+      :show="showShareModal"
+      :title="t('share.modalTitle')"
+      @close="closeShareModal"
+    >
+      <div class="space-y-4 text-sm text-gray-700">
+        <p class="text-gray-600">
+          {{ t('share.modalDescription') }}
+        </p>
+
+        <div
+          v-if="shareStatus?.is_active"
+          class="rounded-md border border-gray-200 bg-gray-50 p-3 space-y-2"
+        >
+          <div class="text-xs font-medium text-gray-500">
+            {{ t('share.currentShare') }}
+          </div>
+          <div class="flex items-center gap-2 min-w-0">
+            <a
+              v-if="!showShareLink.modal"
+              :href="shareStatus.share_url"
+              target="_blank"
+              class="text-sm text-gray-700 hover:text-primary-600 transition-colors"
+            >
+              <span>{{ t('share.openLink') }}</span>
+            </a>
+            <a
+              v-else
+              :href="shareStatus.share_url"
+              target="_blank"
+              class="text-sm text-gray-700 truncate font-mono hover:text-primary-600 hover:underline flex-1 min-w-0"
+            >
+              {{ shareStatus.share_url }}
+            </a>
+            <button
+              type="button"
+              class="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100 transition-colors flex-shrink-0"
+              :title="showShareLink.modal ? t('share.hideLink') : t('share.openLink')"
+              @click="showShareLink.modal = !showShareLink.modal"
+            >
+              <svg
+                v-if="!showShareLink.modal"
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                />
+              </svg>
+              <svg
+                v-else
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                />
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100 transition-colors flex-shrink-0"
+              :title="shareCopyState.link ? t('share.copied') : t('share.copy')"
+              @click="copyShareLink"
+            >
+              <svg
+                v-if="!shareCopyState.link"
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                />
+              </svg>
+              <svg
+                v-else
+                class="w-4 h-4 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <span class="text-xs font-medium text-gray-700">{{
+            t('share.expirationLabel')
+          }}</span>
+          <div class="flex flex-wrap gap-2">
+            <button
+              v-for="option in shareExpirationOptions"
+              :key="option.value"
+              type="button"
+              class="rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
+              :class="
+                shareForm.expiration === option.value
+                  ? 'border-primary-500 bg-primary-50 text-primary-700'
+                  : 'border-gray-300 text-gray-600'
+              "
+              @click="shareForm.expiration = option.value"
+            >
+              {{ option.label }}
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="flex items-center gap-2 text-xs font-medium text-gray-700">
+            <input
+              type="checkbox"
+              v-model="shareForm.requirePassword"
+              class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+            />
+            {{ t('share.passwordToggleLabel') }}
+          </label>
+          <p class="text-xs text-gray-500">
+            {{ t('share.passwordHint') }}
+          </p>
+          <div
+            v-if="shareForm.requirePassword"
+            class="flex items-stretch gap-2"
+          >
+            <input
+              v-model="shareForm.password"
+              inputmode="numeric"
+              maxlength="6"
+              minlength="6"
+              pattern="[0-9]*"
+              class="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              :placeholder="t('share.passwordPlaceholder')"
+            />
+            <BaseButton
+              variant="secondary"
+              size="sm"
+              @click="generateLocalPassword"
+            >
+              {{ t('share.generatePassword') }}
+            </BaseButton>
+          </div>
+        </div>
+
+        <div
+          v-if="sharePasswordDisplay"
+          class="rounded-md border border-green-200 bg-green-50 p-3 space-y-2"
+        >
+          <div class="text-xs font-medium text-green-700">
+            {{ t('share.generatedPasswordLabel') }}
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-lg font-mono text-gray-900">
+              {{ sharePasswordDisplay }}
+            </span>
+            <button
+              class="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100 transition-colors flex-shrink-0"
+              :title="shareCopyState.password ? t('share.copied') : t('share.copy')"
+              type="button"
+              @click="copySharePassword"
+            >
+              <svg
+                v-if="!shareCopyState.password"
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                />
+              </svg>
+              <svg
+                v-else
+                class="w-4 h-4 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <p v-if="shareError" class="text-sm text-red-600">
+          {{ shareError }}
+        </p>
+        <p v-if="shareSuccessMessage" class="text-sm text-green-600">
+          {{ shareSuccessMessage }}
+        </p>
+      </div>
+      <template #footer>
+        <div class="flex flex-wrap items-center gap-2 w-full">
+          <div class="flex-grow"></div>
+          <div class="flex items-center gap-2">
+            <BaseButton
+              v-if="shareStatus?.is_active"
+              variant="danger"
+              size="sm"
+              :loading="shareRevoking"
+              @click="handleStopSharing"
+            >
+              {{ t('share.stopSharing') }}
+            </BaseButton>
+            <BaseButton
+              variant="primary"
+              size="sm"
+              :loading="shareSaving"
+              @click="handleShareSubmit"
+            >
+              {{
+                shareStatus?.is_active
+                  ? t('share.updateButton')
+                  : t('share.createButton')
+              }}
+            </BaseButton>
+            <BaseButton
+              variant="secondary"
+              size="sm"
+              :disabled="shareSaving || shareRevoking"
+              @click="closeShareModal"
+            >
+              {{ t('common.close') }}
+            </BaseButton>
+          </div>
+        </div>
+      </template>
+    </BaseModal>
   </AppLayout>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { usePreferencesStore } from '@/store/preferences'
-import { useToast } from '@/composables/useToast'
-import { formatDate as formatDateUtil } from '@/utils/timezone'
-import { extractErrorMessage } from '@/utils/api'
-import { chatApi } from '@/api/chat'
-import { metadataApi } from '@/api/metadata'
-import { todosApi } from '@/api/todos'
 import MetadataFieldEditor from '@/components/MetadataFieldEditor.vue'
 import MetadataChipsEditor from '@/components/MetadataChipsEditor.vue'
 import RetryDialog from '@/components/RetryDialog.vue'
+import ConfirmDialog from '@/components/ConfirmDialog.vue'
 import TodoItem from '@/components/TodoItem.vue'
 import TodoEditor from '@/components/TodoEditor.vue'
 import InlineMarkdownEditor from '@/components/InlineMarkdownEditor.vue'
@@ -1046,298 +1794,127 @@ import InlineArrayEditor from '@/components/InlineArrayEditor.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import BaseCard from '@/components/ui/BaseCard.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseModal from '@/components/ui/BaseModal.vue'
 import MarkdownRenderer from '@/components/ui/MarkdownRenderer.vue'
+import { useThreadline } from '@/composables/useThreadline'
+import { useThreadlinePolling } from '@/composables/useThreadlinePolling'
+import { useThreadlineShare } from '@/composables/useThreadlineShare'
+import { useThreadlineTodos } from '@/composables/useThreadlineTodos'
+import { useThreadlineMetadata } from '@/composables/useThreadlineMetadata'
+import { useThreadlineContent } from '@/composables/useThreadlineContent'
 
 const route = useRoute()
-const router = useRouter()
 const { t } = useI18n()
-const preferencesStore = usePreferencesStore()
-const toast = useToast()
 
+// Initialize composables
+// Create shared threadline ref first
 const threadline = ref(null)
-const loading = ref(false)
-const error = ref('')
-const deleting = ref(false)
-const retrying = ref(false)
-const showRetryDialog = ref(false)
-const showActionMenu = ref(false)
-const actionMenuRef = ref(null)
-let retryPollInterval = null
-let retryPollStartTime = null
-const MAX_POLL_DURATION = 5 * 60 * 1000 // 5 minutes max polling
 
-// Copy states for different content sections
-const copiedStates = ref({
-  summary: false,
-  llm: false,
-  details: false,
-  keyProcess: false
-})
+// Initialize polling composable (needs threadline)
+const polling = useThreadlinePolling(threadline, route)
 
-const detailsEditorRef = ref(null)
-const keyProcessEditorRef = ref(null)
+// Initialize core threadline composable (needs polling.startPolling)
+const {
+  loading,
+  error,
+  deleting,
+  showDeleteConfirm,
+  showActionMenu,
+  actionMenuRef,
+  shareStatus: computedShareStatus,
+  isProcessing,
+  hasNewFormat,
+  summaryData,
+  formatDate,
+  getStatusClass,
+  loadThreadline,
+  deleteThreadline,
+  confirmDelete,
+  goBack,
+  handleClickOutside
+} = useThreadline(route, polling.startPolling, threadline)
 
-const showEditor = ref(false)
-const editorKey = ref('')
-const editorValue = ref(null)
-const savingKeys = ref(new Set())
-const errorsByKey = ref({})
+// Initialize share composable
+const share = useThreadlineShare(threadline, route)
 
-const openEdit = (key) => {
-  editorKey.value = key
-  editorValue.value = threadline.value?.metadata
-    ? threadline.value.metadata[key]
-    : null
-  showEditor.value = true
-}
+// Initialize todos composable
+const todos = useThreadlineTodos(threadline)
 
-const openAdd = () => {
-  const k = prompt('Enter new metadata key')
-  if (!k) return
-  editorKey.value = k
-  editorValue.value = ''
-  showEditor.value = true
-}
+// Initialize metadata composable
+const metadata = useThreadlineMetadata(threadline, route)
 
-const closeEditor = () => {
-  showEditor.value = false
-}
+// Initialize content composable (needs summaryData getter)
+const content = useThreadlineContent(threadline, route, () => summaryData.value)
 
-const saveEditor = async (newValue) => {
-  if (!threadline.value) return
-  const id = route.params.id
-  const key = editorKey.value
+// Expose composable values for template
+const shareStatus = computedShareStatus
+const shareForm = share.shareForm
+const showShareModal = share.showShareModal
+const shareSaving = share.shareSaving
+const shareRevoking = share.shareRevoking
+const shareError = share.shareError
+const shareSuccessMessage = share.shareSuccessMessage
+const sharePasswordDisplay = share.sharePasswordDisplay
+const shareCopyState = share.shareCopyState
+const inlinePassword = share.inlinePassword
+const passwordSaving = share.passwordSaving
+const editingPassword = share.editingPassword
+const tempPassword = share.tempPassword
+const inlineExpiration = share.inlineExpiration
+const expirationSaving = share.expirationSaving
+const showPassword = share.showPassword
+const editingExpiration = share.editingExpiration
+const tempExpiration = share.tempExpiration
+const showShareLink = share.showShareLink
+const shareExpirationOptions = share.shareExpirationOptions
+const shareExpirationDisplay = share.shareExpirationDisplay
 
-  const prev = threadline.value.metadata ? { ...threadline.value.metadata } : {}
-  const next = { ...prev, [key]: newValue }
+const retrying = polling.retrying
+const showRetryDialog = polling.showRetryDialog
 
-  threadline.value = { ...threadline.value, metadata: next }
-  showEditor.value = false
-  try {
-    savingKeys.value.add(key)
-    delete errorsByKey.value[key]
-    await metadataApi.patchThreadlineMetadata(id, { [key]: newValue })
-  } catch (err) {
-    console.error('Failed to save metadata:', err)
-    threadline.value = { ...threadline.value, metadata: prev }
-    errorsByKey.value[key] = err?.response?.data?.message || '保存失败'
-  } finally {
-    savingKeys.value.delete(key)
-  }
-}
+const copiedStates = content.copiedStates
+const detailsEditorRef = content.detailsEditorRef
+const keyProcessEditorRef = content.keyProcessEditorRef
 
-const onChipsChange = (key, value) => {
-  if (!threadline.value) return
-  const prev = threadline.value.metadata ? { ...threadline.value.metadata } : {}
-  const next = { ...prev, [key]: value }
-  threadline.value = { ...threadline.value, metadata: next }
-}
+const showEditor = metadata.showEditor
+const editorKey = metadata.editorKey
+const editorValue = metadata.editorValue
+const savingKeys = metadata.savingKeys
+const errorsByKey = metadata.errorsByKey
 
-const onChipsSave = async (key, value) => {
-  if (!threadline.value) return
-  const id = route.params.id
-  const prev = threadline.value.metadata ? { ...threadline.value.metadata } : {}
-  try {
-    savingKeys.value.add(key)
-    delete errorsByKey.value[key]
-    const response = await metadataApi.patchThreadlineMetadata(id, { [key]: value })
-    // Update local state with the saved value from response
-    // Response format: { code, message, data: { uuid, metadata } }
-    if (response && response.data && response.data.metadata) {
-      threadline.value.metadata = response.data.metadata
-    } else {
-      // Fallback: update with the value we sent
-      if (threadline.value.metadata) {
-        threadline.value.metadata[key] = value
-      } else {
-        threadline.value.metadata = { [key]: value }
-      }
-    }
-  } catch (err) {
-    console.error('Failed to save metadata:', err)
-    threadline.value = { ...threadline.value, metadata: prev }
-    errorsByKey.value[key] = err?.response?.data?.message || '保存失败'
-  } finally {
-    savingKeys.value.delete(key)
-  }
-}
+// Use composable methods
+const openEdit = metadata.openEdit
+const openAdd = metadata.openAdd
+const closeEditor = metadata.closeEditor
+const saveEditor = metadata.saveEditor
+const onChipsChange = metadata.onChipsChange
+const onChipsSave = metadata.onChipsSave
+const isSaving = metadata.isSaving
+const fieldError = metadata.fieldError
 
-const loadThreadline = async () => {
-  loading.value = true
-  error.value = ''
+const handleQuickShare = share.handleQuickShare
+const openShareModal = share.openShareModal
+const closeShareModal = share.closeShareModal
+const handleShareSubmit = share.handleShareSubmit
+const handleStopSharing = share.handleStopSharing
+const confirmStopSharing = share.confirmStopSharing
+const generateLocalPassword = share.generateLocalPassword
+const copyLinkOnly = share.copyLinkOnly
+const copyShareLink = share.copyShareLink
+const copyFullInvite = share.copyFullInvite
+const copySharePassword = share.copySharePassword
+const createRandomPassword = share.createRandomPassword
+const removePassword = share.removePassword
+const startEditingPassword = share.startEditingPassword
+const cancelEditingPassword = share.cancelEditingPassword
+const savePassword = share.savePassword
+const startEditingExpiration = share.startEditingExpiration
+const cancelEditingExpiration = share.cancelEditingExpiration
+const saveExpiration = share.saveExpiration
 
-  try {
-    const response = await chatApi.getThreadline(route.params.id)
-    // Handle the actual response format from backend
-    const data = response.data.data || response.data
-    threadline.value = data
-
-    // If status is processing, start polling and show loading state
-    if (data.status === 'processing') {
-      retrying.value = true
-      stopRetryPolling() // Clear any existing polling
-      retryPollStartTime = Date.now()
-      retryPollInterval = setInterval(pollThreadlineStatus, 2000)
-      // Poll immediately
-      pollThreadlineStatus()
-    }
-  } catch (err) {
-    console.error('Failed to load threadline:', err)
-
-    // If resource not found (404), redirect to 404 page
-    if (err.response?.status === 404) {
-      router.push({ name: 'NotFound' })
-      return
-    }
-
-    error.value = err.response?.data?.message || 'Failed to load threadline'
-  } finally {
-    loading.value = false
-  }
-}
-
-const deleteThreadline = async () => {
-  if (!confirm('Are you sure you want to delete this threadline?')) return
-
-  deleting.value = true
-
-  try {
-    await chatApi.deleteThreadline(route.params.id)
-    router.push('/dashboard')
-  } catch (err) {
-    console.error('Delete failed:', err)
-    toast.showError(
-      extractErrorMessage(err, t('common.error') + ': ' + t('common.delete'))
-    )
-  } finally {
-    deleting.value = false
-  }
-}
-
-const goBack = () => {
-  if (window.history.length > 1) {
-    router.back()
-  } else {
-    router.push('/dashboard')
-  }
-}
-
-const stopRetryPolling = () => {
-  if (retryPollInterval) {
-    clearInterval(retryPollInterval)
-    retryPollInterval = null
-  }
-  retryPollStartTime = null
-}
-
-const pollThreadlineStatus = async () => {
-  try {
-    // Check if we've been polling too long
-    if (
-      retryPollStartTime &&
-      Date.now() - retryPollStartTime > MAX_POLL_DURATION
-    ) {
-      stopRetryPolling()
-      retrying.value = false
-      console.warn('Polling timeout: exceeded maximum duration')
-      return
-    }
-
-    const response = await chatApi.getThreadline(route.params.id)
-    const data = response.data.data || response.data
-    threadline.value = data
-
-    // Check if processing is complete
-    const status = data.status
-
-    // Keep retrying state true if status is processing
-    if (status === 'processing') {
-      retrying.value = true
-      // Continue polling, don't stop
-      return
-    }
-
-    if (status === 'success' || status === 'failed') {
-      // Processing complete, stop polling
-      stopRetryPolling()
-      retrying.value = false
-
-      // Success or failure is already visible in the UI through status update
-      // No need for alert
-    }
-    // For other statuses (like fetched), continue polling until we get processing or final status
-  } catch (err) {
-    console.error('Failed to poll threadline status:', err)
-    // On error, stop polling
-    stopRetryPolling()
-    retrying.value = false
-  }
-}
-
-const handleRetryClick = () => {
-  // Prevent opening dialog if already processing or retrying
-  if (isProcessing.value || retrying.value || deleting.value) {
-    return
-  }
-  showRetryDialog.value = true
-}
-
-const handleRetry = async (options) => {
-  showRetryDialog.value = false
-  retrying.value = true
-
-  try {
-    await chatApi.retryThreadline(route.params.id, options)
-
-    // Backend now immediately sets status to PROCESSING
-    // Start polling for status updates right away
-    stopRetryPolling() // Clear any existing polling
-    retryPollStartTime = Date.now()
-    retryPollInterval = setInterval(pollThreadlineStatus, 2000)
-
-    // Poll immediately to get the updated status
-    await pollThreadlineStatus()
-  } catch (err) {
-    console.error('Retry failed:', err)
-    stopRetryPolling()
-    retrying.value = false
-    retryPollStartTime = null
-    toast.showError(err.response?.data?.message || t('retry.retryError'))
-  }
-}
-
-const formatDate = (dateString) => {
-  if (!dateString) return t('common.noData')
-
-  // Use different date format based on language
-  const dateFormat =
-    preferencesStore.currentLanguage === 'zh-CN'
-      ? 'yyyy年MM月dd日 HH:mm'
-      : 'MMM dd, yyyy HH:mm'
-
-  return formatDateUtil(
-    dateString,
-    preferencesStore.currentTimezone,
-    dateFormat,
-    preferencesStore.currentLanguage
-  )
-}
-
-const getStatusClass = (status) => {
-  const classes = {
-    pending: 'bg-yellow-100 text-yellow-800',
-    completed: 'bg-green-100 text-green-800',
-    failed: 'bg-red-100 text-red-800',
-    processing: 'bg-blue-100 text-blue-800'
-  }
-  return classes[status] || 'bg-gray-100 text-gray-800'
-}
-
-const handleClickOutside = (event) => {
-  if (actionMenuRef.value && !actionMenuRef.value.contains(event.target)) {
-    showActionMenu.value = false
-  }
-}
+const handleRetryClick = () => polling.handleRetryClick(isProcessing.value, deleting.value)
+const handleRetry = polling.handleRetry
+const stopRetryPolling = polling.stopRetryPolling
 
 onMounted(() => {
   loadThreadline()
@@ -1349,14 +1926,6 @@ onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
 })
 
-const isSaving = (key) => savingKeys.value.has(key)
-const fieldError = (key) => errorsByKey.value[key]
-
-// Check if email is currently processing
-const isProcessing = computed(() => {
-  return threadline.value?.status === 'processing'
-})
-
 const isAnySaving = computed(
   () =>
     isSaving('category') ||
@@ -1364,584 +1933,83 @@ const isAnySaving = computed(
     isSaving('keywords')
 )
 
-const captureScrollPosition = () => {
-  if (typeof window === 'undefined') {
-    return 0
-  }
-  return window.scrollY || 0
-}
+// Use composable methods for todos
+const threadlineTodos = todos.threadlineTodos
+const showTodoEditor = todos.showTodoEditor
+const editingTodo = todos.editingTodo
+const savingTodo = todos.savingTodo
+const todoLoading = todos.todoLoading
+const todoErrorMessage = todos.todoErrorMessage
+const todoSuccessMessage = todos.todoSuccessMessage
+const tempNewTodo = todos.tempNewTodo
+const savingNewTodo = todos.savingNewTodo
+const editingTodoIds = todos.editingTodoIds
+const handleAddTodo = todos.handleAddTodo
+const saveNewTodo = todos.saveNewTodo
+const cancelNewTodo = todos.cancelNewTodo
+const handleTodoEditingChange = todos.handleTodoEditingChange
+const handleEditTodo = todos.handleEditTodo
+const handleSaveTodoInline = todos.handleSaveTodoInline
+const handleSaveTodo = todos.handleSaveTodo
+const handleToggleTodo = todos.handleToggleTodo
+const handleDeleteTodo = todos.handleDeleteTodo
 
-const restoreScrollPosition = async (position) => {
-  if (typeof window === 'undefined') {
-    return
-  }
-  await nextTick()
-  window.scrollTo({
-    top: position,
-    behavior: 'auto'
-  })
-}
+// Use composable methods for content editing
+const editingTitle = content.editingTitle
+const editingTitleValue = content.editingTitleValue
+const savingTitle = content.savingTitle
+const titleError = content.titleError
+const titleInputRef = content.titleInputRef
+const startEditingTitle = content.startEditingTitle
+const cancelEditingTitle = content.cancelEditingTitle
+const saveTitle = content.saveTitle
 
-// Format detection
-const hasNewFormat = computed(() => {
-  if (!threadline.value || !threadline.value.summary_data) {
-    return false
-  }
-  let sd = threadline.value.summary_data
-  // Handle string format (should be parsed by backend, but handle both)
-  if (typeof sd === 'string') {
-    try {
-      sd = JSON.parse(sd)
-    } catch (e) {
-      return false
-    }
-  }
-  return (
-    (sd.details && sd.details.trim()) ||
-    (Array.isArray(sd.key_process) && sd.key_process.length > 0)
-  )
-})
+const detailsValue = content.detailsValue
+const savingDetails = content.savingDetails
+const detailsError = content.detailsError
+const editingDetails = content.editingDetails
+const cancelEditingDetails = content.cancelEditingDetails
+const saveDetails = content.saveDetails
 
-const summaryData = computed(() => {
-  if (!threadline.value || !threadline.value.summary_data) {
-    return { details: '', key_process: [] }
-  }
-  let sd = threadline.value.summary_data
-  // Handle string format (should be parsed by backend, but handle both)
-  if (typeof sd === 'string') {
-    try {
-      sd = JSON.parse(sd)
-    } catch (e) {
-      return { details: '', key_process: [] }
-    }
-  }
-  return {
-    details: sd.details || '',
-    key_process: sd.key_process || []
-  }
-})
+const keyProcessValue = content.keyProcessValue
+const editingKeyProcess = content.editingKeyProcess
+const savingKeyProcess = content.savingKeyProcess
+const keyProcessError = content.keyProcessError
+const cancelEditingKeyProcess = content.cancelEditingKeyProcess
+const saveKeyProcess = content.saveKeyProcess
 
-const threadlineTodos = computed(() => {
-  if (!threadline.value || !threadline.value.todos) {
-    return []
-  }
+const copyContent = content.copyContent
+const openDetailsEditor = content.openDetailsEditor
+const openKeyProcessEditor = content.openKeyProcessEditor
+const copyKeyProcess = content.copyKeyProcess
 
-  const todos = [...threadline.value.todos]
-
-  // Sort by deadline from earliest to latest
-  return todos.sort((a, b) => {
-    if (!a.deadline && !b.deadline) return 0
-    if (!a.deadline) return 1 // No deadline goes to end
-    if (!b.deadline) return -1
-    return new Date(a.deadline) - new Date(b.deadline)
-  })
-})
-
-// TODO management
-const showTodoEditor = ref(false)
-const editingTodo = ref(null)
-const savingTodo = ref(false)
-const todoLoading = ref({})
-const todoErrorMessage = ref('')
-const todoSuccessMessage = ref('')
-const tempNewTodo = ref(null)
-const savingNewTodo = ref(false)
-const editingTodoIds = ref(new Set())
-
-const handleAddTodo = () => {
-  if (!threadline.value || !threadline.value.id) {
-    todoErrorMessage.value =
-      t('todos.error.noEmailMessage') ||
-      'Cannot create TODO: Email message not loaded'
+// Share button click handler - uses composable method
+const handleShareButtonClick = async () => {
+  if (!threadline.value) {
     return
   }
 
-  // Create temporary todo with default values
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const day = String(now.getDate()).padStart(2, '0')
-  const hours = String(now.getHours()).padStart(2, '0')
-  const minutes = String(now.getMinutes()).padStart(2, '0')
-
-  tempNewTodo.value = {
-    id: `temp-${Date.now()}`,
-    content: '',
-    priority: null, // Empty by default
-    owner: '',
-    deadline: `${year}-${month}-${day}T${hours}:${minutes}`, // Current time
-    location: '',
-    is_completed: false,
-    isNew: true
-  }
-}
-
-const saveNewTodo = async (todoId, todoData) => {
-  // Validate - content is required
-  if (!todoData.content || !todoData.content.trim()) {
-    // This validation should be handled by TodoItem component
-    // but we also check here as a safeguard
-    throw new Error(t('todos.content') + ' ' + (t('common.required') || '必填'))
-  }
-
-  savingNewTodo.value = true
-  todoErrorMessage.value = ''
-  todoSuccessMessage.value = ''
-  const tempId = tempNewTodo.value?.id
-
-  try {
-    const response = await todosApi.createTodo({
-      ...todoData,
-      email_message_id: threadline.value?.id
-    })
-    const newTodo = response.data.data || response.data
-
-    // Add new todo to actual todos list
-    if (threadline.value) {
-      if (!threadline.value.todos) {
-        threadline.value.todos = []
-      }
-      threadline.value.todos.push(newTodo)
-    }
-
-    // Wait for next tick to ensure TodoItem has processed the save
-    // and emitted editing-change event, then clear states
-    await nextTick()
-
-    // Clear editing state for the temp todo
-    if (tempId) {
-      editingTodoIds.value.delete(tempId)
-    }
-
-    // Clear tempNewTodo to re-enable the add button
-    tempNewTodo.value = null
-
-    todoSuccessMessage.value =
-      t('todos.createSuccess') || 'TODO created successfully'
-
-    setTimeout(() => {
-      todoSuccessMessage.value = ''
-    }, 3000)
-  } catch (err) {
-    console.error('Failed to create todo:', err)
-    // Clear editing state even on error
-    if (tempId) {
-      editingTodoIds.value.delete(tempId)
-    }
-    todoErrorMessage.value = extractErrorMessage(
-      err,
-      t('common.error') + ': ' + t('todos.save')
-    )
-    throw err // Re-throw to let TodoItem handle the error
-  } finally {
-    savingNewTodo.value = false
-  }
-}
-
-const cancelNewTodo = () => {
-  if (tempNewTodo.value) {
-    editingTodoIds.value.delete(tempNewTodo.value.id)
-  }
-  tempNewTodo.value = null
-}
-
-const handleTodoEditingChange = (todoId, isEditing) => {
-  if (!todoId) {
-    console.warn('handleTodoEditingChange called without todoId')
+  if (shareSaving.value || shareRevoking.value) {
     return
   }
 
-  if (isEditing) {
-    editingTodoIds.value.add(todoId)
-  } else {
-    editingTodoIds.value.delete(todoId)
-  }
-}
-
-const handleEditTodo = (todo) => {
-  editingTodo.value = todo
-  showTodoEditor.value = true
-}
-
-const handleSaveTodoInline = async (todoId, todoData) => {
-  todoLoading.value[todoId] = true
-  todoErrorMessage.value = ''
-  todoSuccessMessage.value = ''
-  try {
-    const response = await todosApi.updateTodo(todoId, todoData)
-    const updatedTodo = response.data.data || response.data
-
-    // Update local state instead of reloading entire threadline
-    if (threadline.value && threadline.value.todos) {
-      const index = threadline.value.todos.findIndex((t) => t.id === todoId)
-      if (index !== -1) {
-        threadline.value.todos[index] = updatedTodo
-      }
-    }
-
-    todoSuccessMessage.value =
-      t('todos.updateSuccess') || 'TODO updated successfully'
-
-    setTimeout(() => {
-      todoSuccessMessage.value = ''
-    }, 3000)
-  } catch (err) {
-    console.error('Failed to save todo:', err)
-    todoErrorMessage.value = extractErrorMessage(
-      err,
-      t('common.error') + ': ' + t('todos.save')
-    )
-    throw err // Re-throw to let TodoItem handle the error
-  } finally {
-    todoLoading.value[todoId] = false
-  }
-}
-
-const handleSaveTodo = async (todoData) => {
-  savingTodo.value = true
-  todoErrorMessage.value = ''
-  todoSuccessMessage.value = ''
-  try {
-    if (editingTodo.value) {
-      const response = await todosApi.updateTodo(editingTodo.value.id, todoData)
-      const updatedTodo = response.data.data || response.data
-
-      // Update local state instead of reloading entire threadline
-      if (threadline.value && threadline.value.todos) {
-        const index = threadline.value.todos.findIndex(
-          (t) => t.id === editingTodo.value.id
-        )
-        if (index !== -1) {
-          threadline.value.todos[index] = updatedTodo
-        }
-      }
-
-      todoSuccessMessage.value =
-        t('todos.updateSuccess') || 'TODO updated successfully'
-    } else {
-      const response = await todosApi.createTodo(todoData)
-      const newTodo = response.data.data || response.data
-
-      // Add new todo to local state instead of reloading entire threadline
-      if (threadline.value) {
-        if (!threadline.value.todos) {
-          threadline.value.todos = []
-        }
-        threadline.value.todos.push(newTodo)
-      }
-
-      todoSuccessMessage.value =
-        t('todos.createSuccess') || 'TODO created successfully'
-    }
-    showTodoEditor.value = false
-    editingTodo.value = null
-
-    setTimeout(() => {
-      todoSuccessMessage.value = ''
-    }, 3000)
-  } catch (err) {
-    console.error('Failed to save todo:', err)
-    todoErrorMessage.value = extractErrorMessage(
-      err,
-      t('common.error') + ': ' + t('todos.save')
-    )
-  } finally {
-    savingTodo.value = false
-  }
-}
-
-const handleToggleTodo = async (todoId) => {
-  todoLoading.value[todoId] = true
-  todoErrorMessage.value = ''
-  try {
-    const todo = threadlineTodos.value.find((t) => t.id === todoId)
-    if (!todo) return
-
-    const response = await todosApi.updateTodo(todoId, {
-      is_completed: !todo.is_completed
-    })
-    const updatedTodo = response.data.data || response.data
-
-    // Update local state instead of reloading entire threadline
-    if (threadline.value && threadline.value.todos) {
-      const index = threadline.value.todos.findIndex((t) => t.id === todoId)
-      if (index !== -1) {
-        threadline.value.todos[index] = updatedTodo
-      }
-    }
-  } catch (err) {
-    console.error('Failed to toggle todo:', err)
-    todoErrorMessage.value = extractErrorMessage(
-      err,
-      t('common.error') + ': ' + t('todos.markCompleted')
-    )
-  } finally {
-    todoLoading.value[todoId] = false
-  }
-}
-
-const handleDeleteTodo = async (todoId) => {
-  todoLoading.value[todoId] = true
-  todoErrorMessage.value = ''
-  try {
-    await todosApi.deleteTodo(todoId)
-
-    // Remove todo from local state instead of reloading entire threadline
-    if (threadline.value && threadline.value.todos) {
-      threadline.value.todos = threadline.value.todos.filter(
-        (t) => t.id !== todoId
-      )
-    }
-
-    todoSuccessMessage.value =
-      t('todos.deleteSuccess') || 'TODO deleted successfully'
-    setTimeout(() => {
-      todoSuccessMessage.value = ''
-    }, 3000)
-  } catch (err) {
-    console.error('Failed to delete todo:', err)
-    todoErrorMessage.value = extractErrorMessage(
-      err,
-      t('common.error') + ': ' + t('todos.delete')
-    )
-  } finally {
-    todoLoading.value[todoId] = false
-  }
-}
-
-// Title editing
-const editingTitle = ref(false)
-const editingTitleValue = ref('')
-const savingTitle = ref(false)
-const titleError = ref('')
-const titleInputRef = ref(null)
-
-const startEditingTitle = () => {
-  editingTitleValue.value =
-    threadline.value?.summary_title ||
-    threadline.value?.subject ||
-    ''
-  editingTitle.value = true
-  nextTick(() => {
-    if (titleInputRef.value) {
-      titleInputRef.value.focus()
-    }
-  })
-}
-
-const cancelEditingTitle = () => {
-  editingTitle.value = false
-  editingTitleValue.value = ''
-  titleError.value = ''
-}
-
-const saveTitle = async () => {
-  if (!threadline.value) return
-  savingTitle.value = true
-  titleError.value = ''
-
-  const id = route.params.id
-  const originalTitle = threadline.value.summary_title
-
-  try {
-    const response = await chatApi.updateThreadline(id, {
-      summary_title: editingTitleValue.value.trim()
-    })
-    const updatedData = response.data.data || response.data
-    threadline.value = { ...threadline.value, ...updatedData }
-    editingTitle.value = false
-  } catch (err) {
-    console.error('Failed to save title:', err)
-    titleError.value =
-      extractErrorMessage(err, t('common.error') + ': ' + t('common.save'))
-  } finally {
-    savingTitle.value = false
-  }
-}
-
-// Details editing
-const detailsValue = computed({
-  get: () => summaryData.value.details || '',
-  set: (val) => {
-    if (!threadline.value) return
-    if (!threadline.value.summary_data) {
-      threadline.value.summary_data = {}
-    }
-    threadline.value.summary_data = {
-      ...threadline.value.summary_data,
-      details: val
-    }
-  }
-})
-const savingDetails = ref(false)
-const detailsError = ref('')
-const editingDetails = ref(false)
-const editingKeyProcess = ref(false)
-
-const cancelEditingDetails = () => {
-  detailsError.value = ''
-  editingDetails.value = false
-}
-
-const saveDetails = async (value) => {
-  if (!threadline.value) return
-  savingDetails.value = true
-  detailsError.value = ''
-
-  const id = route.params.id
-  const currentSummaryData = threadline.value.summary_data || {}
-  const originalDetails = currentSummaryData.details
-
-  try {
-    const updatedSummaryData = {
-      ...currentSummaryData,
-      details: value
-    }
-    const response = await chatApi.updateThreadline(id, {
-      summary_data: updatedSummaryData
-    })
-    const updatedData = response.data.data || response.data
-    threadline.value = { ...threadline.value, ...updatedData }
-    editingDetails.value = false
-  } catch (err) {
-    console.error('Failed to save details:', err)
-    detailsError.value = extractErrorMessage(
-      err,
-      t('common.error') + ': ' + t('common.save')
-    )
-    if (threadline.value.summary_data) {
-      threadline.value.summary_data.details = originalDetails
-    }
-  } finally {
-    savingDetails.value = false
-  }
-}
-
-// Key process editing
-const keyProcessValue = computed({
-  get: () => summaryData.value.key_process || [],
-  set: (val) => {
-    if (!threadline.value) return
-    if (!threadline.value.summary_data) {
-      threadline.value.summary_data = {}
-    }
-    threadline.value.summary_data = {
-      ...threadline.value.summary_data,
-      key_process: val
-    }
-  }
-})
-const savingKeyProcess = ref(false)
-const keyProcessError = ref('')
-
-const cancelEditingKeyProcess = () => {
-  keyProcessError.value = ''
-  editingKeyProcess.value = false
-}
-
-const saveKeyProcess = async (value) => {
-  if (!threadline.value) return
-  savingKeyProcess.value = true
-  keyProcessError.value = ''
-
-  const id = route.params.id
-  const currentSummaryData = threadline.value.summary_data || {}
-  const originalKeyProcess = currentSummaryData.key_process
-
-  try {
-    const updatedSummaryData = {
-      ...currentSummaryData,
-      key_process: value
-    }
-    const response = await chatApi.updateThreadline(id, {
-      summary_data: updatedSummaryData
-    })
-    const updatedData = response.data.data || response.data
-    threadline.value = { ...threadline.value, ...updatedData }
-    editingKeyProcess.value = false
-  } catch (err) {
-    console.error('Failed to save key process:', err)
-    keyProcessError.value = extractErrorMessage(
-      err,
-      t('common.error') + ': ' + t('common.save')
-    )
-    if (threadline.value.summary_data) {
-      threadline.value.summary_data.key_process = originalKeyProcess
-    }
-  } finally {
-    savingKeyProcess.value = false
-  }
-}
-
-// Copy content function
-const copyContent = async (content, section) => {
-  if (!content) return
-
-  try {
-    // Extract plain text from markdown content
-    // Remove markdown syntax but preserve line breaks
-    let textContent = content
-      // Remove code blocks
-      .replace(/```[\s\S]*?```/g, '')
-      // Remove inline code
-      .replace(/`([^`]+)`/g, '$1')
-      // Remove headers
-      .replace(/^#+\s+/gm, '')
-      // Remove bold/italic
-      .replace(/\*\*([^*]+)\*\*/g, '$1')
-      .replace(/\*([^*]+)\*/g, '$1')
-      .replace(/__([^_]+)__/g, '$1')
-      .replace(/_([^_]+)_/g, '$1')
-      // Remove links but keep text
-      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
-      // Remove images
-      .replace(/!\[([^\]]*)\]\([^\)]+\)/g, '')
-      // Clean up extra whitespace
-      .replace(/\n{3,}/g, '\n\n')
-      .trim()
-
-    await navigator.clipboard.writeText(textContent)
-    copiedStates.value[section] = true
-    setTimeout(() => {
-      copiedStates.value[section] = false
-    }, 2000)
-  } catch (error) {
-    console.error('Failed to copy content:', error)
-  }
-}
-
-const openDetailsEditor = () => {
-  if (isProcessing.value || editingDetails.value) return
-  detailsEditorRef.value?.startEditing()
-  editingDetails.value = true
-}
-
-const openKeyProcessEditor = () => {
-  if (isProcessing.value || editingKeyProcess.value) return
-  keyProcessEditorRef.value?.startEditing()
-  editingKeyProcess.value = true
-}
-
-// Copy key process function
-const copyKeyProcess = async () => {
-  if (!summaryData.value.key_process || summaryData.value.key_process.length === 0) {
+  if (
+    shareStatus.value &&
+    shareStatus.value.is_active &&
+    !shareStatus.value.is_expired
+  ) {
+    handleStopSharing()
     return
   }
 
-  try {
-    const textContent = summaryData.value.key_process
-      .map((item, index) => `${index + 1}. ${item}`)
-      .join('\n')
-
-    await navigator.clipboard.writeText(textContent)
-    copiedStates.value.keyProcess = true
-    setTimeout(() => {
-      copiedStates.value.keyProcess = false
-    }, 2000)
-  } catch (error) {
-    console.error('Failed to copy key process:', error)
+  if (isProcessing.value || deleting.value || retrying.value) {
+    return
   }
+
+  // Use handleQuickShare from composable
+  await handleQuickShare()
 }
+
 </script>
 
 <style scoped>

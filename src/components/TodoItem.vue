@@ -10,7 +10,7 @@
       todo.is_completed ? 'opacity-75' : ''
     ]"
   >
-    <div class="flex-shrink-0" :class="shouldAlignTop ? 'pt-0.5' : ''">
+    <div v-if="!readOnly" class="flex-shrink-0" :class="shouldAlignTop ? 'pt-0.5' : ''">
       <input
         type="checkbox"
         :checked="todo.is_completed"
@@ -181,10 +181,12 @@
             'text-sm leading-6 select-text transition-colors',
             todo.is_completed
               ? 'text-gray-500 line-through cursor-not-allowed'
-              : 'text-gray-900 hover:opacity-80 cursor-pointer'
+              : readOnly
+                ? 'text-gray-900 cursor-default'
+                : 'text-gray-900 hover:opacity-80 cursor-pointer'
           ]"
-          @click.stop="handleStartContentEdit"
-          :title="todo.is_completed ? '' : t('todos.edit')"
+          @click.stop="readOnly ? null : handleStartContentEdit"
+          :title="readOnly || todo.is_completed ? '' : t('todos.edit')"
         >
           {{ todo.content }}
         </div>
@@ -256,10 +258,12 @@
               'self-center',
               todo.is_completed
                 ? 'cursor-not-allowed opacity-60'
-                : 'cursor-pointer hover:opacity-80'
+                : readOnly
+                  ? 'cursor-default'
+                  : 'cursor-pointer hover:opacity-80'
             ]"
-            @click.stop="handleStartPriorityEdit"
-            :title="todo.is_completed ? '' : t('todos.edit')"
+            @click.stop="readOnly ? null : handleStartPriorityEdit"
+            :title="readOnly || todo.is_completed ? '' : t('todos.edit')"
           >
             {{ t(`todos.priority.${todo.priority}`) }}
           </span>
@@ -269,10 +273,12 @@
               'text-gray-400 italic self-center',
               todo.is_completed
                 ? 'cursor-not-allowed opacity-60'
-                : 'cursor-pointer hover:opacity-80'
+                : readOnly
+                  ? 'cursor-default'
+                  : 'cursor-pointer hover:opacity-80'
             ]"
-            @click.stop="handleStartPriorityEdit"
-            :title="todo.is_completed ? '' : t('todos.addPriority')"
+            @click.stop="readOnly ? null : handleStartPriorityEdit"
+            :title="readOnly || todo.is_completed ? '' : t('todos.addPriority')"
           >
             + {{ t('todos.priority.label') }}
           </span>
@@ -345,10 +351,12 @@
               'flex items-center gap-1 self-center',
               todo.is_completed
                 ? 'cursor-not-allowed opacity-60'
-                : 'cursor-pointer hover:opacity-80'
+                : readOnly
+                  ? 'cursor-default'
+                  : 'cursor-pointer hover:opacity-80'
             ]"
-            @click.stop="handleStartOwnerEdit"
-            :title="todo.is_completed ? '' : t('todos.edit')"
+            @click.stop="readOnly ? null : handleStartOwnerEdit"
+            :title="readOnly || todo.is_completed ? '' : t('todos.edit')"
           >
             <svg
               class="w-3 h-3"
@@ -463,10 +471,12 @@
               'flex items-center gap-1 self-center',
               todo.is_completed
                 ? 'cursor-not-allowed opacity-60'
-                : 'cursor-pointer hover:opacity-80'
+                : readOnly
+                  ? 'cursor-default'
+                  : 'cursor-pointer hover:opacity-80'
             ]"
-            @click.stop="handleStartDeadlineEdit"
-            :title="todo.is_completed ? '' : t('todos.edit')"
+            @click.stop="readOnly ? null : handleStartDeadlineEdit"
+            :title="readOnly || todo.is_completed ? '' : t('todos.edit')"
           >
             <svg
               class="w-3 h-3"
@@ -489,10 +499,12 @@
               'flex items-center gap-1 text-gray-400 italic self-center',
               todo.is_completed
                 ? 'cursor-not-allowed opacity-60'
-                : 'cursor-pointer hover:opacity-80'
+                : readOnly
+                  ? 'cursor-default'
+                  : 'cursor-pointer hover:opacity-80'
             ]"
-            @click.stop="handleStartDeadlineEdit"
-            :title="todo.is_completed ? '' : t('todos.addDeadline')"
+            @click.stop="readOnly ? null : handleStartDeadlineEdit"
+            :title="readOnly || todo.is_completed ? '' : t('todos.addDeadline')"
           >
             <svg
               class="w-3 h-3"
@@ -587,10 +599,12 @@
               'flex items-center gap-1 self-center',
               todo.is_completed
                 ? 'cursor-not-allowed opacity-60'
-                : 'cursor-pointer hover:opacity-80'
+                : readOnly
+                  ? 'cursor-default'
+                  : 'cursor-pointer hover:opacity-80'
             ]"
-            @click.stop="handleStartLocationEdit"
-            :title="todo.is_completed ? '' : t('todos.edit')"
+            @click.stop="readOnly ? null : handleStartLocationEdit"
+            :title="readOnly || todo.is_completed ? '' : t('todos.edit')"
           >
             <svg
               class="w-3 h-3"
@@ -619,10 +633,12 @@
               'flex items-center gap-1 text-gray-400 italic self-center',
               todo.is_completed
                 ? 'cursor-not-allowed opacity-60'
-                : 'cursor-pointer hover:opacity-80'
+                : readOnly
+                  ? 'cursor-default'
+                  : 'cursor-pointer hover:opacity-80'
             ]"
-            @click.stop="handleStartLocationEdit"
-            :title="todo.is_completed ? '' : t('todos.addLocation')"
+            @click.stop="readOnly ? null : handleStartLocationEdit"
+            :title="readOnly || todo.is_completed ? '' : t('todos.addLocation')"
           >
             <svg
               class="w-3 h-3"
@@ -664,7 +680,7 @@
         </span>
 
         <button
-          v-if="!confirmingDelete && !isNew"
+          v-if="!confirmingDelete && !isNew && !readOnly"
           @click="handleDeleteClick"
           :disabled="loading"
           class="p-1 text-gray-400 hover:text-red-600"
@@ -684,7 +700,7 @@
             />
           </svg>
         </button>
-        <div v-else class="flex items-center gap-1">
+        <div v-else-if="!readOnly" class="flex items-center gap-1">
           <button
             class="p-1 text-green-600 hover:text-green-800 focus:outline-none"
             @click="confirmDelete"
@@ -767,6 +783,10 @@ const props = defineProps({
     default: false
   },
   autoEdit: {
+    type: Boolean,
+    default: false
+  },
+  readOnly: {
     type: Boolean,
     default: false
   }
